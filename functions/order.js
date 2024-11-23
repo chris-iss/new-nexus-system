@@ -39,6 +39,7 @@ export const handler = async (event) => {
         const quantity = requestBody.line_items[0]?.quantity;
         const amount = requestBody.line_items[0]?.subtotal;
         const status = requestBody.status;
+        const currencySymbol = requestBody.currency_symbol
         const date = new Date();
 
         const insertOrder = {
@@ -48,6 +49,7 @@ export const handler = async (event) => {
             quantity: quantity,
             amount: amount,
             status: status,
+            currency: currencySymbol,
             date: date,
         };
 
