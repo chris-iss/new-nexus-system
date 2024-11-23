@@ -54,8 +54,8 @@ export const handler = async (event) => {
         // };
 
         const proccessOrder = requestBody.line_items.map((item) => {
-            fName = requestBody.billing.first_name;
-            lastName = requestBody.billing.last_name;
+            firstname = requestBody.billing.first_name;
+            lastname = requestBody.billing.last_name;
             course = item.name;
             quantity = item.quantity;
             amount = item.price * item.quantity;
