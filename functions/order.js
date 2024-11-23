@@ -1,4 +1,5 @@
 const fetch = require("node-fetch");
+const { supabase } = require("../utils/database");
 require("dotenv").config();
 
 exports.handler = async (event) => {
@@ -35,20 +36,31 @@ exports.handler = async (event) => {
         const status = requestBody.status;
         const date = new Date();
 
-        // Connect to MongoDB
-        // const db = await connectToDatabase();
-        // const collection = db.collection(process.env.MONGODB_COLLECTION);
+     
+        const insertOrder = {
+            firstname: fName,
+            lastname: lastName,
+            course: course,
+            quantity: quantity,
+            amount: amount,
+            status: status,
+            date: date,
+        }
 
-        // // Insert data into MongoDB
-        // const insertResult = await collection.insertOne({
-        //     firstname: fName,
-        //     lastname: lastName,
-        //     course: course,
-        //     quantity: quantity,
-        //     amount: amount,
-        //     status: status,
-        //     date: date,
-        // });
+        // Save data to Superbase
+        try {
+            const { data, error } = await supabase.from("orders")
+            .insert([{order: insertOrder}])
+
+            console.log("INSERTED SSUCCESSFULLY:", data);
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(data)
+            }
+        }catch(error) {
+            console.log(error)
+        }
 
         console.log("Data inserted in MongoDB in:", requestBody);
 
