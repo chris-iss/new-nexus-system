@@ -1,3 +1,6 @@
+const fetch = require("node-fetch");
+require("dotenv").config();
+
 exports.handler = async (event) => {
     let isExecuting = false;
 
