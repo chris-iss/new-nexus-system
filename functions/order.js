@@ -20,6 +20,8 @@ exports.handler = async (event) => {
         const getNetlifyKey = event.queryStringParameters?.API_KEY;
         const getValidationKey = process.env.Netlify_API_KEY;
 
+        console.log(`${getNetlifyKey} - ${getValidationKey}`)
+
         if (getNetlifyKey !== getValidationKey) {
             console.error("Unauthorized Access: Invalid API Key");
             isExecuting = false;
