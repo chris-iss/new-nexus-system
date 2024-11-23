@@ -30,6 +30,8 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
+        console.log("REQUESST BODY:", requestBody)
+
         // Extract data from request
         const fName = requestBody.billing.first_name;
         const lastName = requestBody.billing.last_name;
