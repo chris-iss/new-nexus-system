@@ -1,7 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
-}
+
 
 
 const supabase_url = process.env.SUPABASE_URL;
