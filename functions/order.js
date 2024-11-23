@@ -15,7 +15,7 @@ exports.handler = async (event) => {
     isExecuting = true;
 
     try {
-        // Validate request bodys
+        // Validate request body
         if (!event.body) {
             console.error("Empty body received");
             isExecuting = false;
