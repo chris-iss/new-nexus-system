@@ -62,7 +62,7 @@ exports.handler = async (event) => {
             console.log(error)
         }
 
-        console.log("Data inserted in MongoDB in:", requestBody);
+        console.log("Data Fetched Woo-Commeerce:", requestBody);
 
         // Return success response
         isExecuting = false;
