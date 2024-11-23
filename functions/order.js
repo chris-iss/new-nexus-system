@@ -53,17 +53,17 @@ export const handler = async (event) => {
         //     date: date,
         // };
 
-        const proccessOrder = requestBody.line_items.map((item) => {
-            firstname = requestBody.billing.first_name;
-            lastname = requestBody.billing.last_name;
-            course = item.name;
-            quantity = item.quantity;
-            amount = item.price * item.quantity;
-            status = requestBody.status;
-            currencySymbol = requestBody.currency_symbol
-            date = new Date();
-
-        })
+        const proccessOrder = requestBody.line_items.map((item) => ({
+            firstname: requestBody.billing.first_name,
+            lastname: requestBody.billing.last_name,
+            course: item.name,
+            quantity: item.quantity,
+            amount: item.price * item.quantity,
+            status: requestBody.status,
+            currency: requestBody.currency_symbol,
+            date: new Date(),
+        }));
+        
         // Save data to Supabase
         const { data, error } = await supabase.from("orders").insert([proccessOrder ]);
 
