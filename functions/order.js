@@ -1,12 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
-// const fetch = require('node-fetch');
+// remove `dotenv` for production on Netlify
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_key = process.env.SUPABASE_KEY;
 
 export const supabase = createClient(supabase_url, supabase_key);
-
-require("dotenv").config();
 
 export const handler = async (event) => {
     let isExecuting = false;
@@ -21,7 +19,7 @@ export const handler = async (event) => {
     isExecuting = true;
 
     try {
-        // Validate request bodys
+        // Validate request body
         if (!event.body) {
             console.error("Empty body received");
             isExecuting = false;
@@ -64,7 +62,7 @@ export const handler = async (event) => {
                 body: JSON.stringify(data),
             };
         } catch (error) {
-            console.log(error);
+            console.error("Error inserting into Supabase:", error);
         }
 
         console.log("Data Fetched WooCommerce:", requestBody);
