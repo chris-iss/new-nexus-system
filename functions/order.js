@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabase_url = process.env.SUPABASE_URL;
-const supabase_key = process.env.SUPABASE_KEY;
+const supabase_service_key = process.env.SERVICE_KEY;
 
-export const supabase = createClient(supabase_url, supabase_key);
+export const supabase = createClient(supabase_url, supabase_service_key );
 
 export const handler = async (event) => {
     let isExecuting = false;
