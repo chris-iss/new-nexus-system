@@ -1,7 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 
-
-
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_key = process.env.SUPABASE_KEY;
 
@@ -52,27 +50,23 @@ export const handler = async (event) => {
         };
 
         // Save data to Supabase
-        try {
-            const { data, error } = await supabase.from("orders")
-                .insert([{ order: insertOrder }]);
+        const { data, error } = await supabase.from("orders").insert([{ order: insertOrder }]);
 
-            console.log("INSERTED SUCCESSFULLY:", data);
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify(data),
-            };
-        } catch (error) {
+        if (error) {
             console.error("Error inserting into Supabase:", error);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+            };
         }
 
-        console.log("Data Fetched WooCommerce:", requestBody);
+        console.log("INSERTED SUCCESSFULLY:", data);
 
         // Return success response
         isExecuting = false;
         return {
             statusCode: 200,
-            body: JSON.stringify({ message: "Success" }),
+            body: JSON.stringify(data),
         };
     } catch (error) {
         console.error("Error processing data:", error.message);
