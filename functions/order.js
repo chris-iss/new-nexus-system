@@ -21,7 +21,7 @@ export const handler = async (event) => {
     isExecuting = true;
 
     try {
-        // Validate request body
+        // Validate request bodys
         if (!event.body) {
             console.error("Empty body received");
             isExecuting = false;
