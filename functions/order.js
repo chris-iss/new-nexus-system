@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import fetch from 'node-fetch';  // Use dynamic import for node-fetch
+const axios = require('axios');
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_key = process.env.SUPABASE_KEY;
