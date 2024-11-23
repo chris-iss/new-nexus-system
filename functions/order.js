@@ -50,7 +50,7 @@ export const handler = async (event) => {
         };
 
         // Save data to Supabase
-        const { data, error } = await supabase.from("orders").insert([{ order: insertOrder }]);
+        const { data, error } = await supabase.from("orders").insert([insertOrder]);
 
         if (error) {
             console.error("Error inserting into Supabase:", error);
