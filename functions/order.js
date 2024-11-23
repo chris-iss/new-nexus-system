@@ -1,8 +1,14 @@
-const fetch = require("node-fetch");
-const { supabase } = require("../utils/database");
+import { createClient } from '@supabase/supabase-js';
+import fetch from 'node-fetch';  // Use dynamic import for node-fetch
+
+const supabase_url = process.env.SUPABASE_URL;
+const supabase_key = process.env.SUPABASE_KEY;
+
+export const supabase = createClient(supabase_url, supabase_key);
+
 require("dotenv").config();
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
     let isExecuting = false;
 
     if (isExecuting) {
@@ -36,7 +42,6 @@ exports.handler = async (event) => {
         const status = requestBody.status;
         const date = new Date();
 
-     
         const insertOrder = {
             firstname: fName,
             lastname: lastName,
@@ -45,24 +50,24 @@ exports.handler = async (event) => {
             amount: amount,
             status: status,
             date: date,
-        }
+        };
 
-        // Save data to Superbase
+        // Save data to Supabase
         try {
             const { data, error } = await supabase.from("orders")
-            .insert([{order: insertOrder}])
+                .insert([{ order: insertOrder }]);
 
-            console.log("INSERTED SSUCCESSFULLY:", data);
+            console.log("INSERTED SUCCESSFULLY:", data);
 
             return {
                 statusCode: 200,
-                body: JSON.stringify(data)
-            }
-        }catch(error) {
-            console.log(error)
+                body: JSON.stringify(data),
+            };
+        } catch (error) {
+            console.log(error);
         }
 
-        console.log("Data Fetched Woo-Commeerce:", requestBody);
+        console.log("Data Fetched WooCommerce:", requestBody);
 
         // Return success response
         isExecuting = false;
