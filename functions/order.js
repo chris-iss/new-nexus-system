@@ -14,23 +14,6 @@ exports.handler = async (event) => {
     isExecuting = true;
 
     try {
-        const startTime = Date.now();
-
-        // Validate API key
-        const getNetlifyKey = event.queryStringParameters?.API_KEY;
-        const getValidationKey = process.env.Netlify_API_KEY;
-
-        console.log(`${getNetlifyKey} - ${getValidationKey}`)
-
-        if (getNetlifyKey !== getValidationKey) {
-            console.error("Unauthorized Access: Invalid API Key");
-            isExecuting = false;
-            return {
-                statusCode: 401,
-                body: JSON.stringify({ message: "Unauthorized Access" }),
-            };
-        }
-
         // Validate request body
         if (!event.body) {
             console.error("Empty body received");
