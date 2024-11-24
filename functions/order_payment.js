@@ -1,4 +1,5 @@
 const { createClient } = require("@supabase/supabase-js");
+import { supabase } from './order';
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
@@ -30,6 +31,27 @@ exports.handler = async (event) => {
         const requestBody = JSON.parse(event.body);
 
         console.log("REQUEST BODY:", requestBody);
+
+        const payment_payload = {
+            name: requestBody.name,
+            amount: requestBody.amount,
+            description: requestBody.description,
+            email: requestBody.eamil,
+            date: requestBody.date
+        }
+
+        const { data, error } = await supabase.from("online_payments").insert(payment_payload)
+
+        if (error) {
+            console.error("Error inserting into Supabase:", error);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+            };
+        }
+
+        console.log("INSERTED SUCCESSFULLY:", data);
+
 
         // Example success response
         isExecuting = false; // Reset the flag
