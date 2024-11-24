@@ -1,9 +1,9 @@
-// const { createClient } = require("@supabase/supabase-js");
+const { createClient } = require("@supabase/supabase-js");
 
-// const supabase_url = process.env.SUPABASE_URL;
-// const supabase_service_key = process.env.SERVICE_KEY;
+const supabase_url = process.env.SUPABASE_URL;
+const supabase_service_key = process.env.SERVICE_KEY;
 
-// export const supabase = createClient(supabase_url, supabase_service_key);
+const supabase = createClient(supabase_url, supabase_service_key);
 
 exports.handler = async (event) => {
     let isExecuting = false;
@@ -31,7 +31,7 @@ exports.handler = async (event) => {
 
         console.log("REQUEST BODY:", requestBody);
 
-    } catch(error) {
-        console.log("ERROR", error.message)
+    } catch (error) {
+        console.error("ERROR:", error.message);
     }
-}
+};
