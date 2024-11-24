@@ -35,7 +35,7 @@ exports.handler = async (event) => {
             name: requestBody.name,
             amount: requestBody.amount,
             description: requestBody.description,
-            email: requestBody.eamil,
+            email: requestBody.email,
             date: requestBody.date
         }
 
