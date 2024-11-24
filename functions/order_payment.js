@@ -20,7 +20,7 @@ exports.handler = async (event) => {
     try {
         if (!event.body) {
             console.error("Empty body received");
-            isExecuting = false;
+            isExecuting = false; // Reset the flag
             return {
                 statusCode: 400,
                 body: JSON.stringify({ message: "Request body is empty or missing" }),
@@ -31,7 +31,22 @@ exports.handler = async (event) => {
 
         console.log("REQUEST BODY:", requestBody);
 
+        // Example success response
+        isExecuting = false; // Reset the flag
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: "Request processed successfully", requestBody }),
+        };
     } catch (error) {
         console.error("ERROR:", error.message);
+
+        // Reset the flag in case of an error
+        isExecuting = false;
+
+        // Return an error response
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: "Internal Server Error", error: error.message }),
+        };
     }
 };
