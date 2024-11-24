@@ -39,7 +39,7 @@ exports.handler = async (event) => {
             date: requestBody.date
         }
 
-        const { data, error } = await supabase.from("online_payments").insert(payment_payload)
+        const { data, error } = await supabase.from("payments").insert(payment_payload)
 
         if (error) {
             console.error("Error inserting into Supabase:", error);
