@@ -29,11 +29,19 @@ exports.handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        console.log("REQUEST BODY:", requestBody);
+        let currency = "";
+
+        if (requestBody.currency === "gbp") {
+            currency = "£"
+        } else if(requestBody.currency === "usd") {
+            currency = "$"
+        } else {
+            currency = "€"
+        }
 
         const payment_payload = {
             name: requestBody.name,
-            amount: requestBody.amount,
+            amount: `${currency}${requestBody.amount}`,
             description: requestBody.description,
             email: requestBody.email,
             date: requestBody.date
