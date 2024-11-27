@@ -38,7 +38,7 @@ export const handler = async (event) => {
         const proccessOrder = requestBody.line_items.map((item) => ({
             firstname: requestBody.billing.first_name,
             lastname: requestBody.billing.last_name,
-            email: requestBody.email,
+            email: requestBody.billing.email,
             course: item.name,
             quantity: item.quantity,
             amount: item.price * item.quantity,
