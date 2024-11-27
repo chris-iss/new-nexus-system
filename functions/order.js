@@ -30,6 +30,8 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
+        let status = "Completed"
+
         console.log("REQUEST BODY:", requestBody);
 
         // Process each order item
@@ -42,6 +44,7 @@ export const handler = async (event) => {
             status: requestBody.status,
             currency: requestBody.currency_symbol,
             date: new Date(),
+            status_change: status
         }));
 
         // Save data to Supabase
