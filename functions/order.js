@@ -34,7 +34,7 @@ export const handler = async (event) => {
 
         console.log("REQUEST BODY:", requestBody);
 
-        // Process each order item
+        // Process each order items
         const proccessOrder = requestBody.line_items.map((item) => ({
             firstname: requestBody.billing.first_name,
             lastname: requestBody.billing.last_name,
