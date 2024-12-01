@@ -30,7 +30,7 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        console.log("BROCHURE DOWNLOAD:", requestBody)
+        console.log("BROCHURE DOWNLOADs:", requestBody)
 
         // Process each order items
         // const proccessSalesInvoices = {
