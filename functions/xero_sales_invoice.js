@@ -31,7 +31,7 @@ export const handler = async (event) => {
         const requestBody = JSON.parse(event.body);
 
         // Process each order items
-        const proccessSalesInvoices = requestBody.line_items.map((item) => ({
+        const proccessSalesInvoices = requestBody.map((item) => ({
             email: item.email,
             invoice_number: item.invoice_number,
             reference: item.reference,
