@@ -30,36 +30,29 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        let status = "Completed"
-
-        console.log("REQUEST BODY:", requestBody);
-
         // Process each order items
-        // const proccessOrder = requestBody.line_items.map((item) => ({
-        //     firstname: requestBody.billing.first_name,
-        //     lastname: requestBody.billing.last_name,
-        //     email: requestBody.billing.email,
-        //     course: item.name,
-        //     quantity: item.quantity,
-        //     amount: item.price * item.quantity,
-        //     status: requestBody.status,
-        //     currency: requestBody.currency_symbol,
-        //     date: new Date(),
-        //     status_change: status
-        // }));
+        const proccessSalesInvoices = requestBody.line_items.map((item) => ({
+            email: item.email,
+            invoice_number: item.invoice_number,
+            reference: item.reference,
+            to: item.name,
+            date: item.issue_date,
+            due: item.total,
+            status: item.status
+        }));
 
         // Save data to Supabase
-        // const { data, error } = await supabase.from("orders").insert(proccessOrder);
+        const { data, error } = await supabase.from("invoices").insert(proccessSalesInvoices);
 
-        // if (error) {
-        //     console.error("Error inserting into Supabase:", error);
-        //     return {
-        //         statusCode: 500,
-        //         body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
-        //     };
-        // }
+        if (error) {
+            console.error("Error inserting into Supabase:", error);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+            };
+        }
 
-        // console.log("INSERTED SUCCESSFULLY:", data);
+        console.log("INSERTED SUCCESSFULLY:", data);
 
         // Return success response
         isExecuting = false;
