@@ -31,15 +31,15 @@ export const handler = async (event) => {
         const requestBody = JSON.parse(event.body);
 
         // Process each order items
-        const proccessSalesInvoices = requestBody.map((item) => ({
-            email: item.email,
-            invoice_number: item.invoice_number,
-            reference: item.reference,
-            to: item.name,
-            date: item.issue_date,
-            due: item.total,
-            status: item.status
-        }));
+        const proccessSalesInvoices = {
+            email: requestBody.email,
+            invoice_number: requestBody.invoice_number,
+            reference: requestBody.reference,
+            to: requestBody.name,
+            date: requestBody.issue_date,
+            due: requestBody.total,
+            status: requestBody.status
+        }
 
         // Save data to Supabase
         const { data, error } = await supabase.from("invoices").insert(proccessSalesInvoices);
