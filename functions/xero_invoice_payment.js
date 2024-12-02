@@ -33,28 +33,37 @@ export const handler = async (event) => {
         console.log("INVOICE PAYMENT:", requestBody)
 
         // Process each order items
-        // const proccessSalesInvoices = {
-        //     email: requestBody.email,
-        //     invoice_number: requestBody.invoice_number,
-        //     reference: requestBody.reference,
-        //     to: requestBody.name,
-        //     date: requestBody.issue_date,
-        //     due: requestBody.total,
-        //     status: requestBody.status
-        // }
+        const proccessPaymentInvoices = {
+            item_code: requestBody.Item_code,
+            currency: requestBody.currency,
+            due_date: requestBody.due_date,
+            email: requestBody.email,
+            invoice_number: requestBody.invoice_number,
+            issue_date: requestBody.issue_date,
+            item_name: requestBody.item,
+            line_item: requestBody.line_item,
+            fullname: requestBody.name,
+            reference: requestBody.reference,
+            sales_person: requestBody.sales_person,
+            permission: requestBody.status,
+            status: requestBody.status_paid,
+            tax_rate: requestBody.tax_rate,
+            total: requestBody.total,
+            type: requestBody.type
+          }
 
         // // Save data to Supabase
-        // const { data, error } = await supabase.from("invoices").insert(proccessSalesInvoices);
+        const { data, error } = await supabase.from("invoice_payments").insert(proccessPaymentInvoices);
 
-        // if (error) {
-        //     console.error("Error inserting into Supabase:", error);
-        //     return {
-        //         statusCode: 500,
-        //         body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
-        //     };
-        // }
+        if (error) {
+            console.error("Error inserting into Supabase:", error);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+            };
+        }
 
-        // console.log("INSERTED SUCCESSFULLY:", data);
+        console.log("INSERTED SUCCESSFULLY:", data);
 
         // Return success response
         isExecuting = false;
