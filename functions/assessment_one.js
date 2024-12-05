@@ -35,8 +35,8 @@ export const handler = async (event) => {
         // Process each order items
         const assessment_data = {
             assessment_id: requestBody.assessment_id,
-            firstname: requestBody.first_name,
-            lastname: requestBody.last_name,
+            firstname: requestBody.firstname,
+            lastname: requestBody.lastname,
             email: requestBody.email,
             score: requestBody.score,
             attempt: requestBody.attempt,
