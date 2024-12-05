@@ -35,6 +35,9 @@ export const handler = async (event) => {
         // Process each order items
         const proccessPaymentInvoices = {
             item_code: requestBody.Item_code,
+            desscription: requestBody.description,
+            quantity: requestBody.quantity,
+            discount: requestBody.discount,
             currency: requestBody.currency,
             due_date: requestBody.due_date,
             email: requestBody.email,
