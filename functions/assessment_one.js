@@ -30,8 +30,6 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        let status = "Completed"
-
         console.log("REQUEST BODY:", requestBody);
 
         // Process each order items
@@ -48,7 +46,7 @@ export const handler = async (event) => {
         }
 
         // Save data to Supabase
-        const { data, error } = await supabase.from("orders").insert(proccessOrder);
+        const { data, error } = await supabase.from("assessment_one").insert(assessment_data);
 
         if (error) {
             console.error("Error inserting into Supabase:", error);
