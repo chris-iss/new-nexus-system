@@ -59,15 +59,15 @@ export const handler = async (event) => {
 
         if (error) throw error
 
-        // if (error) {
-        //     console.error("Error inserting into Supabase:", error);
-        //     return {
-        //         statusCode: 500,
-        //         body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
-        //     };
-        // }
+        if (error) {
+            console.error("Error inserting into Supabase:", error);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+            };
+        }
 
-        console.log("INSERTED SUCCESSFULLY:", proccessPaymentInvoices);
+        console.log("INSERTED SUCCESSFULLY:", data);
 
         // Return success response
         isExecuting = false;
