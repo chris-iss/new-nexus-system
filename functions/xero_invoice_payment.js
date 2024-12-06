@@ -55,7 +55,9 @@ export const handler = async (event) => {
           }
 
         // // Save data to Supabase
-        // const { data, error } = await supabase.from("invoice_payments").insert(proccessPaymentInvoices);
+        const { data, error } = await supabase.from("invoice_payments").insert(proccessPaymentInvoices);
+
+        if (error) throw error
 
         // if (error) {
         //     console.error("Error inserting into Supabase:", error);
