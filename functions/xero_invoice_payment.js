@@ -55,17 +55,17 @@ export const handler = async (event) => {
           }
 
         // // Save data to Supabase
-        const { data, error } = await supabase.from("invoice_payments").insert(proccessPaymentInvoices);
+        // const { data, error } = await supabase.from("invoice_payments").insert(proccessPaymentInvoices);
 
-        if (error) {
-            console.error("Error inserting into Supabase:", error);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
-            };
-        }
+        // if (error) {
+        //     console.error("Error inserting into Supabase:", error);
+        //     return {
+        //         statusCode: 500,
+        //         body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+        //     };
+        // }
 
-        console.log("INSERTED SUCCESSFULLY:", data);
+        console.log("INSERTED SUCCESSFULLY:", proccessPaymentInvoices);
 
         // Return success response
         isExecuting = false;
