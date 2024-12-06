@@ -47,7 +47,8 @@ export const handler = async (event) => {
             fullname: requestBody.name,
             reference: requestBody.reference,
             sales_person: requestBody.sales_person,
-            status: requestBody.status,
+            permission: requestBody.permission,
+            status: requestBody.status_paid,
             tax_rate: requestBody.tax_rate,
             total: requestBody.total,
             type: requestBody.type
