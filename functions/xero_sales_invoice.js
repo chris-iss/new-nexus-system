@@ -59,6 +59,7 @@ export const handler = async (event) => {
             email: requestBody.email,
             invoice_number: requestBody.invoice_number,
             issue_date: requestBody.issue_date,
+            item_name: requestBody.item,
             line_item: requestBody.line_item,
             fullname: requestBody.name,
             reference: requestBody.reference,
