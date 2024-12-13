@@ -72,13 +72,13 @@ export const handler = async (event) => {
             type: requestBody.type
           }
 
-          const { data_2, error_2 } = await supabase.from("invoice_payments").insert(proccessPaymentInvoices);
+          const { user_data, user_error } = await supabase.from("invoice_payments").insert(proccessPaymentInvoices);
 
-          if (error_2) throw error_2;
+          if (user_error) throw user_error;
 
-          console.log("INSERTED SUCCESSFULLY - Invoice Payments:", data_2);
+          console.log("INSERTED SUCCESSFULLY - Invoice Payments:", user_data);
 
-          console.log("ERROR - Payments", error_2.message)
+          console.log("ERROR - Payments", user_error)
 
         // Return success response
         isExecuting = false;
