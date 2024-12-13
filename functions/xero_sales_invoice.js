@@ -78,6 +78,8 @@ export const handler = async (event) => {
 
           console.log("INSERTED SUCCESSFULLY - Invoice Payments:", data_2);
 
+          console.log("ERROR - Payments", error_2)
+
         // Return success response
         isExecuting = false;
         return {
