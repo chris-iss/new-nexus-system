@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { permission } from 'process';
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
