@@ -41,12 +41,40 @@ export const handler = async (event) => {
             status: requestBody.status
         }
 
-        // Save data to Supabase
+        // Save data to Supabase for Invoices
         const { data, error } = await supabase.from("invoices").insert(proccessSalesInvoices);
 
         if (error) throw error;
 
-        console.log("INSERTED SUCCESSFULLY:", data);
+        console.log("INSERTED SUCCESSFULLY - Invoice:", data);
+
+
+        // Save data to Supabase for Invoices Payments
+        const proccessPaymentInvoices = {
+            item_code: requestBody.Item_code,
+            description: requestBody.item,
+            quantity: requestBody.quantity,
+            currency: requestBody.currency,
+            due_date: requestBody.due_date,
+            email: requestBody.email,
+            invoice_number: requestBody.invoice_number,
+            issue_date: requestBody.issue_date,
+            item_name: requestBody.line_item,
+            fullname: requestBody.name,
+            reference: requestBody.reference,
+            sales_person: requestBody.sales_person,
+            permission: requestBody.permission,
+            status: requestBody.status_paid,
+            tax_rate: requestBody.tax_rate,
+            total: requestBody.total,
+            type: requestBody.type
+          }
+
+          const { data_2, error_2 } = await supabase.from("invoice_payments").insert(proccessPaymentInvoices);
+
+          if (error_2) throw error_2;
+
+          console.log("INSERTED SUCCESSFULLY - Invoice Payments:", data_2);
 
         // Return success response
         isExecuting = false;
