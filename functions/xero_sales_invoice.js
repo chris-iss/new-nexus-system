@@ -1,10 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabase_url = process.env.SUPABASE_URL;
-const supabase_service_key = process.env.SERVICE_KEY;
-
-export const supabase = createClient(supabase_url, supabase_service_key);
-
 export const handler = async (event) => {
     let isExecuting = false;
 
@@ -18,7 +11,6 @@ export const handler = async (event) => {
     isExecuting = true;
 
     try {
-        // Validate request body
         if (!event.body) {
             console.error("Empty body received");
             isExecuting = false;
@@ -30,7 +22,7 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        // Process each order items
+        // First Insert: Sales Invoices
         const proccessSalesInvoices = {
             email: requestBody.email,
             invoice_number: requestBody.invoice_number,
@@ -38,22 +30,21 @@ export const handler = async (event) => {
             to: requestBody.name,
             date: requestBody.issue_date,
             due: requestBody.total,
-            status: requestBody.status
+            status: requestBody.status,
+        };
+
+        const { data: salesData, error: salesError } = await supabase.from("invoices").insert(proccessSalesInvoices);
+
+        if (salesError) {
+            console.error("Error inserting sales invoice:", salesError);
+            throw salesError;
         }
 
-        // Save data to Supabase for Invoices
-        const { data, error } = await supabase.from("invoices").insert(proccessSalesInvoices);
+        console.log("Inserted successfully into invoices:", salesData);
 
-        if (error) throw error;
-
-        console.log("INSERTED SUCCESSFULLY - Invoice:", data);
-
-        console.log("DATA", requestBody)
-
-
-        // Save data to Supabase for Invoices Payments
+        // Second Insert: Invoice Payments
         const proccessPaymentInvoices = {
-            item_code: requestBody.Item_code,
+            item_code: requestBody.item_code,
             description: requestBody.item,
             quantity: requestBody.quantity,
             currency: requestBody.currency,
@@ -69,30 +60,34 @@ export const handler = async (event) => {
             status: requestBody.status_paid,
             tax_rate: requestBody.tax_rate,
             total: requestBody.total,
-            type: requestBody.type
-          }
+            type: requestBody.type,
+        };
 
-          const { user_data, user_error } = await supabase.from("invoice_payments").insert(proccessPaymentInvoices);
+        const { data: paymentsData, error: paymentsError } = await supabase
+            .from("invoice_payments")
+            .insert(proccessPaymentInvoices);
 
-          if (user_error) throw user_error;
+        if (paymentsError) {
+            console.error("Error inserting invoice payments:", paymentsError);
+            throw paymentsError;
+        }
 
-          console.log("INSERTED SUCCESSFULLY - Invoice Payments:", user_data);
+        console.log("Inserted successfully into invoice_payments:", paymentsData);
 
-          console.log("ERROR - Payments", user_error)
-
-        // Return success response
         isExecuting = false;
         return {
             statusCode: 200,
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify({
+                message: "Data inserted successfully",
+                invoices: salesData,
+                invoice_payments: paymentsData,
+            }),
         };
     } catch (error) {
         console.error("Error processing data:", error.message);
 
-        // Reset execution flag
         isExecuting = false;
 
-        // Return error response
         return {
             statusCode: 500,
             body: JSON.stringify({ message: "Internal Server Error", error: error.message }),
