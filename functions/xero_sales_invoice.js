@@ -48,6 +48,8 @@ export const handler = async (event) => {
 
         console.log("INSERTED SUCCESSFULLY - Invoice:", data);
 
+        console.log("DATA", requestBody)
+
 
         // Save data to Supabase for Invoices Payments
         const proccessPaymentInvoices = {
