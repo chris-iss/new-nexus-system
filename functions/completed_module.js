@@ -63,7 +63,7 @@ export const handler = async (event) => {
             body: JSON.stringify(data),
         };
     } catch (error) {
-        console.error("Error processing data:", error.message);
+        console.error("Error processing data:", error);
 
         // Reset execution flag
         isExecuting = false;
