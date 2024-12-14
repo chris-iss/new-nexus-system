@@ -60,7 +60,7 @@ export const handler = async (event) => {
         isExecuting = false;
         return {
             statusCode: 200,
-            body: JSON.stringify(data),
+            body: JSON.stringify(requestBody),
         };
     } catch (error) {
         console.error("Error processing data:", error);
