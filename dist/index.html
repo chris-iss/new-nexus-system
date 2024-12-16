@@ -204,48 +204,7 @@
         // Debugging: Log form data
         console.log("Form Data:", data);
 
-        // try {
-        //   // Send form data to Netlify Function endpoint
-        //   const response = await fetch(
-        //     "/.netlify/functions/invoice_enrolment",
-        //     {
-        //       method: "POST",
-        //       headers: {
-        //         "Content-Type": "application/json",
-        //       },
-        //       body: JSON.stringify(data),
-        //     }
-        //   );
-
-        //   if (response.ok) {
-        //     const result = await response.text(); // Try to read as plain text
-        //     try {
-        //       const jsonResult = JSON.parse(result); // Attempt to parse it as JSON
-        //       alert("Form submitted successfully!");
-        //       console.log(jsonResult);
-        //     } catch (e) {
-        //       alert("Unexpected response format");
-        //       console.error("Non-JSON response:", result);
-        //     }
-        //   } else {
-        //     const errorResult = await response.text();
-        //     alert("Error submitting form");
-        //     console.error(errorResult);
-        //   }
-
-        //   const result = await response.json();
-
-        //   if (response.ok) {
-        //     alert("Form submitted successfully!");
-        //     console.log(result);
-        //   } else {
-        //     alert("Error submitting form");
-        //     console.error(result);
-        //   }
-        // } catch (error) {
-        //   console.error("Error:", error);
-        //   alert("Something went wrong. Please try again.");
-        // }
+       
       });
     </script>
   </body>
