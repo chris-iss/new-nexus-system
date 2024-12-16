@@ -135,6 +135,7 @@
           data[key] = value;
         });
 
+        console.log(formData)
         try {
           // Send form data to Netlify Function endpoint
           const response = await fetch('/.netlify/functions/invoice_enrolment', {

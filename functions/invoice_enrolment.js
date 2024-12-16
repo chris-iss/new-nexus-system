@@ -56,7 +56,7 @@ export const handler = async (event) => {
         //     };
         // }
 
-        console.log("INSERTED SUCCESSFULLY:", data);
+        console.log("INSERTED SUCCESSFULLY:", requestBody);
 
         // Return success response
         isExecuting = false;
