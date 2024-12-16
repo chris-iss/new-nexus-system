@@ -186,26 +186,49 @@
     </div>
 
     <script>
-      // Form submission logic
-      const form = document.getElementById("enrollmentForm");
-
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault(); // Prevent default form submission
-
-        // Collect form data
-        const formData = new FormData(form);
-        const data = {};
-
-        // Convert FormData to a regular object
-        formData.forEach((value, key) => {
-          data[key] = value;
+        // Form submission logic
+        const form = document.getElementById("enrollmentForm");
+      
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault(); // Prevent default form submission
+      
+          // Collect form data
+          const formData = new FormData(form);
+          const data = {};
+      
+          // Convert FormData to a regular object
+          formData.forEach((value, key) => {
+            data[key] = value;
+          });
+      
+          // Debugging: Log form data
+          console.log("Form Data:", data);
+      
+          try {
+            // Send form data to the Netlify function endpoint
+            const response = await fetch("/.netlify/functions/invoice_enrolment", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),  // Convert the data object to a JSON string
+            });
+      
+            if (response.ok) {
+              const result = await response.json();
+              alert("Form submitted successfully!");
+              console.log(result);
+            } else {
+              const errorResult = await response.json();
+              alert("Error submitting form");
+              console.error(errorResult);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Something went wrong. Please try again.");
+          }
         });
-
-        // Debugging: Log form data
-        console.log("Form Data:", data);
-
-       
-      });
-    </script>
+      </script>
+      
   </body>
 </html>
