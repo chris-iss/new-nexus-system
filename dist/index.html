@@ -140,7 +140,7 @@
 
         try {
           // Send form data to Netlify Function endpoint
-          const response = await fetch('https://nexus-sys.netlify.app/.netlify/functions/invoice_enrolment', {
+          const response = await fetch('/.netlify/functions/invoice_enrolment', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
