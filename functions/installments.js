@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
@@ -20,7 +20,6 @@ export const handler = async (event) => {
     try {
         if (!event.body) {
             console.error("Empty body received");
-            isExecuting = false;
             return {
                 statusCode: 400,
                 body: JSON.stringify({ message: "Request body is empty or missing" }),
@@ -28,10 +27,8 @@ export const handler = async (event) => {
         }
 
         const requestBody = JSON.parse(event.body);
+        console.log("Request Body:", requestBody);
 
-        console.log("REQUES:", requestBody)
-
-        // First Insert: Sales Invoices
         const payments = {
             firstname: requestBody.firstname,
             lastname: requestBody.lastname,
@@ -47,42 +44,45 @@ export const handler = async (event) => {
         };
 
         if (requestBody.subscription === "1") {
-            const { data: salesData, error: salesError } = await supabase.from("installments").insert(payments);
+            const { data, error } = await supabase.from("installments").insert(payments);
 
-            if (salesError) {
-                console.error("Error inserting sales invoice:", salesError);
-                throw salesError;
+            if (error) {
+                console.error("Supabase Insert Error:", error.message);
+                throw error;
             }
 
+            console.log("Inserted successfully into installments:", data);
 
-            console.log("Inserted successfully into invoices:", salesData);
-
-        
-            isExecuting = false;
             return {
                 statusCode: 200,
-                body: JSON.stringify({
-                    message: "Data inserted successfully",
-                    payment: salesData,
-                }),
+                body: JSON.stringify({ message: "Data inserted successfully", payment: data }),
             };
         } else {
             const { data, error } = await supabase
-            .from("installments")
-            .update({ subscription: requestBody.subscription})
-            .eq("email", requestBody.email)
+                .from("installments")
+                .update({ subscription: requestBody.subscription })
+                .eq("email", requestBody.email);
 
-            if (error) throw error
+            if (error) {
+                console.error("Supabase Update Error:", error.message);
+                throw error;
+            }
+
+            console.log("Updated subscription successfully:", data);
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: "Subscription updated successfully", data }),
+            };
         }
-
     } catch (error) {
         console.error("Error processing data:", error.message);
-
-        isExecuting = false;
 
         return {
             statusCode: 500,
             body: JSON.stringify({ message: "Internal Server Error", error: error.message }),
         };
+    } finally {
+        isExecuting = false;
     }
 };
