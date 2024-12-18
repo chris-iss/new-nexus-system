@@ -35,7 +35,7 @@ export const handler = async (event) => {
             lastname: requestBody.lastname,
             email: requestBody.email,
             currency: requestBody.currency,
-            first_payment: requestBody.amount,
+            first_payment: requestBody.first_payment,
             amount_due: requestBody.amount_due,
             subscription: requestBody.subscription,
             max_count: requestBody.max_count,
