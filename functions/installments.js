@@ -46,24 +46,30 @@ export const handler = async (event) => {
             ending_date: requestBody.ending_date,
         };
 
-        const { data: salesData, error: salesError } = await supabase.from("installments").insert(payments);
+        if (requestBody.subscription === "1") {
+            const { data: salesData, error: salesError } = await supabase.from("installments").insert(payments);
 
-        if (salesError) {
-            console.error("Error inserting sales invoice:", salesError);
-            throw salesError;
+            if (salesError) {
+                console.error("Error inserting sales invoice:", salesError);
+                throw salesError;
+            }
+
+
+            console.log("Inserted successfully into invoices:", salesData);
+
+        
+            isExecuting = false;
+            return {
+                statusCode: 200,
+                body: JSON.stringify({
+                    message: "Data inserted successfully",
+                    payment: salesData,
+                }),
+            };
+        } else {
+            console.log("UPDATE FUNCTION GOES HERE!")
         }
 
-        console.log("Inserted successfully into invoices:", salesData);
-
-       
-        isExecuting = false;
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                message: "Data inserted successfully",
-                payment: salesData,
-            }),
-        };
     } catch (error) {
         console.error("Error processing data:", error.message);
 
