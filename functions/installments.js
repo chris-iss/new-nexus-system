@@ -38,7 +38,7 @@ export const handler = async (event) => {
             max_count: requestBody.max_count,
             status: requestBody.status,
             started_date: requestBody.started_date,
-            ending_date: requestBody.last_date_due,
+            ending_date: requestBody.ending_date,
         };
 
         const { data: salesData, error: salesError } = await supabase.from("installments").insert(payments);
