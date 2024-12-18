@@ -29,28 +29,26 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        console.log("DATA:", requestBody)
-
         // First Insert: Sales Invoices
-        // const payments = {
-        //     firstnname: requestBody.firstname,
-        //     lastname: requestBody.lastname,
-        //     email: requestBody.email,
-        //     subscription: requestBody.subscription,
-        //     max_count: requestBody.max_count,
-        //     started_data: requestBody.started_date,
-        //     last_date_due: requestBody.last_date_due,
-        //     status: requestBody.status
-        // };
+        const payments = {
+            firstnname: requestBody.firstname,
+            lastname: requestBody.lastname,
+            email: requestBody.email,
+            subscription: requestBody.subscription,
+            max_count: requestBody.max_count,
+            status: requestBody.status,
+            started_data: requestBody.started_date,
+            last_date_due: requestBody.last_date_due,
+        };
 
-        // const { data: salesData, error: salesError } = await supabase.from("invoices").insert(proccessSalesInvoices);
+        const { data: salesData, error: salesError } = await supabase.from("installments").insert(payments);
 
-        // if (salesError) {
-        //     console.error("Error inserting sales invoice:", salesError);
-        //     throw salesError;
-        // }
+        if (salesError) {
+            console.error("Error inserting sales invoice:", salesError);
+            throw salesError;
+        }
 
-        // console.log("Inserted successfully into invoices:", salesData);
+        console.log("Inserted successfully into invoices:", salesData);
 
        
         isExecuting = false;
@@ -58,7 +56,7 @@ export const handler = async (event) => {
             statusCode: 200,
             body: JSON.stringify({
                 message: "Data inserted successfully",
-                payment: requestBody,
+                payment: salesData,
             }),
         };
     } catch (error) {
