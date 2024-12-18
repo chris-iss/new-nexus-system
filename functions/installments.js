@@ -67,7 +67,12 @@ export const handler = async (event) => {
                 }),
             };
         } else {
-            console.log("UPDATE FUNCTION GOES HERE!")
+            const { data, error } = await supabase
+            .from("installments")
+            .update({ subscription: requestBody.subscription})
+            .eq("email", requestBody.email)
+
+            if (error) throw error
         }
 
     } catch (error) {
