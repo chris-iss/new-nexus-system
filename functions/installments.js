@@ -29,6 +29,8 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
+        console.log("REQUES:", requestBody)
+
         // First Insert: Sales Invoices
         const payments = {
             firstname: requestBody.firstname,
