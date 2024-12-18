@@ -31,7 +31,7 @@ export const handler = async (event) => {
 
         // First Insert: Sales Invoices
         const payments = {
-            firstnname: requestBody.firstname,
+            firstname: requestBody.firstname,
             lastname: requestBody.lastname,
             email: requestBody.email,
             subscription: requestBody.subscription,
