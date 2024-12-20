@@ -53,10 +53,22 @@ export const handler = async (event) => {
 
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
 
-        if (userData) {
-            const getPaymentEmail = userData[0].email
-            console.log("PAYMENT EMAIL:", getPaymentEmail)
+        if (userError) {
+            console.error("Error fetching from payments:", userError);
+            isExecuting = false;
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error fetching from payments", error: userError.message }),
+            };
         }
+
+        if (userData && userData.length > 0) {
+            const getPaymentEmail = userData[0].email;
+            console.log("PAYMENT EMAIL:", getPaymentEmail);
+        } else {
+            console.error("No user data found in payments table");
+        }
+        
 
         if (userError) throw error;
 
