@@ -5,7 +5,6 @@ const supabase_service_key = process.env.SERVICE_KEY;
 
 export const supabase = createClient(supabase_url, supabase_service_key);
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const handler = async (event) => {
     let isExecuting = false;
