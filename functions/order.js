@@ -32,10 +32,10 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        let status = "Completed";
+        const status = "Completed";
 
         // Process each order item
-        const proccessOrder = {
+        const proccessOrders = requestBody.line_items.map((item) => ({
             firstname: requestBody.billing.first_name,
             lastname: requestBody.billing.last_name,
             email: requestBody.billing.email,
@@ -46,10 +46,10 @@ export const handler = async (event) => {
             currency: requestBody.currency_symbol,
             date: new Date(),
             status_change: status,
-        }
+        }));
 
         // Insert orders into Supabase
-        const { data, error } = await supabase.from("orders").insert(proccessOrder);
+        const { data, error } = await supabase.from("orders").insert(proccessOrders);
 
         if (error) {
             console.error("Error inserting into Supabase:", error);
@@ -61,51 +61,52 @@ export const handler = async (event) => {
 
         console.log("INSERTED SUCCESSFULLY:", data);
 
-         
-         // Fetch payments data
-         await delay(60000);
-         const { data: userData, error: userError } = await supabase.from("payments").select("*");
+        // Wait for 1 minute before fetching payment data
+        await delay(60000);
 
-         if (userError) {
-             console.error("Error fetching from payments:", userError);
-             isExecuting = false;
-             return {
-                 statusCode: 500,
-                 body: JSON.stringify({ message: "Error fetching from payments", error: userError.message }),
-             };
-         }
+        // Fetch payments data
+        const { data: userData, error: userError } = await supabase.from("payments").select("*");
+
+        if (userError) {
+            console.error("Error fetching from payments:", userError);
+            isExecuting = false;
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error fetching from payments", error: userError.message }),
+            };
+        }
 
         // Update order IDs
         const updateOrderId = async () => {
             if (userData && userData.length > 0) {
                 for (const item of userData) {
-                    if (item.email === proccessOrder[0].email) {
-        
-                        const { data: updateData, error: updateError } = await supabase
-                            .from("orders")
-                            .update({ order_id: item.description })
-                            .eq("email", item.email);
+                    proccessOrders.forEach(async (order) => {
+                        if (item.email === order.email) {
+                            const { data: updateData, error: updateError } = await supabase
+                                .from("orders")
+                                .update({ order_id: item.description })
+                                .eq("email", item.email);
 
-                        if (updateError) {
-                            console.error("Error updating order_id:", updateError);
-                        } else {
-                            console.log("Order ID updated successfully:", updateData);
+                            if (updateError) {
+                                console.error("Error updating order_id:", updateError);
+                            } else {
+                                console.log("Order ID updated successfully:", updateData);
+                            }
                         }
-                    }
+                    });
                 }
             } else {
                 console.error("No user data found in payments table");
             }
         };
 
-        await updateOrderId(); 
-
+        await updateOrderId();
 
         // Return success response
         isExecuting = false;
         return {
             statusCode: 200,
-            body: JSON.stringify(data),
+            body: JSON.stringify({ message: "Order processing completed", data }),
         };
     } catch (error) {
         console.error("Error processing data:", error.message);
