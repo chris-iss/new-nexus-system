@@ -46,7 +46,6 @@ export const handler = async (event) => {
             currency: requestBody.currency_symbol,
             date: new Date(),
             status_change: status,
-            order_id: "searching"
         }));
 
         // Save data to Supabase
