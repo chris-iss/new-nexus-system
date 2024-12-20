@@ -35,7 +35,7 @@ export const handler = async (event) => {
         let status = "Completed";
 
         // Process each order item
-        const proccessOrder = requestBody.line_items.map((item) => ({
+        const proccessOrder = {
             firstname: requestBody.billing.first_name,
             lastname: requestBody.billing.last_name,
             email: requestBody.billing.email,
@@ -46,7 +46,7 @@ export const handler = async (event) => {
             currency: requestBody.currency_symbol,
             date: new Date(),
             status_change: status,
-        }));
+        }
 
         // Fetch payments data
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
