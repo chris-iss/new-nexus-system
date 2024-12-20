@@ -32,36 +32,74 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        console.log("DATA:", requestBody)
+        let status = "Completed";
 
-        // let status = "Completed";
+        // Process each order item
+        const proccessOrder = {
+            firstname: requestBody.billing.first_name,
+            lastname: requestBody.billing.last_name,
+            email: requestBody.billing.email,
+            course: item.name,
+            quantity: item.quantity,
+            amount: item.price * item.quantity,
+            status: requestBody.status,
+            currency: requestBody.currency_symbol,
+            date: new Date(),
+            status_change: status,
+        }
 
-        // // Process each order item
-        // const proccessOrder = {
-        //     firstname: requestBody.billing.first_name,
-        //     lastname: requestBody.billing.last_name,
-        //     email: requestBody.billing.email,
-        //     course: item.name,
-        //     quantity: item.quantity,
-        //     amount: item.price * item.quantity,
-        //     status: requestBody.status,
-        //     currency: requestBody.currency_symbol,
-        //     date: new Date(),
-        //     status_change: status,
-        // }
+        // Insert orders into Supabase
+        const { data, error } = await supabase.from("orders").insert(proccessOrder);
 
-        // // Insert orders into Supabase
-        // const { data, error } = await supabase.from("orders").insert(proccessOrder);
+        if (error) {
+            console.error("Error inserting into Supabase:", error);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+            };
+        }
 
-        // if (error) {
-        //     console.error("Error inserting into Supabase:", error);
-        //     return {
-        //         statusCode: 500,
-        //         body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
-        //     };
-        // }
+        console.log("INSERTED SUCCESSFULLY:", data);
 
-        // console.log("INSERTED SUCCESSFULLY:", data);
+         
+         // Fetch payments data
+         await delay(60000);
+         const { data: userData, error: userError } = await supabase.from("payments").select("*");
+
+         if (userError) {
+             console.error("Error fetching from payments:", userError);
+             isExecuting = false;
+             return {
+                 statusCode: 500,
+                 body: JSON.stringify({ message: "Error fetching from payments", error: userError.message }),
+             };
+         }
+
+        // Update order IDs
+        const updateOrderId = async () => {
+            if (userData && userData.length > 0) {
+                for (const item of userData) {
+                    if (item.email === proccessOrder[0].email) {
+        
+                        const { data: updateData, error: updateError } = await supabase
+                            .from("orders")
+                            .update({ order_id: item.description })
+                            .eq("email", item.email);
+
+                        if (updateError) {
+                            console.error("Error updating order_id:", updateError);
+                        } else {
+                            console.log("Order ID updated successfully:", updateData);
+                        }
+                    }
+                }
+            } else {
+                console.error("No user data found in payments table");
+            }
+        };
+
+        await updateOrderId(); 
+
 
         // Return success response
         isExecuting = false;
