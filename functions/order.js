@@ -32,6 +32,8 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
+        let storeEmails = []
+
         let status = "Completed"
 
         // Process each order items
@@ -48,6 +50,10 @@ export const handler = async (event) => {
             status_change: status,
         }));
 
+        requestBody.line_items.map((item) => {
+            return storeEmails.push(item)
+        })
+
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
 
         if (userError) {
@@ -62,15 +68,22 @@ export const handler = async (event) => {
         if (userData && userData.length > 0) {
             const fetchPaymentEmail = userData[0].email;
 
-            if (fetchPaymentEmail === proccessOrder[0].email) {
-                console.log(`PAYMENT EMAIL: ${userData} ORDER EMAIL: ${proccessOrder[0].email}`);
-            }
+            console.log("EMAILS:", storeEmails)
+
+            
         } else {
             console.error("No user data found in payments table");
         }
         
 
         if (userError) throw error;
+
+
+
+
+
+
+
 
         // Save data to Supabase
         const { data, error } = await supabase.from("orders").insert(proccessOrder);
