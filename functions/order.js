@@ -32,8 +32,6 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        let storeEmails = []
-
         let status = "Completed"
 
         // Process each order items
@@ -50,10 +48,6 @@ export const handler = async (event) => {
             status_change: status,
         }));
 
-        requestBody.line_items.map((item) => {
-            storeEmails.push(item.email)
-        })
-
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
 
         if (userError) {
@@ -68,7 +62,7 @@ export const handler = async (event) => {
         if (userData && userData.length > 0) {
             const fetchPaymentEmail = userData[0].email;
 
-            console.log("EMAILS:", storeEmails)
+            console.log("EMAILS:", fetchPaymentEmail)
 
             
         } else {
