@@ -61,6 +61,7 @@ export const handler = async (event) => {
 
         if (userData && userData.length > 0) {
             userData.forEach((item) => {
+                console.log("PAYMENT-item:", item)
                 if (item.email === proccessOrder[0].email) {
                     console.log("PAYMENT DETAILS:", item)
                 }
