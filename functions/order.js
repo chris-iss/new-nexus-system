@@ -28,9 +28,6 @@ export const handler = async (event) => {
             };
         }
 
-        const requestBodys = JSON.parse(event.body.meta_data);
-        console.log("REQUEST BODY:", requestBodys);
-
         const requestBody = JSON.parse(event.body);
 
         let status = "Completed"
