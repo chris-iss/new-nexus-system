@@ -60,8 +60,7 @@ export const handler = async (event) => {
         }
 
         if (userData && userData.length > 0) {
-            const getPaymentEmail = userData;
-            console.log("PAYMENT EMAIL:", getPaymentEmail);
+            console.log("PAYMENT EMAIL:", userData);
         } else {
             console.error("No user data found in payments table");
         }
