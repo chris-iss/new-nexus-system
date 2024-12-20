@@ -62,7 +62,7 @@ export const handler = async (event) => {
         console.log("INSERTED SUCCESSFULLY:", requestBody);
 
 
-        // Return success response
+        // Return success responses
         isExecuting = false;
         return {
             statusCode: 200,
