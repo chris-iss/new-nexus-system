@@ -46,6 +46,7 @@ export const handler = async (event) => {
             currency: requestBody.currency_symbol,
             date: new Date(),
             status_change: status,
+            order_id: item.number
         }));
 
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
@@ -71,7 +72,9 @@ export const handler = async (event) => {
             };
         }
 
-        console.log("INSERTED SUCCESSFULLY:", data);        
+        console.log("INSERTED SUCCESSFULLY:", data);  
+        
+        console.log("REQUES BODY:", requestBody)
 
         // Return success response
         isExecuting = false;
