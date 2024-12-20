@@ -51,7 +51,7 @@ export const handler = async (event) => {
         }));
 
         requestBody.line_items.map((item) => {
-            return storeEmails.push(item)
+            storeEmails.push(item.email)
         })
 
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
