@@ -59,48 +59,8 @@ export const handler = async (event) => {
             };
         }
 
-        console.log("INSERTED SUCCESSFULLY:", data);
+        console.log("INSERTED SUCCESSFULLY:", requestBody);
 
-        // Wait for 1 minute before fetching payment data
-        await delay(24000);
-
-        // Fetch payments data
-        const { data: userData, error: userError } = await supabase.from("payments").select("*");
-
-        if (userError) {
-            console.error("Error fetching from payments:", userError);
-            isExecuting = false;
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ message: "Error fetching from payments", error: userError.message }),
-            };
-        }
-
-        // Update order IDs
-        const updateOrderId = async () => {
-            if (userData && userData.length > 0) {
-                for (const item of userData) {
-                    proccessOrders.forEach(async (order) => {
-                        if (item.email === order.email) {
-                            const { data: updateData, error: updateError } = await supabase
-                                .from("orders")
-                                .update({ order_id: item.description })
-                                .eq("email", item.email);
-
-                            if (updateError) {
-                                console.error("Error updating order_id:", updateError);
-                            } else {
-                                console.log("Order ID updated successfully:", updateData);
-                            }
-                        }
-                    });
-                }
-            } else {
-                console.error("No user data found in payments table");
-            }
-        };
-
-        await updateOrderId();
 
         // Return success response
         isExecuting = false;
