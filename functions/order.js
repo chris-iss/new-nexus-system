@@ -5,6 +5,7 @@ const supabase_service_key = process.env.SERVICE_KEY;
 
 export const supabase = createClient(supabase_url, supabase_service_key);
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const handler = async (event) => {
     let isExecuting = false;
@@ -31,10 +32,10 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        const status = "Completed";
+        let status = "Completed"
 
-        // Process each order item
-        const proccessOrders = requestBody.line_items.map((item) => ({
+        // Process each order items
+        const proccessOrder = requestBody.line_items.map((item) => ({
             firstname: requestBody.billing.first_name,
             lastname: requestBody.billing.last_name,
             email: requestBody.billing.email,
@@ -47,8 +48,20 @@ export const handler = async (event) => {
             status_change: status,
         }));
 
-        // Insert orders into Supabase
-        const { data, error } = await supabase.from("orders").insert(proccessOrders);
+        const { data: userData, error: userError } = await supabase.from("payments").select("*");
+
+        if (userError) {
+            console.error("Error fetching from payments:", userError);
+            isExecuting = false;
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error fetching from payments", error: userError.message }),
+            };
+        }
+
+        
+        // Save data to Supabase
+        const { data, error } = await supabase.from("orders").insert(proccessOrder);
 
         if (error) {
             console.error("Error inserting into Supabase:", error);
@@ -58,14 +71,13 @@ export const handler = async (event) => {
             };
         }
 
-        console.log("INSERTED SUCCESSFULLY:", requestBody);
+        console.log("INSERTED SUCCESSFULLY:", data);        
 
-
-        // Return success responses
+        // Return success response
         isExecuting = false;
         return {
             statusCode: 200,
-            body: JSON.stringify({ message: "Order processing completed", data }),
+            body: JSON.stringify(data),
         };
     } catch (error) {
         console.error("Error processing data:", error.message);
