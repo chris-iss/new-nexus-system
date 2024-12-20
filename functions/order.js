@@ -32,9 +32,9 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        let status = "Completed"
+        let status = "Completed";
 
-        // Process each order items
+        // Process each order item
         const proccessOrder = requestBody.line_items.map((item) => ({
             firstname: requestBody.billing.first_name,
             lastname: requestBody.billing.last_name,
@@ -48,6 +48,7 @@ export const handler = async (event) => {
             status_change: status,
         }));
 
+        // Fetch payments data
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
 
         if (userError) {
@@ -59,32 +60,7 @@ export const handler = async (event) => {
             };
         }
 
-        if (userData && userData.length > 0) {
-            userData.forEach((item) => {
-                console.log("PAYMENT-item:", item)
-                if (item.email === proccessOrder[0].email) {
-                    console.log("PAYMENT DETAILS:", item)
-                }
-            })
-
-           
-
-            
-        } else {
-            console.error("No user data found in payments table");
-        }
-        
-
-        if (userError) throw error;
-
-
-
-
-
-
-
-
-        // Save data to Supabase
+        // Insert orders into Supabase
         const { data, error } = await supabase.from("orders").insert(proccessOrder);
 
         if (error) {
@@ -96,6 +72,33 @@ export const handler = async (event) => {
         }
 
         console.log("INSERTED SUCCESSFULLY:", data);
+
+        // Update order IDs
+        const updateOrderId = async () => {
+            if (userData && userData.length > 0) {
+                for (const item of userData) {
+                    if (item.email === proccessOrder[0].email) {
+                        console.log("PAYMENT DETAILS:", item);
+
+                        const { data: updateData, error: updateError } = await supabase
+                            .from("orders")
+                            .update({ order_id: item.description })
+                            .eq("email", item.email);
+
+                        if (updateError) {
+                            console.error("Error updating order_id:", updateError);
+                        } else {
+                            console.log("Order ID updated successfully:", updateData);
+                        }
+                    }
+                }
+            } else {
+                console.error("No user data found in payments table");
+            }
+        };
+
+        // Await the update function
+        await updateOrderId();
 
         // Return success response
         isExecuting = false;
