@@ -5,6 +5,8 @@ const supabase_service_key = process.env.SERVICE_KEY;
 
 export const supabase = createClient(supabase_url, supabase_service_key);
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const handler = async (event) => {
     let isExecuting = false;
 
@@ -45,6 +47,18 @@ export const handler = async (event) => {
             date: new Date(),
             status_change: status,
         }));
+
+        console.log("Delaying execution for 1 minute...");
+        await delay(60000); // 60000 milliseconds = 1 minute
+
+        const { data: userData, error: userError } = await supabase.from("payments").select("*");
+
+        if (userData) {
+            const getPaymentEmail = userData[0].email
+            console.log("PAYMENT EMAIL:", getPaymentEmail)
+        }
+
+        if (userError) throw error;
 
         // Save data to Supabase
         const { data, error } = await supabase.from("orders").insert(proccessOrder);
