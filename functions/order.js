@@ -62,7 +62,7 @@ export const handler = async (event) => {
         console.log("INSERTED SUCCESSFULLY:", data);
 
         // Wait for 1 minute before fetching payment data
-        await delay(60000);
+        await delay(24000);
 
         // Fetch payments data
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
