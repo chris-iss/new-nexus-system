@@ -48,9 +48,6 @@ export const handler = async (event) => {
             status_change: status,
         }));
 
-        console.log("Delaying execution for 1 minute...");
-        await delay(60000); // 60000 milliseconds = 1 minute
-
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
 
         if (userError) {
