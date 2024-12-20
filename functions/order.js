@@ -28,11 +28,12 @@ export const handler = async (event) => {
             };
         }
 
+        const requestBodys = JSON.parse(event.body.meta_data);
+        console.log("REQUEST BODY:", requestBodys);
+
         const requestBody = JSON.parse(event.body);
 
         let status = "Completed"
-
-        console.log("REQUEST BODY:", requestBody);
 
         // Process each order items
         const proccessOrder = requestBody.line_items.map((item) => ({
