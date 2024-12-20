@@ -46,7 +46,7 @@ export const handler = async (event) => {
             currency: requestBody.currency_symbol,
             date: new Date(),
             status_change: status,
-            order_id: item.number
+            order_id: requestBody.number
         }));
 
         const { data: userData, error: userError } = await supabase.from("payments").select("*");
