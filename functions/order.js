@@ -65,7 +65,6 @@ export const handler = async (event) => {
             if (fetchPaymentEmail === proccessOrder[0].email) {
                 console.log(`PAYMENT EMAIL: ${userData} ORDER EMAIL: ${proccessOrder[0].email}`);
             }
-            console.log("PAYMENT EMAIL:", userData);
         } else {
             console.error("No user data found in payments table");
         }
