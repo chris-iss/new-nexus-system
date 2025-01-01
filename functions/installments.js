@@ -64,8 +64,6 @@ export const handler = async (event) => {
         } else if(requestBody.subscription === "2") {
             const price = parseInt(requestBody.first_payment * 2);
 
-            console.log("PRICE:", price);
-
             const { data, error } = await supabase
                 .from("installments")
                 .update({ first_payment: price, subscription: requestBody.subscription, ending_date: nextPaymentDate })
@@ -83,9 +81,13 @@ export const handler = async (event) => {
                 body: JSON.stringify({ message: "Subscription updated successfully", data }),
             };
         } else if(requestBody.subscription === "3") {
+            const price = parseInt(requestBody.first_payment * 3);
+
+            console.log("PRICE:", price)
+
             const { data, error } = await supabase
                 .from("installments")
-                .update({ subscription: requestBody.subscription, ending_date: nextPaymentDate })
+                .update({ first_payment: price, subscription: requestBody.subscription, ending_date: nextPaymentDate })
                 .eq("email", requestBody.email);
 
             if (error) {
@@ -100,9 +102,11 @@ export const handler = async (event) => {
                 body: JSON.stringify({ message: "Subscription updated successfully", data }),
             }; 
         } else if(requestBody.subscription === "4") {
+            const price = parseInt(requestBody.first_payment * 4);
+
             const { data, error } = await supabase
                 .from("installments")
-                .update({ subscription: requestBody.subscription, ending_date: nextPaymentDate })
+                .update({ first_payment: price, subscription: requestBody.subscription, ending_date: nextPaymentDate })
                 .eq("email", requestBody.email);
 
             if (error) {
