@@ -64,6 +64,8 @@ export const handler = async (event) => {
         } else if(requestBody.subscription === "2") {
             const price = parseInt(requestBody.amount_due) * 2;
 
+            console.log("PRICE:", price);
+
             const { data, error } = await supabase
                 .from("installments")
                 .update({ first_payment: price, subscription: requestBody.subscription, ending_date: nextPaymentDate })
