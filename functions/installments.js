@@ -62,7 +62,7 @@ export const handler = async (event) => {
                 body: JSON.stringify({ message: "Data inserted successfully", payment: data }),
             };
         } else if(requestBody.subscription === "2") {
-            const price = parseInt(requestBody.amount_due * 2);
+            const price = parseInt(requestBody.first_payment * 2);
 
             console.log("PRICE:", price);
 
