@@ -49,17 +49,6 @@ export const handler = async (event) => {
             order_id: requestBody.number
         }));
 
-        const { data: userData, error: userError } = await supabase.from("payments").select("*");
-
-        if (userError) {
-            console.error("Error fetching from payments:", userError);
-            isExecuting = false;
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ message: "Error fetching from payments", error: userError.message }),
-            };
-        }
-
         
         // Save data to Supabase
         const { data, error } = await supabase.from("orders").insert(proccessOrder);

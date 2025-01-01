@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { timeStamp } from "console";
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
@@ -27,7 +28,10 @@ export const handler = async (event) => {
         }
 
         const requestBody = JSON.parse(event.body);
-        console.log("Request Body:", requestBody);
+        
+        const convertDate = requestBody.ending_date
+        const time_Stamp = new Date(convertDate * 1000);
+        const nextPaymentDate = time_Stamp.toLocaleString().split("T")[0]
 
         const payments = {
             firstname: requestBody.firstname,
@@ -40,7 +44,7 @@ export const handler = async (event) => {
             max_count: requestBody.max_count,
             status: requestBody.status,
             started_date: requestBody.started_date,
-            ending_date: requestBody.ending_date,
+            ending_date: nextPaymentDate,
         };
 
         if (requestBody.subscription === "1") {
@@ -57,10 +61,12 @@ export const handler = async (event) => {
                 statusCode: 200,
                 body: JSON.stringify({ message: "Data inserted successfully", payment: data }),
             };
-        } else {
+        } else if(requestBody.subscription === "2") {
+            const price = parseInt(requestBody.amount_due) * 2;
+
             const { data, error } = await supabase
                 .from("installments")
-                .update({ subscription: requestBody.subscription })
+                .update({ first_payment: price, subscription: requestBody.subscription, ending_date: nextPaymentDate })
                 .eq("email", requestBody.email);
 
             if (error) {
@@ -74,6 +80,40 @@ export const handler = async (event) => {
                 statusCode: 200,
                 body: JSON.stringify({ message: "Subscription updated successfully", data }),
             };
+        } else if(requestBody.subscription === "3") {
+            const { data, error } = await supabase
+                .from("installments")
+                .update({ subscription: requestBody.subscription, ending_date: nextPaymentDate })
+                .eq("email", requestBody.email);
+
+            if (error) {
+                console.error("Supabase Update Error:", error.message);
+                throw error;
+            }
+
+            console.log("Updated subscription successfully:", data);
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: "Subscription updated successfully", data }),
+            }; 
+        } else if(requestBody.subscription === "4") {
+            const { data, error } = await supabase
+                .from("installments")
+                .update({ subscription: requestBody.subscription, ending_date: nextPaymentDate })
+                .eq("email", requestBody.email);
+
+            if (error) {
+                console.error("Supabase Update Error:", error.message);
+                throw error;
+            }
+
+            console.log("Updated subscription successfully:", data);
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: "Subscription updated successfully", data }),
+            }; 
         }
     } catch (error) {
         console.error("Error processing data:", error.message);
