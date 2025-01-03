@@ -42,7 +42,6 @@ export const handler = async (event) => {
             attempt: requestBody.attempt,
             status: requestBody.status,
             first_completion_date: requestBody.date_completed,
-            second_completion_date: "Not Available"
         }
 
         // Save data to Supabase
