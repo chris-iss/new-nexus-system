@@ -41,8 +41,7 @@ export const handler = async (event) => {
             score: requestBody.score,
             attempt: requestBody.attempt,
             status: requestBody.status,
-            date_started: requestBody.date_started,
-            date_completed: requestBody.date_completed
+            second_completion_date: requestBody.date_completed,
         }
 
         // Save data to Supabase
