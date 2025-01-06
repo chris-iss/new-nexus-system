@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
@@ -6,86 +6,107 @@ const supabase_service_key = process.env.SERVICE_KEY;
 export const supabase = createClient(supabase_url, supabase_service_key);
 
 export const handler = async (event) => {
-    let isExecuting = false;
+  let isExecuting = false;
 
-    if (isExecuting) {
-        return {
-            statusCode: 409,
-            body: JSON.stringify({ message: "Function is already executing" }),
-        };
+  if (isExecuting) {
+    return {
+      statusCode: 409,
+      body: JSON.stringify({ message: "Function is already executing" }),
+    };
+  }
+
+  isExecuting = true;
+
+  try {
+    // Validate request body
+    if (!event.body) {
+      console.error("Empty body received");
+      isExecuting = false;
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: "Request body is empty or missing" }),
+      };
     }
 
-    isExecuting = true;
+    const requestBody = JSON.parse(event.body);
 
-    try {
-        // Validate request body
-        if (!event.body) {
-            console.error("Empty body received");
-            isExecuting = false;
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ message: "Request body is empty or missing" }),
-            };
-        }
+    console.log("REQUEST BODY:", requestBody);
 
-        const requestBody = JSON.parse(event.body);
+    // Process each order items
+    const assessment_data = {
+      assessment_id: requestBody.assessment_id,
+      firstname: requestBody.firstname,
+      lastname: requestBody.lastname,
+      email: requestBody.email,
+      score: requestBody.score,
+      attempt: requestBody.attempt,
+      status: requestBody.status,
+      second_completion_date: requestBody.date_completed,
+    };
 
-        console.log("REQUEST BODY:", requestBody);
+    // Save data to Supabase
+    const { data, error } = await supabase
+      .from("assessment_two")
+      .insert(assessment_data);
 
-        // Process each order items
-        const assessment_data = {
-            assessment_id: requestBody.assessment_id,
-            firstname: requestBody.firstname,
-            lastname: requestBody.lastname,
-            email: requestBody.email,
-            score: requestBody.score,
-            attempt: requestBody.attempt,
-            status: requestBody.status,
-            second_completion_date: requestBody.date_completed,
-        }
+    if (error) {
+      console.error("Error inserting into Supabase:", error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: "Error inserting into Supabase",
+          error: error.message,
+        }),
+      };
+    }
 
-        // Save data to Supabase
-        const { data, error } = await supabase.from("assessment_two").insert(assessment_data);
+    const fetchFirstResult = async () => {
+      try{
+        const { data, error } = await supabase.from("assessment_one").select("*");
 
         if (error) {
-            console.error("Error inserting into Supabase:", error);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
-            };
+            console.error("Error fetching data:", error);
         }
 
+        const response = data.filter((data) => data.email === requestBody.email)
 
-        const fetchFirstResult = async () => {
-            const { data, error } = await supabase.from("assessment_one").select("*");
-                        
-                        if (error) {
-                            console.error("Error fetching data:", error);
-                        }
-        
-                        console.log("FIRST ASSESSMENTS", data);
-                     
-        };
-        
-        await fetchFirstResult();
-        
+       if (response.length === 0) {
+        console.warn("No matching student data found for the given email");
+       } else {
+        const { data, error } = await supabase.from("assessment_one")
+        .update({ score_two: requestBody.score, second_completion_date: requestBody.date_completed})
+        .eq("email", response.email);
 
-        // Return success response
-        isExecuting = false;
-        return {
-            statusCode: 200,
-            body: JSON.stringify(data),
-        };
-    } catch (error) {
-        console.error("Error processing data:", error.message);
+        if (error) throw error;
 
-        // Reset execution flag
-        isExecuting = false;
+        console.log("Update was successful", data)
+       }
+      }catch(error){
+        console.log("Error fetching assessment data:", error)
+      }
+    };
 
-        // Return error response
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: "Internal Server Error", error: error.message }),
-        };
-    }
+    await fetchFirstResult();
+
+    // Return success response
+    isExecuting = false;
+    return {
+      statusCode: 200,
+      body: JSON.stringify(data),
+    };
+  } catch (error) {
+    console.error("Error processing data:", error.message);
+
+    // Reset execution flag
+    isExecuting = false;
+
+    // Return error response
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: "Internal Server Error",
+        error: error.message,
+      }),
+    };
+  }
 };
