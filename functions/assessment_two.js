@@ -64,6 +64,8 @@ export const handler = async (event) => {
                 if (error) throw error
 
                 console.log("FIRST ASSESSMENNTS", data)
+                
+                resolve("RESOLVED")
              
             }, 500)
         })
