@@ -58,8 +58,13 @@ export const handler = async (event) => {
 
         const fetchFirstResult = () => new Promise((resolve) => {
             setTimeout(() => {
-                console.log("SET TIMEOUT RAN++++++")
-                resolve("Resolved Promise")
+                const {data, error} = supabase.from("assessment_one")
+                .select("*") 
+
+                if (error) throw error
+
+                console.log("FIRST ASSESSMENNTS", data)
+             
             }, 500)
         })
         
