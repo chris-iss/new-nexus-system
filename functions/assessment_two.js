@@ -56,11 +56,8 @@ export const handler = async (event) => {
         }
 
 
-        const fetchFirstResult = () => {
-            return new Promise((resolve, reject) => {
-                setTimeout(async () => {
-                    try {
-                        const { data, error } = await supabase.from("assessment_one").select("*");
+        const fetchFirstResult = async () => {
+            const { data, error } = await supabase.from("assessment_one").select("*");
                         
                         if (error) {
                             console.error("Error fetching data:", error);
@@ -70,12 +67,6 @@ export const handler = async (event) => {
         
                         console.log("FIRST ASSESSMENTS", data);
                         resolve("RESOLVED");
-                    } catch (err) {
-                        console.error("Unexpected error:", err);
-                        reject(err);
-                    }
-                }, 500); // 500ms delay
-            });
         };
         
         await fetchFirstResult();
