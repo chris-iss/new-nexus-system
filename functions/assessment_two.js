@@ -66,7 +66,7 @@ export const handler = async (event) => {
                         }
         
                         console.log("FIRST ASSESSMENTS", data);
-                        resolve("RESOLVED");
+                     
         };
         
         await fetchFirstResult();
