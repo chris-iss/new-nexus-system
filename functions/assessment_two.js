@@ -61,8 +61,6 @@ export const handler = async (event) => {
                         
                         if (error) {
                             console.error("Error fetching data:", error);
-                            reject(error);
-                            return;
                         }
         
                         console.log("FIRST ASSESSMENTS", data);
