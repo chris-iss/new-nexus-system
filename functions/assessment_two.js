@@ -55,7 +55,11 @@ export const handler = async (event) => {
             };
         }
 
-        console.log("INSERTED SUCCESSFULLY:", data);
+        const fetchFirstResult = setTimeout( async () => {
+            console.log("SET TIMEOUT")
+        }, 500)
+        
+        await fetchFirstResult()
 
         // Return success response
         isExecuting = false;
