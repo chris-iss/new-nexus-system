@@ -55,9 +55,13 @@ export const handler = async (event) => {
             };
         }
 
-        const fetchFirstResult = setTimeout( async () => {
-            console.log("SET TIMEOUT")
-        }, 500)
+
+        const fetchFirstResult = () => new Promise((resolve) => {
+            setTimeout(() => {
+                console.log("SET TIMEOUT RAN++++++")
+                resolve("Resolved Promise")
+            }, 500)
+        })
         
         await fetchFirstResult()
 
