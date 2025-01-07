@@ -79,7 +79,9 @@ export const handler = async (event) => {
 
       //Updates the second assessmennt score in table Assessmennt_One
       const fetchFirstResult = () => {
+        console.log("FIRED 1")
         setTimeout(async () => {
+            console.log("FIRED 2")
           try {
             const { data, error } = await supabase
               .from("assessment_one")
@@ -90,15 +92,20 @@ export const handler = async (event) => {
               return;
             }
 
+            console.log("FIRED 3")
+
             const response = data.filter(
               (entry) => entry.email === requestBody.email
             );
+
+            console.log("FIRED 4")
 
             if (response.length === 0) {
               console.warn(
                 "No matching student data found for the given email"
               );
             } else {
+                console.log("FIRED 5")
               const { data: updateData, error: updateError } = await supabase
                 .from("assessment_one")
                 .update({
