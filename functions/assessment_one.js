@@ -57,35 +57,37 @@ export const handler = async (event) => {
         console.log("Assessment table is empty")
     } else {
 
-        checkData.forEach(async(data) => {
+        const tasks = checkData.map(async (data) => {
             if (data.email === requestBody.email) {
-                console.log(`This ${requestBody.email} already exist. Hence record ccan't be stored`);
-              } else {
-                const { data, error } = await supabase
+              console.log("Data already exists in Assessment_One Table");
+              return null; // No action needed
+            } else {
+              try {
+                const { data: insertedData, error } = await supabase
                   .from("assessment_one")
                   .insert(assessment_data);
-        
+          
                 if (error) {
                   console.error("Error inserting into Supabase:", error);
-                  return {
-                    statusCode: 500,
-                    body: JSON.stringify({
-                      message: "Error inserting into Supabase",
-                      error: error.message,
-                    }),
-                  };
+                  throw new Error(error.message);
                 }
-        
-                console.log("INSERTED SUCCESSFULLY:", data);
-        
-                // Return success response
-                isExecuting = false;
-                return {
-                  statusCode: 200,
-                  body: JSON.stringify(data),
-                };
+          
+                console.log("INSERTED SUCCESSFULLY:", insertedData);
+                return insertedData;
+              } catch (error) {
+                console.error("Unexpected error:", error.message);
+                throw error;
               }
-        })
+            }
+          });
+          
+          try {
+            const results = await Promise.all(tasks);
+            console.log("All tasks completed:", results);
+          } catch (error) {
+            console.error("Error processing tasks:", error.message);
+          }
+          
     }
   } catch (error) {
     console.error("Error processing data:", error.message);
