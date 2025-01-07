@@ -59,7 +59,7 @@ export const handler = async (event) => {
 
         checkData.forEach(async(data) => {
             if (data.email === requestBody.email) {
-                console.log("Data already exist in Assessment_One Table");
+                console.log(`This ${requestBody.email} already exist. Hence record ccan't be stored`);
               } else {
                 const { data, error } = await supabase
                   .from("assessment_one")
