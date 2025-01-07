@@ -71,6 +71,8 @@ export const handler = async (event) => {
                 }
     
                 const response = data.filter((entry) => entry.email === requestBody.email);
+
+                console.log("CCONDITION MET:", response)
     
                 if (response.length === 0) {
                     console.warn("No matching student data found for the given email");
