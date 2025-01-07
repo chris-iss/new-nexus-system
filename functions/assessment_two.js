@@ -64,6 +64,8 @@ export const handler = async (event) => {
         setTimeout(async () => {
             try {
                 const { data, error } = await supabase.from("assessment_one").select("*");
+
+                console.log("ASSESSMENT_ONE:", data)
     
                 if (error) {
                     console.error("Error fetching data:", error);
