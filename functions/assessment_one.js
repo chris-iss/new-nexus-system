@@ -51,47 +51,41 @@ export const handler = async (event) => {
       .from("assessment_one")
       .select("*");
 
-      console.log("ALL DATA:", checkData)
-
     if (checkError) throw error;
 
     if (checkData.length === 0) {
         console.log("Assessment table is empty")
     } else {
-        
-        checkData.forEach((data) => {
-            console.log("TESTINNG DATA", data)
-        })
 
-        for (let student of checkData) {
-            if (student.email === requestBody.email) {
-              console.log("Data already exist in Assessment_One Table");
-            } else {
-              const { data, error } = await supabase
-                .from("assessment_one")
-                .insert(assessment_data);
-      
-              if (error) {
-                console.error("Error inserting into Supabase:", error);
+        checkData.forEach(async(data) => {
+            if (data.email === requestBody.email) {
+                console.log("Data already exist in Assessment_One Table");
+              } else {
+                const { data, error } = await supabase
+                  .from("assessment_one")
+                  .insert(assessment_data);
+        
+                if (error) {
+                  console.error("Error inserting into Supabase:", error);
+                  return {
+                    statusCode: 500,
+                    body: JSON.stringify({
+                      message: "Error inserting into Supabase",
+                      error: error.message,
+                    }),
+                  };
+                }
+        
+                console.log("INSERTED SUCCESSFULLY:", data);
+        
+                // Return success response
+                isExecuting = false;
                 return {
-                  statusCode: 500,
-                  body: JSON.stringify({
-                    message: "Error inserting into Supabase",
-                    error: error.message,
-                  }),
+                  statusCode: 200,
+                  body: JSON.stringify(data),
                 };
               }
-      
-              console.log("INSERTED SUCCESSFULLY:", data);
-      
-              // Return success response
-              isExecuting = false;
-              return {
-                statusCode: 200,
-                body: JSON.stringify(data),
-              };
-            }
-          }
+        })
     }
   } catch (error) {
     console.error("Error processing data:", error.message);
