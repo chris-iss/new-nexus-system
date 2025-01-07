@@ -60,33 +60,35 @@ export const handler = async (event) => {
       };
     }
 
-    const fetchFirstResult = async () => {
-      try{
-        const { data, error } = await supabase.from("assessment_one").select("*");
-
-        if (error) {
-            console.error("Error fetching data:", error);
-        }
-
-        const response = data.filter((data) => data.email === requestBody.email)
-
-       if (response.length === 0) {
-        console.warn("No matching student data found for the given email");
-       } else {
-        const { data, error } = await supabase.from("assessment_one")
-        .update({ score_two: requestBody.score, second_completion_date: requestBody.date_completed})
-        .eq("email", response.email);
-
-        if (error) throw error;
-
-        console.log("Update was successful", data)
-       }
-      }catch(error){
-        console.log("Error fetching assessment data:", error)
-      }
+    const fetchFirstResult = () => {
+      setTimeout( async () => {
+        try{
+            const { data, error } = await supabase.from("assessment_one").select("*");
+    
+            if (error) {
+                console.error("Error fetching data:", error);
+            }
+    
+            const response = data.filter((data) => data.email === requestBody.email)
+    
+           if (response.length === 0) {
+            console.warn("No matching student data found for the given email");
+           } else {
+            const { data, error } = await supabase.from("assessment_one")
+            .update({ score_two: requestBody.score, second_completion_date: requestBody.date_completed})
+            .eq("email", response.email);
+    
+            if (error) throw error;
+    
+            console.log("Update was successful", data)
+           }
+          }catch(error){
+            console.log("Error fetching assessment data:", error)
+          }
+      }, 500)
     };
 
-    await fetchFirstResult();
+   fetchFirstResult();
 
     // Return success response
     isExecuting = false;
