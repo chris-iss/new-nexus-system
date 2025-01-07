@@ -77,7 +77,6 @@ export const handler = async (event) => {
 
     // Delayed Execution
     const fetchFirstResult = async () => {
-      console.log("Delayed function fired.");
       const { data: firstData, error: firstError } = await supabase
         .from("assessment_one")
         .select("*");
