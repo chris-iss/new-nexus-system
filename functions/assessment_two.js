@@ -109,7 +109,8 @@ export const handler = async (event) => {
     };
 
     // Trigger delayed function
-    setTimeout(fetchFirstResult, 30000);
+    fetchFirstResult()
+    // setTimeout(fetchFirstResult, 30000);
 
     isExecuting = false;
     return {
