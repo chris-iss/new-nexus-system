@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { error } from "console";
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
@@ -45,66 +46,95 @@ export const handler = async (event) => {
     };
 
     // Save data to Supabase
-    const { data, error } = await supabase
-      .from("assessment_two")
-      .insert(assessment_data);
+    const { data: checkData, error: checkError } = await supabase
+      .from("assessment_one")
+      .select("*");
 
-    if (error) {
-      console.error("Error inserting into Supabase:", error);
+    for (const data of checkData) {
+      if (data.email === requestBody.email) {
+        console.log(
+          `This ${requestBody.email} already exist. Hence record can't be stored`
+        );
+        return;
+      }
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("assessment_two")
+        .insert(assessment_data);
+
+      if (error) {
+        console.error("Error inserting into Supabase:", error);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({
+            message: "Error inserting into Supabase",
+            error: error.message,
+          }),
+        };
+      }
+
+      //Updates the second assessmennt score in table Assessmennt_One
+      const fetchFirstResult = () => {
+        setTimeout(async () => {
+          try {
+            const { data, error } = await supabase
+              .from("assessment_one")
+              .select("*");
+
+            if (error) {
+              console.error("Error fetching data:", error);
+              return;
+            }
+
+            const response = data.filter(
+              (entry) => entry.email === requestBody.email
+            );
+
+            if (response.length === 0) {
+              console.warn(
+                "No matching student data found for the given email"
+              );
+            } else {
+              const { data: updateData, error: updateError } = await supabase
+                .from("assessment_one")
+                .update({
+                  score_two: requestBody.score,
+                  second_completion_date: requestBody.date_completed,
+                })
+                .eq("email", requestBody.email); 
+
+              if (updateError) {
+                console.error("Error updating data:", updateError);
+              } else {
+                console.log("Update was successful", updateData);
+              }
+            }
+          } catch (err) {
+            console.error("Unexpected error:", err);
+          }
+        }, 30000); // Delay of 30 seconds (30000 ms)
+      };
+
+      fetchFirstResult();
+
+      // Return success response
+      isExecuting = false;
+      return {
+        statusCode: 200,
+        body: JSON.stringify(data),
+      };
+    } catch (error) {
+      console.error("Unexpected error:", error.message);
       return {
         statusCode: 500,
         body: JSON.stringify({
-          message: "Error inserting into Supabase",
+          message: "Internal Server Error",
           error: error.message,
         }),
       };
     }
-
-    const fetchFirstResult = () => {
-        setTimeout(async () => {
-            try {
-                const { data, error } = await supabase.from("assessment_one").select("*");
-    
-                if (error) {
-                    console.error("Error fetching data:", error);
-                    return;
-                }
-    
-                const response = data.filter((entry) => entry.email === requestBody.email);
-
-    
-                if (response.length === 0) {
-                    console.warn("No matching student data found for the given email");
-                } else {
-                    const { data: updateData, error: updateError } = await supabase
-                        .from("assessment_one")
-                        .update({
-                            score_two: requestBody.score,
-                            second_completion_date: requestBody.date_completed,
-                        })
-                        .eq("email", requestBody.email); // Use requestBody.email directly
-    
-                    if (updateError) {
-                        console.error("Error updating data:", updateError);
-                    } else {
-                        console.log("Update was successful", updateData);
-                    }
-                }
-            } catch (err) {
-                console.error("Unexpected error:", err);
-            }
-        }, 30000); // Delay of 30 seconds (30000 ms)
-    };
-    
-    fetchFirstResult();
-    
-
-    // Return success response
-    isExecuting = false;
-    return {
-      statusCode: 200,
-      body: JSON.stringify(data),
-    };
   } catch (error) {
     console.error("Error processing data:", error.message);
 

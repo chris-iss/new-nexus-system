@@ -54,50 +54,51 @@ export const handler = async (event) => {
     if (checkError) throw error;
 
     if (checkData.length === 0) {
-        console.log("Assessment table is empty")
+      console.log("Assessment table is empty");
     } else {
-
-        for (const data of checkData) {
-            if (data.email === requestBody.email) {
-                console.log(`This ${requestBody.email} already exist. Hence record can't be stored`);
-                return;
-             }  
+      for (const data of checkData) {
+        if (data.email === requestBody.email) {
+          console.log(
+            `This ${requestBody.email} already exist. Hence record can't be stored`
+          );
+          return;
         }
+      }
 
-        try{
-            const { data, error } = await supabase
-            .from("assessment_one")
-            .insert(assessment_data);
-  
-          if (error) {
-            console.error("Error inserting into Supabase:", error);
-            return {
-              statusCode: 500,
-              body: JSON.stringify({
-                message: "Error inserting into Supabase",
-                error: error.message,
-              }),
-            };
-          }
-  
-          console.log("INSERTED SUCCESSFULLY:", data);
-  
-          // Return success response
-          isExecuting = false;
+      try {
+        const { data, error } = await supabase
+          .from("assessment_one")
+          .insert(assessment_data);
+
+        if (error) {
+          console.error("Error inserting into Supabase:", error);
           return {
-            statusCode: 200,
-            body: JSON.stringify(data),
-          }; 
-        }catch(error){
-            console.error("Unexpected error:", error.message);
-            return {
-              statusCode: 500,
-              body: JSON.stringify({
-                message: "Internal Server Error",
-                error: error.message,
-              }),
-            };
+            statusCode: 500,
+            body: JSON.stringify({
+              message: "Error inserting into Supabase",
+              error: error.message,
+            }),
+          };
         }
+
+        console.log("INSERTED SUCCESSFULLY:", data);
+
+        // Return success response
+        isExecuting = false;
+        return {
+          statusCode: 200,
+          body: JSON.stringify(data),
+        };
+      } catch (error) {
+        console.error("Unexpected error:", error.message);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({
+            message: "Internal Server Error",
+            error: error.message,
+          }),
+        };
+      }
     }
   } catch (error) {
     console.error("Error processing data:", error.message);
