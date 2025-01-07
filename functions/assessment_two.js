@@ -47,8 +47,10 @@ export const handler = async (event) => {
 
     // Save data to Supabase
     const { data: checkData, error: checkError } = await supabase
-      .from("assessment_one")
+      .from("assessment_two")
       .select("*");
+
+      if (checkError) throw error;
 
     for (const data of checkData) {
       if (data.email === requestBody.email) {
