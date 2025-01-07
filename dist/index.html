@@ -203,30 +203,25 @@
       
           // Debugging: Log form data
           console.log("Form Data:", data);
-      
-        //   try {
-        //     // Send form data to the Netlify function endpoint
-        //     const response = await fetch("/.netlify/functions/invoice_enrolment", {
-        //       method: "POST",
-        //       headers: {
-        //         "Content-Type": "application/json",
-        //       },
-        //       body: JSON.stringify(data),  // Convert the data object to a JSON string
-        //     });
-      
-        //     if (response.ok) {
-        //       const result = await response.json();
-        //       alert("Form submitted successfully!");
-        //       console.log(result);
-        //     } else {
-        //       const errorResult = await response.json();
-        //       alert("Error submitting form");
-        //       console.error(errorResult);
-        //     }
-        //   } catch (error) {
-        //     console.error("Error:", error.message);
-        //     alert("Something went wrong. Please try again.");
-        //   }
+
+          await fetch(
+            "https://hooks.zapier.com/hooks/catch/14129819/2zti9qh/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                certQty: data.certQty,
+                course: data.course,
+                courseId: data.courseId,
+                date: data.date,
+                diplomaQty: data.diplomaQty,
+                email: data.email,
+                status: data.status
+              }),
+            }
+          );
         });
       </script>
       

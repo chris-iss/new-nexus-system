@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { permission } from 'process';
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
@@ -34,14 +35,23 @@ export const handler = async (event) => {
 
         // Process each order items
         // const proccessSalesInvoices = {
+        //     item_code: requestBody.Item_code,
+        //     currency: requestBody.currency,
+        //     due_date: requestBody.due_date,
         //     email: requestBody.email,
         //     invoice_number: requestBody.invoice_number,
+        //     issue_date: requestBody.issue_date,
+        //     item_name: requestBody.item,
+        //     line_item: requestBody.line_item,
+        //     fullname: requestBody.name,
         //     reference: requestBody.reference,
-        //     to: requestBody.name,
-        //     date: requestBody.issue_date,
-        //     due: requestBody.total,
-        //     status: requestBody.status
-        // }
+        //     sales_person: requestBody.sales_person,
+        //     permission: requestBody.status,
+        //     status: requestBody.status_paid,
+        //     tax_rate: requestBody.tax_rate,
+        //     total: requestBody.total,
+        //     type: requestBody.type
+        //   }
 
         // // Save data to Supabase
         // const { data, error } = await supabase.from("invoices").insert(proccessSalesInvoices);
