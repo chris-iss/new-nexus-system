@@ -58,8 +58,12 @@ export const handler = async (event) => {
     if (checkData.length === 0) {
         console.log("Assessment table is empty")
     } else {
+        
+        checkData.forEach((data) => {
+            console.log("TESTINNG DATA", data)
+        })
+
         for (let student of checkData) {
-            console.log("ALL DATA IN LOOP:", student)
             if (student.email === requestBody.email) {
               console.log("Data already exist in Assessment_One Table");
             } else {
