@@ -88,6 +88,8 @@ export const handler = async (event) => {
 
       const response = firstData.find((entry) => entry.email === requestBody.email);
 
+      console.log("LOG:", response)
+
       if (!response) {
         console.warn("No matching student data found for the given email.");
         return;
