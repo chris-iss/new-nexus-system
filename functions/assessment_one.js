@@ -57,7 +57,7 @@ export const handler = async (event) => {
         console.log("Assessment table is empty")
     } else {
         for (let student of checkData) {
-            console.log("ALL EMAIL:", student.email)
+            console.log("ALL EMAIL:", student)
             if (student.email === requestBody.email) {
               console.log("Data already exist in Assessment_One Table");
             } else {
