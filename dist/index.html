@@ -185,47 +185,7 @@
       </div>
     </div>
 
-    <!-- <script>
-        // Form submission logic
-        const form = document.getElementById("enrollmentForm");
-      
-        form.addEventListener("submit", async (event) => {
-          event.preventDefault(); // Prevent default form submission
-      
-          // Collect form data
-          const formData = new FormData(form);
-          const data = {};
-      
-          // Convert FormData to a regular object
-          formData.forEach((value, key) => {
-            data[key] = value;
-          });
-      
-          // Debugging: Log form data
-          console.log("Form Data:", data);
-
-          await fetch(
-            "https://hooks.zapier.com/hooks/catch/14129819/2zti9qh/",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                certQty: data.certQty,
-                course: data.course,
-                courseId: data.courseId,
-                date: data.date,
-                diplomaQty: data.diplomaQty,
-                email: data.email,
-                status: data.status
-              }),
-            }
-          );
-        });
-      </script> -->
-
-      <script src="../dist/script.js"></script>
+      <script src="../dist/index.js"></script>
       
   </body>
 </html>
