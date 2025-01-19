@@ -1,5 +1,7 @@
 const form = document.getElementById("enrollmentForm");
 
+console.log("FORM", form)
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
