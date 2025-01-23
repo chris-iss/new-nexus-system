@@ -46,13 +46,13 @@ export const handler = async (event) => {
         // // Save data to Supabase
         // const { data, error } = await supabase.from("cert_of_completion").insert(user_data);
 
-        if (error) {
-            console.error("Error inserting into Supabase:", error);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
-            };
-        }
+        // if (error) {
+        //     console.error("Error inserting into Supabase:", error);
+        //     return {
+        //         statusCode: 500,
+        //         body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+        //     };
+        // }
 
         // Return success response
         isExecuting = false;
