@@ -30,29 +30,25 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        console.log("FREE COURSE DATA:", requestBody)
+        const course_data = {
+            firstname: requestBody.firstname,
+            lastname: requestBody.lastname,
+            email: requestBody.email,
+            phone: requestBody.phone,
+            course: requestBody.course,
+            date: new Date()
+        }
 
-        // const fullname = requestBody.fullname.split(" ")
+        const { data, error } = await supabase.from("free-course-access").insert(course_data);
 
-        // // Process each order items
-        // const user_data = {
-        //     firstname: fullname[0],
-        //     lastname: fullname[1],
-        //     email: requestBody.email,
-        //     module_completed: requestBody.module_completed,
-        //     issue_date: requestBody.issue_date,
-        // }
 
-        // // Save data to Supabase
-        // const { data, error } = await supabase.from("cert_of_completion").insert(user_data);
-
-        // if (error) {
-        //     console.error("Error inserting into Supabase:", error);
-        //     return {
-        //         statusCode: 500,
-        //         body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
-        //     };
-        // }
+        if (error) {
+            console.error("Error inserting into Supabase:", error);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+            };
+        }
 
         // Return success response
         isExecuting = false;
