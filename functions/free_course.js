@@ -5,8 +5,6 @@ const supabase_service_key = process.env.SERVICE_KEY;
 
 export const supabase = createClient(supabase_url, supabase_service_key);
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export const handler = async (event) => {
     let isExecuting = false;
 
@@ -32,26 +30,21 @@ export const handler = async (event) => {
 
         const requestBody = JSON.parse(event.body);
 
-        let status = "Completed"
+        console.log("FREE COURSE DATA:", requestBody)
 
-        // Process each order items
-        const proccessOrder = requestBody.line_items.map((item) => ({
-            firstname: requestBody.billing.first_name,
-            lastname: requestBody.billing.last_name,
-            email: requestBody.billing.email,
-            course: item.name,
-            quantity: item.quantity,
-            amount: item.price * item.quantity,
-            status: requestBody.status,
-            currency: requestBody.currency_symbol,
-            date: new Date(),
-            status_change: status,
-            order_id: requestBody.number
-        }));
+        // const fullname = requestBody.fullname.split(" ")
 
-        
-        // Save data to Supabase
-        const { data, error } = await supabase.from("orders").insert(proccessOrder);
+        // // Process each order items
+        // const user_data = {
+        //     firstname: fullname[0],
+        //     lastname: fullname[1],
+        //     email: requestBody.email,
+        //     module_completed: requestBody.module_completed,
+        //     issue_date: requestBody.issue_date,
+        // }
+
+        // // Save data to Supabase
+        // const { data, error } = await supabase.from("cert_of_completion").insert(user_data);
 
         if (error) {
             console.error("Error inserting into Supabase:", error);
@@ -61,16 +54,14 @@ export const handler = async (event) => {
             };
         }
 
-        console.log("INSERTED SUCCESSFULLY:", data);  
-
         // Return success response
         isExecuting = false;
         return {
             statusCode: 200,
-            body: JSON.stringify(data),
+            body: JSON.stringify(requestBody),
         };
     } catch (error) {
-        console.error("Error processing data:", error.message);
+        console.error("Error processing data:", error);
 
         // Reset execution flag
         isExecuting = false;

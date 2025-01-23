@@ -41,6 +41,8 @@ html, body {
     gap: 20px;
     width: 90%;
     height: 50px;
+    margin-top: 10px;
+    margin-bottom: 20px;
     margin-left: 25px;
     margin-right: 15px;
     border: 1px solid #9a9a9a;
@@ -71,7 +73,8 @@ html, body {
     gap: 20px;
     width: 90%;
     height: 50px;
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
     margin-left: 25px;
     margin-right: 15px;
     border: 1px solid #9a9a9a;
@@ -102,15 +105,15 @@ html, body {
     color: #aaa;
 }
 
-
+/*Courses*/
 .input-course {
     display: flex;
     align-items: center;
     gap: 20px;
     width: 90%;
-    height: 50px;
+    height: 100px;
     margin-top: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     margin-left: 25px;
     margin-right: 15px;
     border: 1px solid #9a9a9a;
@@ -139,6 +142,49 @@ html, body {
 }
 
 .input-course .input::placeholder {
+    color: #aaa;
+}
+
+
+
+
+/*Course id*/
+.input-course_ {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 90%;
+    height: auto;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    margin-left: 25px;
+    margin-right: 15px;
+    border: 1px solid #9a9a9a;
+}
+
+.input-course_ i {
+    margin-left: 10px;
+    font-size: 25px;
+    color: #06C168;
+}
+
+.input-course_ .input,
+.input-course_ .dropdown {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    padding: 5px;
+    flex: 1; /* Makes input and dropdown share space */
+}
+
+.input-course_ .dropdown {
+    background-color: #fff;
+    cursor: pointer;
+    margin-right: 20px;
+    width: 50%;
+}
+
+.input-course_ .input::placeholder {
     color: #aaa;
 }
 
@@ -194,3 +240,76 @@ html, body {
     cursor: pointer;
     float: right;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.select-course {
+    padding-bottom: 300px !important;
+}
+.input-container {
+    margin-bottom: 15px;
+    margin-right: 25px;
+    position: relative;
+    width: 100%;
+  }
+  
+  .custom-multi-select {
+    padding: 10px;
+    margin-top: 20px;
+    height: auto;
+    position: relative;
+    cursor: pointer;
+    background-color: #fff;
+  }
+  .custom-multi-select .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .custom-multi-select .tag {
+    background: #007bff;
+    color: #fff;
+    border-radius: 3px;
+    padding: 3px 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .custom-multi-select .tag .remove-tag {
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .custom-multi-select .dropdown-options {
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 10;
+    display: none;
+  }
+  .custom-multi-select .dropdown-options .option {
+    padding: 8px 10px;
+    cursor: pointer;
+  }
+  .custom-multi-select .dropdown-options .option:hover {
+    background: #f0f0f0;
+  }
+  .custom-multi-select.show .dropdown-options {
+    display: block;
+  }

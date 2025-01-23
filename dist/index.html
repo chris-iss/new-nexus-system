@@ -17,6 +17,9 @@
         <div class="rightside">
           <p>Invoice Course Enrollment</p>
           <form class="form-right" id="enrollmentForm">
+            <label for="courses" style="padding-left: 25px; margin-bottom: 10px"
+              >Student Email</label
+            >
             <div class="input-email">
               <i class="fa-solid fa-envelope"></i>
               <input
@@ -28,6 +31,9 @@
               />
             </div>
 
+            <label for="courses" style="padding-left: 25px"
+              >Select Status</label
+            >
             <div class="input-status">
               <i class="fa-solid fa-square-poll-horizontal"></i>
               <select name="status" class="dropdown" required>
@@ -36,100 +42,30 @@
               </select>
             </div>
 
-            <div class="input-course">
-              <i class="fa-solid fa-book"></i>
-              <select name="course" class="dropdown" required>
-                <option value="" disabled selected>Select Course</option>
-                <option value="certificate-business-sustainability">
-                  Certificate in Business Sustainability
-                </option>
-                <option value="certificate-sustainability-plan-development">
-                  Certificate in Sustainability Plan Development
-                </option>
-                <option value="certificate-sustainability-plan-implementation">
-                  Certificate in Sustainability Plan Implementation
-                </option>
-                <option value="certificate-decarbonisation-net-zero">
-                  Certificate in Decarbonisation: Achieving Net Zero
-                </option>
-                <option value="certificate-circular-economy">
-                  Certificate in Circular Economy
-                </option>
-                <option value="certificate-business-biodiversity">
-                  Certificate in Business with Biodiversity
-                </option>
-                <option value="certificate-diversity-equity-inclusion">
-                  Certificate in Diversity Equity and Inclusion
-                </option>
-                <option value="certificate-sustainable-finance">
-                  Certificate in Sustainable Finance
-                </option>
-                <option value="certificate-sustainable-business-operations">
-                  Certificate in Sustainable Business Operations
-                </option>
-                <option value="certificate-sustainable-supply-chain">
-                  Certificate in Sustainable Supply Chain
-                </option>
-                <option value="certificate-green-marketing">
-                  Certificate in Green Marketing
-                </option>
-                <option value="certificate-esg-reporting-auditing">
-                  Certificate in ESG Reporting and Auditing
-                </option>
-                <option value="diploma-business-sustainability">
-                  Diploma in Business Sustainability
-                </option>
-              </select>
+            <label for="courses" style="padding-left: 25px"
+              >Select Courses</label
+            >
+            <div class="input-course_">
+              <i class="fa-regular fa-id-badge"></i>
+              <div class="input-container" name="course">
+                <div class="custom-multi-select" id="courseMultiSelect">
+                  <div class="tags-container"></div>
+                  <div class="dropdown-options"></div>
+                </div>
+              </div>
             </div>
 
-            <div class="input-course">
+            <label for="courseIds" style="padding-left: 25px"
+              >Select Course's Id</label
+            >
+            <div class="input-course_">
               <i class="fa-regular fa-id-badge"></i>
-              <select name="courseId" class="dropdown" required>
-                <option value="" disabled selected>Select Course Id</option>
-                <option value="2755212">
-                  Certificate in Business Sustainability - 2755212
-                </option>
-                <option value="2755219">
-                  Certificate in Sustainability Plan Development - 2755219
-                </option>
-                <option value="2755224">
-                  Certificate in Sustainability Plan Implementation - 2755224
-                </option>
-                <option value="2755233">
-                  Certificate in Decarbonisation: Achieving Net Zero - 2755233
-                </option>
-                <option value="2755243">
-                  Certificate in Circular Economy - 2755243
-                </option>
-                <option value="2755260">
-                  Certificate in Business with Biodiversity - 2755260
-                </option>
-                <option value="2755264">
-                  Certificate in Diversity Equity and Inclusion - 2755264
-                </option>
-                <option value="2755272">
-                  Certificate in Sustainable Finance - 2755272
-                </option>
-                <option value="2755276">
-                  Certificate in Sustainable Business Operations - 2755276
-                </option>
-                <option value="2755278">
-                  Certificate in Sustainable Supply Chain - 2755278
-                </option>
-                <option value="2755281">
-                  Certificate in Green Marketing - 2755281
-                </option>
-                <option value="2755283">
-                  Certificate in ESG Reporting and Auditing - 2755283
-                </option>
-                <option value="2730358">
-                  Certificate in Corporate Sustainability Reporting Directive
-                  (CSRD) - 2730358
-                </option>
-                <option value="2622273">
-                  Diploma in Business Sustainability - 2622273
-                </option>
-              </select>
+              <div class="input-container" name="courseIds">
+                <div class="custom-multi-select" id="courseIdMultiSelect">
+                  <div class="tags-container"></div>
+                  <div class="dropdown-options"></div>
+                </div>
+              </div>
             </div>
 
             <div class="input-qty">
@@ -171,13 +107,13 @@
             </div>
 
             <div class="input-status">
-              <i class="fa-solid fa-calendar-week"></i>
-              <select name="date" class="dropdown" required>
-                <option value="" disabled selected>Select a Date</option>
-                <option value="2024-06-01">June 1, 2024</option>
-                <option value="2024-06-15">June 15, 2024</option>
-              </select>
-            </div>
+                <i class="fa-solid fa-calendar-week"></i>
+                <select name="date" class="dropdown" required>
+                  <option value="" disabled selected>Select a Date</option>
+                  <option value="2024-06-01">June 1, 2024</option>
+                  <option value="2024-06-15">June 15, 2024</option>
+                </select>
+              </div>
 
             <button type="submit" class="submit">Submit Request</button>
           </form>
@@ -185,7 +121,196 @@
       </div>
     </div>
 
-      <script src="../dist/index.js"></script>
-      
+    <script type="module">
+      // Multi-select for courses
+      const multiSelect = document.getElementById("courseMultiSelect");
+      const dropdownOptions = multiSelect.querySelector(".dropdown-options");
+      const tagsContainer = multiSelect.querySelector(".tags-container");
+
+      const courses = [
+        "Certificate in Business Sustainability",
+        "Certificate in Sustainability Plan Development",
+        "Certificate in Sustainability Plan Implementation",
+        "Certificate in Decarbonisation: Achieving Net Zero",
+        "Certificate in Circular Economy",
+        "Certificate in Business with Biodiversity",
+        "Certificate in Diversity Equity and Inclusion",
+        "Certificate in Sustainable Finance",
+        "Certificate in Sustainable Business Operations",
+        "Certificate in Sustainable Supply Chain",
+        "Certificate in Green Marketing",
+        "Certificate in ESG Reporting and Auditing",
+        "Diploma in Business Sustainability",
+      ];
+
+      let selectedCourses = [];
+
+      function populateDropdown() {
+        dropdownOptions.innerHTML = "";
+        courses.forEach((course) => {
+          if (!selectedCourses.includes(course)) {
+            const optionDiv = document.createElement("div");
+            optionDiv.classList.add("option");
+            optionDiv.textContent = course;
+            optionDiv.addEventListener("click", () => addCourse(course));
+            dropdownOptions.appendChild(optionDiv);
+          }
+        });
+      }
+
+      function addCourse(course) {
+        selectedCourses.push(course);
+        updateTags();
+        populateDropdown();
+      }
+
+      function updateTags() {
+        tagsContainer.innerHTML = "";
+        selectedCourses.forEach((course) => {
+          const tagDiv = document.createElement("div");
+          tagDiv.classList.add("tag");
+          tagDiv.textContent = course;
+
+          const removeSpan = document.createElement("span");
+          removeSpan.classList.add("remove-tag");
+          removeSpan.textContent = "×";
+          removeSpan.addEventListener("click", () => removeCourse(course));
+
+          tagDiv.appendChild(removeSpan);
+          tagsContainer.appendChild(tagDiv);
+        });
+      }
+
+      function removeCourse(course) {
+        selectedCourses = selectedCourses.filter((item) => item !== course);
+        updateTags();
+        populateDropdown();
+      }
+
+      multiSelect.addEventListener("click", (e) => {
+        e.stopPropagation();
+        multiSelect.classList.toggle("show");
+      });
+
+      document.addEventListener("click", () => {
+        multiSelect.classList.remove("show");
+      });
+
+      populateDropdown();
+
+      // Multi-select for course IDs
+      const courseIdMultiSelect = document.getElementById(
+        "courseIdMultiSelect"
+      );
+      const courseIdDropdownOptions =
+        courseIdMultiSelect.querySelector(".dropdown-options");
+      const courseIdTagsContainer =
+        courseIdMultiSelect.querySelector(".tags-container");
+
+      const courseIds = [
+        "Certificate in Business Sustainability - 2755212",
+        "Certificate in Sustainability Plan Development - 2755219",
+        "Certificate in Sustainability Plan Implementation - 2755224",
+        "Certificate in Decarbonisation: Achieving Net Zero - 2755233",
+        " Certificate in Circular Economy - 2755243",
+        "Certificate in Business with Biodiversity - 2755260",
+        "Certificate in Diversity Equity and Inclusion - 2755264",
+        "Certificate in Sustainable Finance - 2755272",
+        "Certificate in Sustainable Business Operations - 2755276",
+        "Certificate in Sustainable Supply Chain - 2755278",
+        "Certificate in Green Marketing - 2755281",
+        "Certificate in ESG Reporting and Auditing - 2755283",
+        "Certificate in Corporate Sustainability Reporting Directive(CSRD) - 2730358",
+        "Diploma in Business Sustainability - 2622273"
+      ];
+
+      let selectedCourseIds = [];
+
+      function populateCourseIdDropdown() {
+        courseIdDropdownOptions.innerHTML = "";
+        courseIds.forEach((id) => {
+          if (!selectedCourseIds.includes(id)) {
+            const optionDiv = document.createElement("div");
+            optionDiv.classList.add("option");
+            optionDiv.textContent = id;
+            optionDiv.addEventListener("click", () => addCourseId(id));
+            courseIdDropdownOptions.appendChild(optionDiv);
+          }
+        });
+      }
+
+      function addCourseId(id) {
+        selectedCourseIds.push(id);
+        updateCourseIdTags();
+        populateCourseIdDropdown();
+      }
+
+      function updateCourseIdTags() {
+        courseIdTagsContainer.innerHTML = "";
+        selectedCourseIds.forEach((id) => {
+          const tagDiv = document.createElement("div");
+          tagDiv.classList.add("tag");
+          tagDiv.textContent = id;
+
+          const removeSpan = document.createElement("span");
+          removeSpan.classList.add("remove-tag");
+          removeSpan.textContent = "×";
+          removeSpan.addEventListener("click", () => removeCourseId(id));
+
+          tagDiv.appendChild(removeSpan);
+          courseIdTagsContainer.appendChild(tagDiv);
+        });
+      }
+
+      function removeCourseId(id) {
+        selectedCourseIds = selectedCourseIds.filter((item) => item !== id);
+        updateCourseIdTags();
+        populateCourseIdDropdown();
+      }
+
+      courseIdMultiSelect.addEventListener("click", (e) => {
+        e.stopPropagation();
+        courseIdMultiSelect.classList.toggle("show");
+      });
+
+      document.addEventListener("click", () => {
+        courseIdMultiSelect.classList.remove("show");
+      });
+
+      populateCourseIdDropdown();
+
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+      const supabase_url = "https://nimxewcbajddbaltrwmd.supabase.co";
+      const supabase_service_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbXhld2NiYWpkZGJhbHRyd21kIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMjM4MDc5OCwiZXhwIjoyMDQ3OTU2Nzk4fQ.ez-nMDbdgD0f9xv2uzZoy6kCPVjvE991OE9CTyJOyqg"; // Replace with your Supabase key
+      const supabase = createClient(supabase_url, supabase_service_key);
+
+      const form = document.getElementById("enrollmentForm");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+          data[key] = value;
+        });
+
+        data.course = selectedCourses;
+        data.courseId = selectedCourseIds;
+
+        console.log(data)
+
+        try {
+          const { data: insertedData, error } = await supabase
+            .from("manual_invoicing")
+            .insert(data);
+          if (error) throw error;
+          alert("Form submitted successfully!");
+        } catch (err) {
+          alert("Error submitting form: " + err.message);
+        }
+      });
+    </script>
   </body>
 </html>
