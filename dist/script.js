@@ -180,6 +180,31 @@ activateForm.addEventListener("click", function () {
 });
 
 
+async function getEnvironmentVariables() {
+    try {
+      const response = await fetch('https://nexus-sys.netlify.app/.netlify/functions/getSupabaseConfig'); // Adjust the endpoint accordingly
+      const data = await response.json();
+      const { supabaseUrl, supabaseKey, code } = data;
+  
+      // Now you can use the supabaseUrl and supabaseKey in your frontend code
+      console.log('Supabase URL:', supabaseUrl);
+      console.log('Supabase Key:', supabaseKey);
+
+      console.log('Activation Key:', code);
+      
+      // Example: Initialize Supabase client
+      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      
+      // Now you can use the `supabase` client in your frontend code
+    } catch (error) {
+      console.error('Error fetching environment variables:', error);
+    }
+  }
+
+  getEnvironmentVariables()
+
+
 
 
 
