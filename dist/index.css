@@ -17,10 +17,61 @@ html, body {
 }
 
 .leftside {
-    background-color: #2a2a2a;
+    background-image: url("https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2023/09/26194839/ISS_Graphic_Pattern_RGB_Slate_Dark.svg");
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #000000;
     width: 70%;
     height: auto;
 }
+
+.leftside img {
+    width: 100px;
+    height: 100px;
+    animation: rotate 5s linear infinite; 
+}
+
+@keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .form-activation-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 40px;
+    color: #ffff;
+  }
+
+  .form-activation-container label {
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  .activate-input {
+    width: 400px;
+    height: 30px;
+    outline: none;
+    padding: 10px;
+    background-color: #e7e7e7;
+    font-size: 16px;
+  }
+
+  .submit_activate_form {
+    width: 40%;
+    height: 50px;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 100px;
+    cursor: pointer;
+  }
 
 .rightside {
     background-color: #f3f3f3;
@@ -239,6 +290,8 @@ html, body {
     margin: 25px;
     cursor: pointer;
     float: right;
+    border: #06C168;
+    border-radius: 100px;
 }
 
 

@@ -13,7 +13,16 @@
   <body>
     <div class="wrapper">
       <div class="form-container">
-        <div class="leftside">LeftSide</div>
+        <div class="leftside">
+            <img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2024/05/16110040/cropped-ISS-Favicon.png" alt="" />
+
+            <div class="form-activation-container">
+                <label>Activate Form</label>
+                <input type="text" name="activate" class="activate-input" id="activateInput" required />
+                <button type="submit" id="submitActivateForm" class="submit_activate_form">Submit</button>
+            </div>
+         </div>
+
         <div class="rightside">
           <p>Invoice Course Enrollment</p>
           <form class="form-right" id="enrollmentForm">
@@ -121,11 +130,12 @@
       </div>
     </div>
 
-    <script type="module">
+    <!-- <script type="module">
       // Multi-select for courses
       const multiSelect = document.getElementById("courseMultiSelect");
       const dropdownOptions = multiSelect.querySelector(".dropdown-options");
       const tagsContainer = multiSelect.querySelector(".tags-container");
+      const getActivateForm = document.getElementsByClassName("activate-input")
 
       const courses = [
         "Certificate in Business Sustainability",
@@ -285,6 +295,30 @@
       const supabase_service_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbXhld2NiYWpkZGJhbHRyd21kIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMjM4MDc5OCwiZXhwIjoyMDQ3OTU2Nzk4fQ.ez-nMDbdgD0f9xv2uzZoy6kCPVjvE991OE9CTyJOyqg"; // Replace with your Supabase key
       const supabase = createClient(supabase_url, supabase_service_key);
 
+
+      const activateForm = document.getElementById("submitActivateForm");
+
+      activateForm.addEventListener("click", function() {
+
+            const activateCode = document.getElementById("activateInput").value;
+
+            if(!activateCode) {
+                alert("Please enter an activation code!");
+                return;
+            }
+
+           
+
+      })
+
+      
+
+
+
+
+
+
+
       const form = document.getElementById("enrollmentForm");
 
       form.addEventListener("submit", async (event) => {
@@ -311,6 +345,7 @@
           alert("Error submitting form: " + err.message);
         }
       });
-    </script>
+    </script> -->
+    <script type="module" src="../dist/script.js "></script>
   </body>
 </html>
