@@ -1,8 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-import { configDotenv } from "dotenv";
-
-console.log(configDotenv)
 
 const supabase_url = "https://nimxewcbajddbaltrwmd.supabase.co";
 const supabase_service_key =
@@ -13,7 +10,6 @@ const supabase = createClient(supabase_url, supabase_service_key);
 const multiSelect = document.getElementById("courseMultiSelect");
 const dropdownOptions = multiSelect.querySelector(".dropdown-options");
 const tagsContainer = multiSelect.querySelector(".tags-container");
-const getActivateForm = document.getElementsByClassName("activate-input");
 
 const courses = [
   "Certificate in Business Sustainability",
