@@ -11,7 +11,9 @@ exports.handler = async function () {
     body: JSON.stringify({
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseKey: process.env.SERVICE_KEY,
-      code: process.env.ACTIVATION_CODE, 
+      code: process.env.ACTIVATION_CODE,
+      thinkificKey: process.env.THINKIFIC_API_KEY,
+      thinkificUrl: process.env.THINKIFIC_SUB_DOMAIN,
     }),
   };
 };
