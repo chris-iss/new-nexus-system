@@ -9,7 +9,7 @@ exports.handler = async (event) => {
                 body: JSON.stringify({ error: "User ID is required" })
             };
         }
-        const response = await fetch(`https://api.thinkific.com/api/public/v1/enrollments?user_id=${userId}`, {
+        const response = await fetch(`https://api.thinkific.com/api/public/v1/enrollments?query[user_id]=${userId}`, {
             headers: {
                 "X-Auth-API-Key": THINKIFIC_API_KEY,
                 "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN
