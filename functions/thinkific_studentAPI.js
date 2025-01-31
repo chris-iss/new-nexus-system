@@ -1,7 +1,6 @@
 const fetch = require("node-fetch");
 exports.handler = async (event, context) => {
     try {
-        // Extract userId from request
         const userId = event.queryStringParameters.userId;
         if (!userId) {
             return {
@@ -25,6 +24,24 @@ exports.handler = async (event, context) => {
                 "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN,
               },
         });
+        // Check if the response is HTML (meaning an error page)
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const errorText = await response.text();
+            console.error("Non-JSON response from Thinkific:", errorText);
+            return {
+                statusCode: response.status,
+                body: JSON.stringify({
+                    error: "Invalid response from Thinkific API",
+                    details: errorText
+                }),
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type",
+                }
+            };
+        }
         const data = await response.json();
         if (!response.ok) {
             console.error("Thinkific API Error:", data);
@@ -61,9 +78,6 @@ exports.handler = async (event, context) => {
         };
     }
 };
-
-
-
 
 
 
