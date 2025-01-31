@@ -3,6 +3,7 @@ exports.handler = async (event, context) => {
         // Extract userId from query parameters
         const userId = event.queryStringParameters.userId;
         console.log("Received userId:", userId); // Log userId for debugging
+
         if (!userId) {
             return {
                 statusCode: 400,
@@ -10,7 +11,8 @@ exports.handler = async (event, context) => {
                 headers: { "Access-Control-Allow-Origin": "*" }
             };
         }
-        // Thinkific API request https://api.thinkific.com/api/public/v1/enrollments?query[user_id]=USER_ID
+
+        // Thinkific API request
         const response = await fetch(`https://api.thinkific.com/api/public/v1/enrollments?query[user_id]=${userId}`, {
             headers: {
                 "Content-Type": "application/json",
@@ -18,11 +20,14 @@ exports.handler = async (event, context) => {
                 "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN,
             }
         });
+
         if (!response.ok) {
             throw new Error(`Thinkific API returned ${response.status} - ${response.statusText}`);
         }
+
         const data = await response.json();
         console.log("Thinkific API Response:", data);
+        
         return {
             statusCode: 200,
             body: JSON.stringify(data),
