@@ -13,7 +13,7 @@ exports.handler = async (event, context) => {
         }
 
         // Thinkific API request
-        const response = await fetch(`https://api.thinkific.com/api/public/v1/enrollments?user_id=${userId}`, {
+        const response = await fetch(`https://api.thinkific.com/api/public/v1/enrollments?query[user_id]=${userId}`, {
             headers: {
                 "Content-Type": "application/json",
                 "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
