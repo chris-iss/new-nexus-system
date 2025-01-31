@@ -10,9 +10,10 @@ exports.handler = async (event, context) => {
                 headers: { "Access-Control-Allow-Origin": "*" }
             };
         }
-        // Thinkific API request
-        const response = await fetch(`https://api.thinkific.com/api/public/v1/users/${userId}/enrollments`, {
+        // Thinkific API request https://api.thinkific.com/api/public/v1/enrollments?query[user_id]=USER_ID
+        const response = await fetch(`https://api.thinkific.com/api/public/v1/enrollments?query[user_id]=${userId}`, {
             headers: {
+                "Content-Type": "application/json",
                 "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
                 "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN,
             }
