@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 exports.handler = async (event) => {
     try {
         const { THINKIFIC_API_KEY, THINKIFIC_SUB_DOMAIN } = process.env;
-        const response = await fetch(`https://api.thinkific.com/api/public/v1/courses`, {
+        const response = await fetch(`https://api.thinkific.com/api/public/v1/products`, {
             headers: {
                 "X-Auth-API-Key": THINKIFIC_API_KEY,
                 "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN
