@@ -1,19 +1,21 @@
 exports.handler = async (event, context) => {
     try {
         // Extract userId from query parameters
-        const userId = event.queryStringParameters.userId;
-        console.log("Received userId:", userId); // Log userId for debugging
+        //const userId = event.queryStringParameters.userId;
+        //console.log("Received userId:", userId); // Log userId for debugging
 
-        if (!userId) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: "Missing userId parameter" }),
-                headers: { "Access-Control-Allow-Origin": "*" }
-            };
-        }
+        // if (!userId) {
+        //     return {
+        //         statusCode: 400,
+        //         body: JSON.stringify({ error: "Missing userId parameter" }),
+        //         headers: { "Access-Control-Allow-Origin": "*" }
+        //     };
+        // }
+
+        console.log("EVENT-DATA:", event)
 
         // Thinkific API request
-        const response = await fetch(`https://api.thinkific.com/api/public/v1/enrollments`, {
+        const response = await fetch(`https://api.thinkific.com/api/public/v1/courses`, {
             headers: {
                 "Content-Type": "application/json",
                 "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
