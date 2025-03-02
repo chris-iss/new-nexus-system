@@ -32,14 +32,14 @@ exports.handler = async (event) => {
         return {
             statusCode: 500,
             headers: { "Access-Control-Allow-Origin": "*" },
-            body: JSON.stringify({ error: "Missing API Key or Subdomain" })
+            body: JSON.stringify({ error: "Missing API Key or Subdomain in environment variables" })
         };
     }
 
     const GRAPHQL_ENDPOINT = "https://api.thinkific.com/api/public/v1/graphql";
 
     console.log("🔗 Sending request to Thinkific API...");
-    
+
     try {
         const response = await fetch(GRAPHQL_ENDPOINT, {
             method: "POST",
@@ -55,6 +55,16 @@ exports.handler = async (event) => {
 
         const textResponse = await response.text(); // ✅ Get raw response
         console.log("📩 Thinkific Raw Response:", textResponse);
+
+        // Check if the response is HTML (error page) instead of JSON
+        if (textResponse.startsWith("<")) {
+            console.error("❌ Received HTML instead of JSON. Possible API Key/Subdomain issue.");
+            return {
+                statusCode: 500,
+                headers: { "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({ error: "Invalid API response: Received HTML instead of JSON." })
+            };
+        }
 
         const data = JSON.parse(textResponse);
 
