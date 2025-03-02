@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
+    // Handle CORS Preflight Request
     if (event.httpMethod === "OPTIONS") {
         return {
             statusCode: 200,
@@ -13,25 +14,31 @@ exports.handler = async (event) => {
         };
     }
 
+    // Allow only POST requests
     if (event.httpMethod !== "POST") {
         return {
             statusCode: 405,
-            headers: { "Allow": "POST" },
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Allow": "POST"
+            },
             body: JSON.stringify({ error: "Method Not Allowed" })
         };
     }
 
+    // Load API credentials
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
     const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
     if (!THINKIFIC_API_KEY || !THINKIFIC_SUB_DOMAIN) {
         return {
             statusCode: 500,
+            headers: { "Access-Control-Allow-Origin": "*" }, // ✅ Always include CORS headers
             body: JSON.stringify({ error: "Missing API Key or Subdomain in environment variables" })
         };
     }
 
-    const GRAPHQL_ENDPOINT = "https://api.thinkific.com/api/public/v1/graphql"; // ✅ Correct Endpoint
+    const GRAPHQL_ENDPOINT = "https://api.thinkific.com/api/public/v1/graphql"; // ✅ Correct Thinkific GraphQL API
 
     try {
         const response = await fetch(GRAPHQL_ENDPOINT, {
@@ -45,21 +52,30 @@ exports.handler = async (event) => {
         });
 
         const data = await response.json();
-        console.log("Thinkific API Response:", data);
+
+        if (!response.ok) {
+            return {
+                statusCode: response.status,
+                headers: { "Access-Control-Allow-Origin": "*" }, // ✅ Always include CORS headers
+                body: JSON.stringify({ error: data })
+            };
+        }
 
         return {
             statusCode: 200,
             headers: {
-                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Origin": "*", // ✅ CORS Header
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(data)
         };
     } catch (error) {
         console.error("GraphQL Fetch Error:", error);
+
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Error fetching GraphQL data" })
+            headers: { "Access-Control-Allow-Origin": "*" }, // ✅ Fixes CORS on errors
+            body: JSON.stringify({ error: "Error fetching GraphQL data", details: error.message })
         };
     }
 };
