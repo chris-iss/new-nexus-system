@@ -1,7 +1,8 @@
 const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
-    // Handle CORS Preflight Request
+    console.log("🔍 Incoming Request:", event.httpMethod);
+
     if (event.httpMethod === "OPTIONS") {
         return {
             statusCode: 200,
@@ -14,49 +15,54 @@ exports.handler = async (event) => {
         };
     }
 
-    // Allow only POST requests
     if (event.httpMethod !== "POST") {
+        console.log("⛔ Method Not Allowed");
         return {
             statusCode: 405,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Allow": "POST"
-            },
+            headers: { "Access-Control-Allow-Origin": "*" },
             body: JSON.stringify({ error: "Method Not Allowed" })
         };
     }
 
-    // Load API credentials
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
     const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
     if (!THINKIFIC_API_KEY || !THINKIFIC_SUB_DOMAIN) {
+        console.log("❌ Missing API Key or Subdomain");
         return {
             statusCode: 500,
-            headers: { "Access-Control-Allow-Origin": "*" }, // ✅ Always include CORS headers
-            body: JSON.stringify({ error: "Missing API Key or Subdomain in environment variables" })
+            headers: { "Access-Control-Allow-Origin": "*" },
+            body: JSON.stringify({ error: "Missing API Key or Subdomain" })
         };
     }
 
-    const GRAPHQL_ENDPOINT = "https://api.thinkific.com/api/public/v1/graphql"; // ✅ Correct Thinkific GraphQL API
+    const GRAPHQL_ENDPOINT = "https://api.thinkific.com/api/public/v1/graphql";
 
+    console.log("🔗 Sending request to Thinkific API...");
+    
     try {
         const response = await fetch(GRAPHQL_ENDPOINT, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-Auth-API-Key": THINKIFIC_API_KEY, // ✅ Correct API Key Header
-                "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN // ✅ Correct Subdomain Header
+                "X-Auth-API-Key": THINKIFIC_API_KEY,
+                "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN
             },
             body: event.body
         });
 
-        const data = await response.json();
+        console.log("🟢 Response Status:", response.status);
+
+        const textResponse = await response.text(); // ✅ Get raw response
+        console.log("📩 Thinkific Raw Response:", textResponse);
+
+        const data = JSON.parse(textResponse);
 
         if (!response.ok) {
+            console.log("❌ API Error:", data);
             return {
                 statusCode: response.status,
-                headers: { "Access-Control-Allow-Origin": "*" }, // ✅ Always include CORS headers
+                headers: { "Access-Control-Allow-Origin": "*" },
                 body: JSON.stringify({ error: data })
             };
         }
@@ -64,17 +70,17 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                "Access-Control-Allow-Origin": "*", // ✅ CORS Header
+                "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(data)
         };
     } catch (error) {
-        console.error("GraphQL Fetch Error:", error);
+        console.error("🔥 GraphQL Fetch Error:", error);
 
         return {
             statusCode: 500,
-            headers: { "Access-Control-Allow-Origin": "*" }, // ✅ Fixes CORS on errors
+            headers: { "Access-Control-Allow-Origin": "*" },
             body: JSON.stringify({ error: "Error fetching GraphQL data", details: error.message })
         };
     }
