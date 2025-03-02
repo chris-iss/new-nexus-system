@@ -15,7 +15,8 @@ exports.handler = async (event) => {
 
     const { THINKIFIC_API_KEY, THINKIFIC_SUB_DOMAIN } = process.env;
 
-    const GRAPHQL_ENDPOINT = "https://yourgraphqlapi.com/graphql"; // Replace with actual GraphQL API
+    const GRAPHQL_ENDPOINT = "https://api.thinkific.com/graphql"; 
+
 
     try {
         const response = await fetch(GRAPHQL_ENDPOINT, {
