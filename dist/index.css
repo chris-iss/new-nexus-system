@@ -1,452 +1,955 @@
-html, body {
-    height: 100%;
-    margin: 0;
+main.custom,
+.rich-text__container,
+.section__content,
+.dashboard-container {
+    display: flex;
+    width: 98vw !important;
+    max-width: none !important;
+    margin: 0 auto;
+    padding: 0 !important;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
-.wrapper {
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center;     /* Center vertically */
-    height: 100vh;           /* Full viewport height */
+/*LEFT-SIDE*/
+.leftSide {
+    position: relative;
+    flex: 1.5;
+    background-color: #fff;
+    overflow-x: none !important;
 }
 
-/* Form container */
-.form-lock-container {
+.leftSide-inner-wrapper {
+    position: relative;
+}
+
+.first-nav-item {
+    margin-top: 20px !important;
+}
+
+.leftSide img {
+    width: 55px;
+    height: 55px;
+}
+
+.leftSide .img-container {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    color: #fff;
-    padding: 30px;
-    background-image: url("https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2023/09/26194839/ISS_Graphic_Pattern_RGB_Slate_Dark.svg");
-    background-size: cover;
-    background-position: center;
-    
-    width: 90%;
-    max-width: 400px; /* Makes it responsive */
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Image */
-  .form-lock-container img {
-    max-width: 80px;
-    margin-bottom: 20px;
-  }
-  
-  /* Heading */
-  .form-lock-container h2 {
+    justify-content: space-between;
+    display: flex;
+    gap: 11px;
+}
+
+.leftSide .img-container p {
     font-size: 20px;
-    margin-bottom: 15px;
-  }
-  
-  /* Input field */
-  .pin-input {
-    width: 100%;
-    height: 50px;
-    margin-bottom: 15px;
-    padding-left: 15px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    outline: none;
-  }
-  
-  /* Submit button */
-  .submit_activate_form {
-    width: 100%;
-    height: 50px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s;
-  }
-  
-  .submit_activate_form:hover {
-    background-color: #34c780;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 600px) {
-    .form-lock-container {
-      width: 100%;
-      max-width: 350px;
-      padding: 20px;
-    }
-    
-    .form-lock-container h2 {
-      font-size: 18px;
-    }
-    
-    .pin-input {
-      height: 45px;
-      font-size: 14px;
-    }
-    
-    .submit_activate_form {
-      height: 45px;
-      font-size: 14px;
-    }
-  }
+    font-weight: 700;
+}
 
-  .form-container {
+.dashboard-icon-container {
+    position: relative;
     display: flex;
-    width: 100%;
-    max-width: 1200px;
-  }
-
-.leftside {
-    background-image: url("https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2023/09/26194839/ISS_Graphic_Pattern_RGB_Slate_Dark.svg");
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-    background-color: #000000;
-    width: 70%;
-    height: auto;
-}
-
-.leftside img {
-    width: 100px;
-    height: 100px;
-    animation: rotate 5s linear infinite; 
-}
-
-@keyframes rotate {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  .form-activation-container {
-    display: flex;
-    flex-direction: column;
-    margin-top: 40px;
-    color: #ffff;
-  }
-
-  .form-activation-container label {
-    font-size: 20px;
+    max-width: 180px;
+    height: 50px;
+    gap: 10px;
+    margin-top: 20px;
     margin-bottom: 10px;
-    font-weight: bold;
-  }
-
-  .activate-input {
-    width: 400px;
-    height: 30px;
-    outline: none;
-    padding: 10px;
-    background-color: #e7e7e7;
-    font-size: 16px;
-  }
-
-  .submit_activate_form {
-    width: 40%;
-    height: 50px;
-    margin-top: 3px;
-    margin-bottom: 20px;
-    font-size: 16px;
-    border-radius: 100px;
-    cursor: pointer;
-    background-color: #06C168;
-    color: #fff;
-  }
-
-.rightside {
-    background-color: #f3f3f3;
-    width: 70%;
-    height: auto;
+    background-color: rgba(198, 205, 243, 0.537);
+    border-radius: 15px;
+    padding-left: 20px;
 }
 
-.rightside p {
-    text-align: center;
-    font-size: 30px;
-    font-weight: 600;
-    color: #06C168;
+.dashboard-icon-container img {
+    width: 23px;
+    height: 23px;
 }
 
-.input-email {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    width: 90%;
-    height: 50px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    margin-left: 25px;
-    margin-right: 15px;
-    border: 1px solid #9a9a9a;
-}
-
-.input {
-    outline: none;
-    width: 80%;
-    height: 40px;
-    border: none;
-    background-color: #f3f3f3;
-
-}
-
-.input-email .input::placeholder {
-    color: #aaa;
-}
-
-.fa-solid {
-    margin-left: 10px;
-    color: #06C168;
+.dashboard-icon-container p {
     font-size: 20px;
 }
 
-.input-status {
+.iss-logo-container {
     display: flex;
     align-items: center;
-    gap: 20px;
-    width: 90%;
-    height: 50px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    margin-left: 25px;
-    margin-right: 15px;
-    border: 1px solid #9a9a9a;
-}
-
-.input-status i {
-    margin-left: 10px;
-    font-size: 25px;
-    color: #06C168;
-}
-
-.input-status .input,
-.input-status .dropdown {
-    border: none;
-    outline: none;
-    font-size: 14px;
-    padding: 5px;
-    flex: 1; /* Makes input and dropdown share space */
-}
-
-.input-status .dropdown {
-    background-color: #fff;
-    cursor: pointer;
-    margin-right: 20px;
-}
-
-.input-status .input::placeholder {
-    color: #aaa;
-}
-
-/*Courses*/
-.input-course {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    width: 90%;
-    height: 100px;
+    gap: 10px;
     margin-top: 20px;
-    margin-bottom: 5px;
-    margin-left: 25px;
-    margin-right: 15px;
-    border: 1px solid #9a9a9a;
 }
 
-.input-course i {
-    margin-left: 10px;
-    font-size: 25px;
-    color: #06C168;
+.iss-logo-container p {
+    font-size: 15px !important;
 }
 
-.input-course .input,
-.input-course .dropdown {
-    border: none;
-    outline: none;
-    font-size: 14px;
-    padding: 5px;
-    flex: 1; /* Makes input and dropdown share space */
-}
-
-.input-course .dropdown {
-    background-color: #fff;
-    cursor: pointer;
-    margin-right: 20px;
-    width: 50%;
-}
-
-.input-course .input::placeholder {
-    color: #aaa;
-}
-
-
-
-
-/*Course id*/
-.input-course_ {
+.dashboard-icon-course {
     display: flex;
     align-items: center;
-    gap: 20px;
-    width: 90%;
+    max-width: 190px;
+    height: 50px;
+    gap: 10px;
+    margin-top: 2px;
+    padding-left: 20px;
+}
+
+.dashboard-icon-course:hover {
+    background-color: rgba(198, 205, 243, 0.537);
+    border-radius: 15px;
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.dashboard-icon-course::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: rgba(198, 205, 243, 0.537);
+    left: 0;
+    bottom: -2px;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease-out;
+}
+
+.dashboard-icon-course:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.dashboard-icon-course img {
+    width: 23px;
+    height: 23px;
+}
+
+.dashboard-icon-course p {
+    font-size: 18px;
+}
+
+.membership-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 220px;
+    height: 200px;
+    background-color: #5028a3;
+    margin-left: 20px;
+    margin-top: 40px;
+    border-radius: 15px;
+}
+
+.settings-container {
+    width: 100%;
+    max-width: 220px;
     height: auto;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    margin-left: 25px;
-    margin-right: 15px;
-    border: 1px solid #9a9a9a;
+    padding-bottom: 20px;
+    background-color: #ffffff;
+    margin-left: 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.input-course_ i {
-    margin-left: 10px;
-    font-size: 25px;
-    color: #06C168;
-}
-
-.input-course_ .input,
-.input-course_ .dropdown {
-    border: none;
-    outline: none;
-    font-size: 14px;
-    padding: 5px;
-    flex: 1; /* Makes input and dropdown share space */
-}
-
-.input-course_ .dropdown {
-    background-color: #fff;
-    cursor: pointer;
-    margin-right: 20px;
-    width: 50%;
-}
-
-.input-course_ .input::placeholder {
-    color: #aaa;
-}
-
-
-.input-qty {
+.settings-list {
     display: flex;
     align-items: center;
-    gap: 20px;
-    width: 90%;
-    height: 50px;
-    margin-top: 20px;
-    margin-left: 25px;
-    margin-right: 15px;
-    border: 1px solid #9a9a9a;
+    padding-top: 25px;
+    padding-left: 25px;
+    gap: 10px;
 }
 
-.input-qty i {
-    margin-left: 10px;
-    font-size: 25px;
-    color: #06C168;
+.settings-list img {
+    width: 20px;
+    height: 20px;
 }
 
-.input-qty .input,
-.input-qty .dropdown {
-    border: none;
-    outline: none;
-    font-size: 14px;
-    padding: 5px;
-    flex: 1; /* Makes input and dropdown share space */
+.settings-list a {
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
 }
 
-.input-qty .dropdown {
-    background-color: #fff;
-    cursor: pointer;
-    margin-right: 20px;
-    width: 50%;
+.membership-container p {
+    text-align: center;
+    font-size: 20px;
+    color: #fff;
+    margin-top: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
-.input-qty .input::placeholder {
-    color: #aaa;
+.membership-container img {
+    width: 130px;
+    height: 30px;
+    margin-top: -20px;
 }
 
-.submit {
+.membership-container a {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 150px;
-    height: 50px;
-    background-color: #06C168;
-    margin-bottom: 30px;
-    color:  #fff;
-    margin: 25px;
-    cursor: pointer;
-    float: right;
-    border: #06C168;
-    border-radius: 100px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.select-course {
-    padding-bottom: 300px !important;
-}
-.input-container {
-    margin-bottom: 15px;
-    margin-right: 25px;
-    position: relative;
-    width: 100%;
-  }
-  
-  .custom-multi-select {
-    padding: 10px;
-    margin-top: 20px;
-    height: auto;
-    position: relative;
-    cursor: pointer;
+    text-decoration: none;
     background-color: #fff;
-  }
-  .custom-multi-select .tags-container {
+    color: #020955;
+    width: 150px;
+    height: 40px;
+    border-radius: 100px;
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none
+}
+
+#iss-close {
+    display: none;
+}
+
+/************************************************ LEFT-SIDE END **********************************************/
+
+
+/************************************************ RightSide CSS *********************************************/
+.rightSide {
+    height: 140vh;
+    flex: 7;
+    background-color: rgba(212, 218, 248, 0.355);
+}
+
+.welcome-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.welcome-user-container {
+    position: relative;
     display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-  .custom-multi-select .tag {
-    background: #007bff;
-    color: #fff;
-    border-radius: 3px;
-    padding: 3px 8px;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #fff;
+    height: auto;
+    padding-left: 40px;
+    padding-bottom: 28px;
+    margin-top: 20px;
+    border-radius: 15px;
+    overflow-y: hidden !important;
+}
+
+
+
+.welcome-wrapper img {
+    width: 70px;
+    height: 70px;
+    clip-path: circle(50%);
+    padding-top: 30px;
+    padding-right: 30px;
+}
+
+#welcome-open-icon {
+    display: none;
+}
+
+.welcome-user-container p {
+    font-weight: 700;
+    color: #000;
+    font-size: 20px;
+
+}
+
+.welcome-user-container span {
+    padding-bottom: 100px;
+    font-size: 20px;
+    color: #6b6b6b;
+}
+
+
+/* Banner Container */
+.banner-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1500px;
+
+}
+
+.banner-inner-leftCol {
+    width: 60%;
+    border-radius: 15px;
+}
+
+.banner-inner-rightCol {
+    width: 40%;
+}
+
+.banner-inner-rightCol p {
+    font-size: 20px
+}
+
+/* Left Banner (Blue Section) */
+.left-banner {
+    background-color: #5028a3;
+    color: white;
     display: flex;
     align-items: center;
-    gap: 5px;
-  }
-  .custom-multi-select .tag .remove-tag {
-    cursor: pointer;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-left: 30px;
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+    flex: 1.6;
+    /* Takes more space */
+    min-height: 200px;
+}
+
+/* Text Content */
+.banner-content {
+    max-width: 60%;
+}
+
+.banner-content p {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Button */
+.enroll-btn {
+    display: inline-block;
+    background-color: white;
+    color: #5028a3;
+    padding: 10px 15px;
     font-weight: bold;
-  }
-  .custom-multi-select .dropdown-options {
-    max-height: 200px;
-    overflow-y: auto;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: 0.3s ease;
+}
+
+.enroll-btn:hover {
+    background-color: #ffcc00;
+    color: black;
+}
+
+/* Image Section */
+.banner-image {
     position: absolute;
-    top: 100%;
-    left: 0;
+    bottom: -5px;
+    /* Moves the image slightly out of the box */
     right: 0;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    z-index: 10;
-    display: none;
-  }
-  .custom-multi-select .dropdown-options .option {
-    padding: 8px 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    width: 200px;
+    height: auto;
+}
+
+.banner-image img {
+    width: 290px;
+    height: 250px;
+    transform: translateY(10px);
+    transform: translateX(-30px);
+}
+
+/* Right Banner (Red Section) */
+.right-banner {
+    flex: 1;
+}
+
+.right-banner p {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.event-wrapper {
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    height: auto;
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+.event-text {
+    flex: 2;
+}
+
+.event-person-img {
+    flex: 1;
+}
+
+.event-text h5 {
+    padding-left: 15px;
+    padding-top: 5px;
+    color: #ff6938;
+}
+
+.event-text p {
+    padding-left: 15px;
+    color: #000;
+    font-weight: 700;
+    margin-top: -17px;
+}
+
+.event-details {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: -10px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #000;
+    padding-left: 15px;
+}
+
+.event-details img {
+    width: 13px;
+    height: 13px;
+}
+
+.event-text a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    background-color: #06C168;
+    color: #fff;
+    width: 140px;
+    height: 35px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 10px;
+    margin-left: 15px;
+    margin-bottom: 30px;
     cursor: pointer;
-  }
-  .custom-multi-select .dropdown-options .option:hover {
-    background: #f0f0f0;
-  }
-  .custom-multi-select.show .dropdown-options {
-    display: block;
-  }
+    border: none
+}
+
+.event-person-img img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    clip-path: circle(50%);
+    width: 120px;
+    height: 120px;
+}
+
+
+
+
+
+
+
+
+/* My Courses Section */
+.my-courses {
+    margin-top: 0px;
+    width: 90%;
+    max-width: 1200px;
+
+}
+
+.my-courses p {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+/* Courses Grid */
+.courses-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+/* Course Card */
+.course-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 15px;
+    width: 48%;
+}
+
+.course-card img {
+    width: 100%;
+    height: 140px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.course-card h3 {
+    font-size: 15px;
+    margin: 10px 0;
+}
+
+/* Progress Bar */
+.progress-container {
+    background: #e0e0e0;
+    height: 8px;
+    border-radius: 50px;
+    margin: 10px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background: #06C168;
+    border-radius: 50px;
+    transition: width 1s ease-in-out;
+}
+
+/* Continue Learning Button */
+.continue-btn {
+    background-color: #06C168;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.continue-btn:hover {
+    background-color: #218838;
+}
+
+.leaderborad-todaytask-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 20px;
+    gap: 30px;
+}
+
+.leaderboard-wrapper {
+    width: 50%;
+    height: 300px;
+}
+
+.leaderboard-child-wrapper {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 15px;
+    height: auto;
+    padding-bottom: 16px;
+}
+
+.leaderboardImg-container {
+    position: relative;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+.leaderboardImg-container p {
+    position: absolute;
+    font-size: 14px;
+    top: 78;
+    font-weight: 600;
+}
+
+.leaderboardImg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 100px;
+    border: 4px solid #000;
+}
+
+.leaderboardImg:nth-child(1) {
+    border: 4px solid #c4c808;
+}
+
+.leaderboardImg:nth-child(2) {
+    border: 4px solid #b6b6b6;
+}
+
+.leaderboardImg:nth-child(3) {
+    border: 4px solid #926f28;
+}
+
+.leaderboardImg img {
+    width: 60px;
+    height: 60px;
+    clip-path: circle(50%);
+}
+
+.vertical-leaderboardImg-container {
+    margin-top: 18px;
+    margin-left: 26px;
+}
+
+.vertical-leaderboard-content {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: 5px;
+}
+
+.vertical-leaderboard-content p {
+    font-size: 15px;
+}
+
+.vertical-leaderboard-content img {
+    width: 60px;
+    height: 60px;
+}
+
+.todaytask-wrapper {
+    width: 50%;
+}
+
+.todaytask-child-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-radius: 15px;
+    height: auto;
+    border: 2px solid #06C168;
+    background-color: #fff;
+}
+
+.todaytask-inner-child-wrapper {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    padding-top: 10px;
+    padding-bottom: 10;
+    padding-left: 15px;
+    font-size: 18px;
+    font-weight: 500;
+    gap: 6px;
+}
+
+.todaytask-inner-child-wrapper img {
+    width: 50px;
+    height: 50px;
+}
+
+.todaytask-icon-wrapper {
+    width: 20%;
+}
+
+.todaytask-icon-wrapper img {
+    width: 50px;
+    height: 50px;
+}
+
+.comment-child-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 15px;
+    height: auto;
+    background-color: #fff;
+}
+
+.comment-inner-child-wrapper {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    padding-top: 10px;
+    padding-bottom: 10;
+    padding-left: 15px;
+    font-size: 18px;
+    font-weight: 500;
+    gap: 6px;
+}
+
+.comment-inner-child-wrapper img {
+    width: 50px;
+    height: 50px;
+}
+
+.comment-icon-wrapper {
+    width: 20%;
+}
+
+.comment-icon-wrapper img {
+    width: 50px;
+    height: 50px;
+}
+
+
+
+
+
+
+/* ISS Connect Community Section */
+.iss-connect-community {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.iss-connect-community img {
+    width: 100%;
+}
+
+.iss-comm-text {
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+.iss-connect-card {
+    margin-top: -14px;
+    width: 100%;
+    height: 140px;
+    box-shadow: -1px 0px 8px 4px rgba(81, 81, 81, 0.1);
+}
+
+.iss-connect-card-textImg {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.iss-connect-card-textImg p {
+    font-size: 17px;
+}
+
+.iss-connect-card-textImg img {
+    width: 135px;
+    height: 40px;
+}
+
+.community-subtitl-container {
+    margin-top: -15px;
+    margin-left: 20px;
+    font-family: 15px;
+    color: #525252;
+}
+
+
+
+
+
+
+
+
+.leftSide,
+.rightSide {
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+
+
+/********************************************* Mobile CSS *************************************/
+@media (max-width: 768px) {
+    .dashboard-container {
+        position: relative;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    .leftSide {
+        width: 80%;
+        height: 100vh;
+        position: absolute;
+        background-color: #fff;
+        z-index: 10;
+        padding-right: 20px;
+        overflow: hidden !important;
+    }
+
+    .welcome-user-container {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        background-color: #fff !important;
+        padding-top: 30px;
+        padding-bottom: 20px;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        position: relative !important;
+    }
+
+    .membership-container {
+        max-width: 300px;
+        overflow: hidden !important;
+    }
+
+    .welcome-text-container p {
+        font-size: 18px;
+    }
+
+    .welcome-text-container span {
+        font-size: 18px;
+    }
+
+    .welcome-img-icon {
+        position: absolute;
+        top: 15;
+        left: 70;
+        z-index: 1000px;
+    }
+
+    .welcome-img-icon img {
+        width: 50px;
+        height: 50px;
+        clip-path: circle(50%);
+        margin-left: -30px;
+    }
+
+    #welcome-open-icon {
+        position: absolute;
+        right: 35px;
+        top: 10px;
+        z-index: 1000px;
+        display: block;
+    }
+
+    #welcome-open-icon img {
+        width: 30px;
+        height: 30px;
+        margin-left: -30px;
+    }
+
+
+    #iss-close {
+        display: block;
+    }
+
+    #iss-close img {
+        width: 30px;
+        height: 30px;
+    }
+
+
+
+    .iss-logo-container {
+        max-width: 200px !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .iss-logo-container img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .iss-logo-container p {
+        font-size: 17px !important;
+    }
+
+    .banner-inner-rightCol {
+        width: 100%;
+    }
+
+    .dashboard-icon-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        max-width: 380px;
+        height: 80px;
+        gap: 20px;
+        margin-top: 40px;
+        background-color: #a4c9f6d1;
+        border-radius: 15px;
+        padding-left: 20px;
+    }
+
+    .dashboard-icon-container p {
+        font-size: 20px;
+    }
+
+    .dashboard-icon-course {
+        display: flex;
+        align-items: center;
+        max-width: 350px;
+        height: 30px;
+        gap: 25px;
+        margin-top: 20px;
+        padding-left: 20px;
+    }
+
+    .dashboard-icon-course img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .dashboard-icon-course p {
+        font-size: 20px;
+    }
+
+    .banner-container {
+        display: flex;
+        flex-direction: column;
+        max-width: 1200px;
+        margin: 20px auto;
+    }
+
+
+
+    .banner-content p {
+        font-size: 16px;
+    }
+
+    .banner-image img {
+        width: 150px;
+        height: 170px;
+    }
+
+    .banner-inner-leftCol {
+        width: 100%;
+        border-radius: 15px;
+    }
+
+    .my-courses {
+        width: 100%;
+        max-width: 1200px;
+    }
+
+    .courses-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .course-card {
+        width: 90%;
+        height: auto;
+    }
+
+    /*RightSide CSS*/
+    .rightSide {
+        max-width: 100%;
+        overflow-x: hidden;
+        background-color: rgba(212, 218, 248, 0.355);
+        height: 400vh;
+    }
+
+    .leaderborad-todaytask-wrapper {
+        flex-direction: column;
+    }
+
+    .leaderboard-wrapper {
+        width: 100%;
+    }
+
+    .todaytask-wrapper {
+        margin-top: 80px;
+        width: 100%;
+    }
+
+    .event-person-img img {
+        width: 90px;
+        height: 90px;
+    }
+
+
+}

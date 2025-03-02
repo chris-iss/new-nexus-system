@@ -1,25 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Invoice Course Enrollment</title>
-    <link rel="stylesheet" href="index.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-  </head>
-  <body>
-    <div class="wrapper">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Course Enrollment</title>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+
+<body>
+  <!-- <div class="wrapper">
         <div class="form-lock-container">
             <img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2024/05/16110040/cropped-ISS-Favicon.png" alt="" />
             <h2>Enter an Authorized Access Code</h2>
             <input type="password" id="activateInput" class="pin-input" />
             <button type="submit" id="submitActivateForm" class="submit_activate_form">Activate</button>
         </div>
+    </div> -->
+
+  <div class="dashboard-container">
+    <!--LeftSide Column-->
+    <div class="leftSide">
+      <div class="leftSide-inner-wrapper">
+        <div class="img-container">
+          <div class="iss-logo-container">
+            <img
+              src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2024/12/15201453/ISS_Logo_png.png"
+              alt="iss-logo" />
+            <p>Institute of <br>Sustainability Studies</p>
+          </div>
+          <div id="iss-close">
+            <img
+              src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/24202902/close-icon-green.png"
+              alt="iss-logo" />
+          </div>
+        </div>
+
+        <div class="dashboard-icon-container">
+          <img
+            src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/21184913/dashboard-icon.png"
+            alt="iss-logo" />
+          <p>Dashboard</p>
+        </div>
+
+        <div id="sideNav-container">
+          <a href="#" style="text-decoration: none; color: #000;">
+            <div class="dashboard-icon-course">
+              <img
+                src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/21185606/My-courses-icon.png"
+                alt="course-icon" />
+              <p>My Course</p>
+            </div>
+          </a>
+          <a href="#" style="text-decoration: none; color: #000;">
+            <div class="dashboard-icon-course ${targetFirstNav}">
+              <img
+                src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/21190235/my-community-icon.png"
+                alt="community-icon" />
+              <p>My Community</p>
+            </div>
+          </a>
+          <a href="#" style="text-decoration: none; color: #000;">
+            <div class="dashboard-icon-course ${targetFirstNav}">
+              <img
+                src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/21191917/shorts-icon.png"
+                alt="shorts-icon" />
+              <p>Shorts</p>
+            </div>
+          </a>
+          <a href="#" style="text-decoration: none; color: #000;">
+            <div class="dashboard-icon-course ${targetFirstNav}">
+              <img
+                src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/21192023/leaderboard-icon.png"
+                alt="leaderboard-icon" />
+              <p>Leaderboard</p>
+            </div>
+          </a>
+          <a href="#" style="text-decoration: none; color: #000;">
+            <div class="dashboard-icon-course ${targetFirstNav}">
+              <img
+                src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/21211959/discover-icon.png"
+                alt="discover-icon" />
+              <p>Discover</p>
+            </div>
+          </a>
+          <a href="#" style="text-decoration: none; color: #000;">
+            <div class="dashboard-icon-course ${targetFirstNav}">
+              <img
+                src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/03/01173916/settings-icon.png"
+                alt="settings-icon" />
+              <p>Settings</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="settings-container" id="settingsContainer"></div>
+
+        <div class="membership-container">
+          <p>Extend Your <br> Membership Access</p>
+          <img
+            src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/24115302/star-icon-white.png"
+            alt="star-logo" />
+          <a href="https://google.com">Get Access</a>
+        </div>
+      </div>
     </div>
 
-    <script type="module" src="../dist/script.js "></script>
-  </body>
+    <!--Parent RightSide Column-->
+    <div class="rightSide">
+      <div class="welcome-user-container">
+        <div class="welcome-wrapper">
+          <div class="welcome-text-container">
+            <p>Welcome back, Christian</p>
+            <span>Lets boost your sustainability knowledge today and learn a few new things.</span>
+          </div>
+          <img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2023/11/13143928/Christian.png"
+            alt="event-anchor">
+        </div>
+        <div id="welcome-open-icon">
+          <img
+            src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/26142544/icons8-hamburger-menu-150.png"
+            alt="iss-logo" />
+        </div>
+      </div>
+
+
+
+      <div class="banner-container">
+        <div class="banner-inner-leftCol">
+          <div class="left-banner">
+            <div class="banner-content">
+              <p>Learn to comply with CSRD regulations with a short certificate course ⭐⭐⭐⭐⭐</p>
+              <a href="#" class="enroll-btn">Enrol Today</a>
+            </div>
+            <div class="banner-image">
+              <img
+                src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/25132322/banner-image.png"
+                alt="Man holding laptop">
+            </div>
+          </div>
+
+          <section class="my-courses">
+            <p>My Courses</p>
+            <div class="courses-container">
+              <!-- Course 1 -->
+              <div class="course-card">
+                <img
+                  src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2024/10/18160440/Circular-products.webp"
+                  alt="Course Image">
+                <h3>Certificate in Business with Biodiversity</h3>
+                <div class="progress-container">
+                  <div class="progress-bar" data-progress="70"></div>
+                </div>
+                <button class="continue-btn">Continue Learning</button>
+              </div>
+
+              <!-- Course 2 -->
+              <div class="course-card">
+                <img
+                  src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2023/12/29100633/diversity-equity-and-inclusion.jpg"
+                  alt="Course Image">
+                <h3>Certificate in Decarbonisation: Achieving Net Zero</h3>
+                <div class="progress-container">
+                  <div class="progress-bar" data-progress="10"></div>
+                </div>
+                <button class="continue-btn">Continue Learning</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="leaderborad-todaytask-wrapper">
+            <div class="leaderboard-wrapper">
+              <p>Leaderboard</p>
+              <div class="leaderboard-child-wrapper">
+                <div class="leaderboardImg-container">
+                  <div class="leaderboardImg">
+                    <img
+                      src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2023/11/13143928/Christian.png"
+                      alt="event-anchor">
+                    <p>1st Place</p>
+                  </div>
+                  <div class="leaderboardImg">
+                    <img
+                      src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2024/09/24101002/Alex.webp"
+                      alt="event-anchor">
+                    <p>2nd Place</p>
+                  </div>
+                  <div class="leaderboardImg">
+                    <img
+                      src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/15095641/cropped-Niall-300x300-1.png"
+                      alt="event-anchor">
+                    <p>3rd Place</p>
+                  </div>
+                </div>
+
+                <div class="vertical-leaderboardImg-container">
+                  <div class="vertical-leaderboard-content">
+                    <p>4th</p>
+                    <img
+                      src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2024/09/24095554/new-Nazia-new-colour.webp"
+                      alt="event-anchor">
+                    <p>Michael</p>
+                  </div>
+                  <div class="vertical-leaderboard-content">
+                    <p>5th</p>
+                    <img
+                      src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2024/09/24100623/Bronagh-new.webp"
+                      alt="event-anchor">
+                    <p>Jackson</p>
+                  </div>
+                  <div class="vertical-leaderboard-content">
+                    <p>6th</p>
+                    <img
+                      src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/15095734/ryan-new.png"
+                      alt="event-anchor">
+                    <p>Shruthi</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="todaytask-wrapper">
+              <p>Today's Task</p>
+              <div class="todaytask-child-wrapper">
+                <div class="todaytask-inner-child-wrapper">
+                  <img
+                    src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/28162843/reading-task-icon.png"
+                    alt="book-icon">
+                  <p>Complete 2 Lessons</p>
+                </div>
+                <div class="todaytask-icon-wrapper">
+                  <img
+                    src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/28161335/icons8-checkmark-144.png"
+                    alt="event-anchor">
+                </div>
+              </div>
+
+              <div class="comment-child-wrapper">
+                <div class="comment-inner-child-wrapper">
+                  <img
+                    src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/28163735/my-community-icon-1.png"
+                    alt="book-icon">
+                  <p>Respond to comment on ISS Community</p>
+                </div>
+                <div class="comment-icon-wrapper">
+                  <img
+                    src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/28164447/checkmark-gray.png"
+                    alt="event-anchor">
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="banner-inner-rightCol">
+          <p>Upcoming Event</p>
+          <div class="event-wrapper">
+            <div class="event-text">
+              <h5>Live Online Masterclass</h5>
+              <p>Grow Your Positive Impact & Income</p>
+              <div class="event-details">
+                <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar-icon">
+                <span>06 March 2025</span>
+              </div>
+              <a href="#">Enrol Today</a>
+            </div>
+            <div class="event-person-img">
+              <img
+                src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/25170929/placeholder.webp"
+                alt="event-anchor">
+            </div>
+          </div>
+
+          <div class="iss-comm-text">
+            ISS Connect Community
+          </div>
+
+          <div class="iss-connect-community">
+            <img
+              src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2023/12/29100633/diversity-equity-and-inclusion.jpg"
+              alt="event-anchor">
+            <div class="iss-connect-card">
+              <div class="iss-connect-card-textImg">
+                <p>ISS Connect</p>
+                <img
+                  src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/02/28174813/posters.png"
+                  alt="event-anchor">
+              </div>
+              <div class="community-subtitl-container">
+                Welcome to the ISS Connect! This is your space to engage with peers and explore key
+                topics.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <script type="module" src="../dist/script.js "></script>
+</body>
+
 </html>
