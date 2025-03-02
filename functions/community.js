@@ -36,7 +36,7 @@ exports.handler = async (event) => {
         };
     }
 
-    const GRAPHQL_ENDPOINT = "https://api.thinkific.com/api/public/v1/graphql";
+    const GRAPHQL_ENDPOINT = "https://api.thinkific.com/stable/graphql";
 
     console.log("🔗 Sending request to Thinkific API...");
 
