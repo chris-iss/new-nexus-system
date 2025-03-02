@@ -8,6 +8,7 @@ main.custom,
     margin: 0 auto;
     padding: 0 !important;
     font-family: Georgia, 'Times New Roman', Times, serif;
+    overflow: hidden !important;
 }
 
 /*LEFT-SIDE*/
