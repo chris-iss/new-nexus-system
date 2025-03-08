@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
         const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
         const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
-        const response = await fetch(`https://api.thinkific.com/api/public/v1/users?query[user_id]=${userId}`, {
+        const response = await fetch(`https://api.thinkific.com/api/public/v1/users/${userId}`, {
             headers: {
                 "Content-Type": "application/json",
                 "X-Auth-API-Key": THINKIFIC_API_KEY,
