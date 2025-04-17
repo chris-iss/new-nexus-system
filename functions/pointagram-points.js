@@ -1,6 +1,6 @@
 // /netlify/functions/leaderboard.js
 export async function handler(event, context) {
-    console.log("EVENT CHECK+++++++", event)
+    console.log("EVENT CHECK+++++++", event.body)
     const API_KEY = "JjKc6Z12gHxyKRQfKkSJFLGhZXMGJnMM";
     const API_URL = "https://app.pointagram.com/api/v2";
   
