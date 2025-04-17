@@ -8,21 +8,6 @@ export async function handler(event, context) {
       "Api-User": "learning@instituteofsustainabilitystudies.com"
     };
   
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
-    };
-  
-    // Handle preflight CORS request
-    if (event.httpMethod === "OPTIONS") {
-      return {
-        statusCode: 200,
-        headers: corsHeaders,
-        body: "OK"
-      };
-    }
-  
     try {
       const competitionsRes = await fetch(`${API_URL}/competitions`, { headers });
       const competitions = await competitionsRes.json();
@@ -30,7 +15,10 @@ export async function handler(event, context) {
       if (!competitions?.data?.length) {
         return {
           statusCode: 404,
-          headers: corsHeaders,
+          headers: {
+            "Access-Control-Allow-Origin": "*", // Or replace * with your site
+            "Access-Control-Allow-Headers": "Content-Type"
+          },
           body: JSON.stringify({ message: "No competitions found." })
         };
       }
@@ -48,13 +36,19 @@ export async function handler(event, context) {
   
       return {
         statusCode: 200,
-        headers: corsHeaders,
+        headers: {
+          "Access-Control-Allow-Origin": "*", // Allow all origins
+          "Access-Control-Allow-Headers": "Content-Type"
+        },
         body: JSON.stringify({ competition: competitions.data[0].name, leaderboard })
       };
     } catch (error) {
       return {
         statusCode: 500,
-        headers: corsHeaders,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type"
+        },
         body: JSON.stringify({ error: error.message })
       };
     }
