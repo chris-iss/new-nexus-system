@@ -18,7 +18,7 @@ export async function handler(event, context) {
         return {
           statusCode: 404,
           headers: {
-            "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com/pages/student-homepage",
+            "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "Content-Type"
           },
           body: JSON.stringify({ message: "No competitions found." })
@@ -43,7 +43,7 @@ export async function handler(event, context) {
       return {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com/pages/student-homepage",
+          "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "Content-Type"
         },
         body: JSON.stringify({ competition: competitions.data[0].name, leaderboard })
@@ -54,7 +54,7 @@ export async function handler(event, context) {
       return {
         statusCode: 500,
         headers: {
-          "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com/pages/student-homepage",
+          "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "Content-Type"
         },
         body: JSON.stringify({ error: error.message || "Something went wrong" })
