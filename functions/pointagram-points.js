@@ -33,19 +33,23 @@ export async function handler(event, context) {
       // STEP 2: Fetch players in that competition
       const playersRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
       const playersData = await playersRes.json();
-
-      console.log("SHOW DATA 1:", playersData)
-      console.log("SHOW DATA 2:", playersData.data)
   
-      if (!playersData?.data) {
+      console.log("PLAYERS RAW:", playersData);
+  
+      if (!playersData?.data?.players) {
         throw new Error("No players returned");
       }
   
-      const leaderboard = playersData.data.players.map((player, index) => ({
-        rank: index + 1,
-        name: player.name || player.email,
-        score: player.total_points
+      // STEP 3: Build leaderboard
+      const leaderboard = playersData.data.players.map((player) => ({
+        rank: parseInt(player.rank),
+        name: player.Name,
+        score: parseFloat(player.current_score),
+        icon: player.icon
       }));
+  
+      // Optional: Sort by rank in case it's unordered
+      leaderboard.sort((a, b) => a.rank - b.rank);
   
       return {
         statusCode: 200,
@@ -53,7 +57,10 @@ export async function handler(event, context) {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "Content-Type"
         },
-        body: JSON.stringify({ competition: allCompetitions[0].name, leaderboard })
+        body: JSON.stringify({
+          competition: allCompetitions[0].name,
+          leaderboard
+        })
       };
   
     } catch (error) {
