@@ -29,6 +29,8 @@ export async function handler(event, context) {
   
       const playersRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
       const playersData = await playersRes.json();
+
+      console.log("PLAYER-DATA:", playersData)
   
       if (!playersData?.data) {
         throw new Error("No player data returned");
