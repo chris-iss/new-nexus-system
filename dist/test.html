@@ -1,0 +1,429 @@
+<p>
+	<title>Student Dashboard</title>
+</p>
+<!-- Styles -->
+<style>
+	#loading-spinner {
+		position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); display: flex; justify-content: center; align-items: center; z-index: 2000;
+	}
+	
+	.spinner {
+		width: 50px; height: 50px; border: 5px solid #ddd; border-top: 5px solid #06c168; border-radius: 50%; display: flex; justify-content: center; align-items: center; position: relative; animation: spin 1s linear infinite;
+	}
+	
+	.spinner-logo {
+		width: 50px;
+		/* Adjust size */
+		height: auto; position: absolute; margin-top: 10px;
+	}
+	
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+	/* Modal styling */
+	
+	.modal {
+		display: none;
+		/* Hidden by default */
+		position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); overflow: auto;
+	}
+	
+	.modal-content {
+		background-color: #f9f9f9; margin: 10% auto; padding: 40px; width: 70%; border-radius: 12px; text-align: center; font-family: Arial, sans-serif; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); position: relative;
+	}
+	
+	.modal-header {
+		text-align: center; margin-bottom: 20px;
+	}
+	
+	.modal-lock-icon {
+		display: block; margin: 0 auto 60px; width: 70px; height: 70px;
+	}
+	
+	.modal-content h2 {
+		font-size: 35px; font-weight: bold; margin-bottom: 15px;
+	}
+	
+	.modal-features {
+		text-align: center; list-style-type: none; margin: 0; padding: 0; font-size: 16px; line-height: 1.8; color: #555;
+	}
+	
+	.modal-features li {
+		margin-bottom: 10px; color: #000; list-style-type: none;
+	}
+	
+	.modal-enroll-button {
+		background-color: #06c168; color: #fff; border: none; padding: 10px 20px; border-radius: 100px; cursor: pointer; font-size: 16px; margin-top: 20px;
+	}
+	
+	.modal-enroll-button a {
+		text-decoration: none; color: #fff;
+	}
+	
+	.modal-enroll-button:hover {
+		background-color: #218838;
+	}
+	
+	.modal-footer {
+		width: 100%; display: flex; align-items: center; justify-content: center; background-color: #000; padding: 10px 0; color: #fff; font-size: 14px; border-radius: 0 0 12px 12px; margin-top: 20px;
+	}
+	
+	.footer-logo {
+		height: 30px; margin-right: 10px;
+	}
+	
+	.footer-text {
+		font-size: 16px; color: #fff; font-family: Arial, sans-serif;
+	}
+	
+	.close {
+		display: flex; justify-content: center; align-items: center; color: #fff; float: right; font-size: 24px; font-weight: bold; cursor: pointer; border: 1px solid #000; background-color: #000; border-radius: 100px; width: 40px; height: 40px;
+	}
+	
+	.close:hover {
+		color: #fff; background-color: #06c168; border: 1px solid #06c168;
+	}
+	/**Locked icons*/
+	
+	.locked {
+		position: relative; filter: grayscale(100%); opacity: 0.5;
+	}
+	
+	.locked-link {
+		cursor: not-allowed; pointer-events: none;
+	}
+	
+	.lock-icon {
+		cursor: allowed; pointer-events: visible; cursor: pointer;
+	}
+	
+	.locked .lock-icon {
+		position: absolute; top: 50%; left: 50%; width: 55px; height: 55px; transform: translate(-50%, -50%); font-size: 30px; color: #333; background: rgba(72, 72, 72, 0.8); border-radius: 50%; padding: 5px;
+	}
+	/* Force full width on main and all parent containers */
+	
+	main.custom,
+	.rich-text__container,
+	.section__content,
+	.dashboard-container {
+		width: 82vw !important; max-width: none !important; margin: 0 auto; padding: 0 !important;
+	}
+	
+	.dashboard-container {
+		display: grid;
+		/* Use grid layout */
+		grid-template-columns: repeat(2, 1fr);
+		/* Two columns */
+		gap: 30px;
+		/* Space between items */
+		padding: 20px; justify-content: center;
+		/* Center the grid horizontally */
+		margin-bottom: 50px;
+	}
+	
+	.dashboard-item {
+		text-align: center;
+	}
+	/* Dashboard image styles */
+	
+	.dashboard-img {
+		width: 100%; height: 260px; border-radius: 5px; object-fit: cover; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition: box-shadow 0.3s ease, transform 0.2s;
+	}
+	/* Add hover effect */
+	
+	.dashboard-img:hover {
+		box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3); transform: scale(1.02);
+	}
+	
+	@media (max-width: 1024px) {
+		.dashboard-container {
+			grid-template-columns: 1fr; gap: 15px;
+		}
+		.dashboard-item {
+			flex: 1 1 45%; max-width: 45%;
+		}
+		.dashboard-img {
+			height: 160px;
+		}
+	}
+	
+	@media (max-width: 768px) {
+		.dashboard-container {
+			grid-template-columns: 1fr; gap: 15px; align-items: center;
+		}
+		.dashboard-item {
+			flex: 1 100%; max-width: 100%; margin-bottom: 20px;
+		}
+		.dashboard-img {
+			height: 160px;
+		}
+	}
+
+</style>
+<!-- Student Dashboard -->
+
+<p class="dashboard-header" style="padding-top: 20px; padding-bottom: -400px; font-size: 45px; font-weight: 500; text-align: center; font-family: Lora;">Learner Homepage</p>
+
+<p style="text-align: center; margin-top: -20px; margin-bottom: 20px; font-size: 17px; color: #616161;">Welcome to your Homepage &ndash; your hub for courses, progress, resources, and connections.</p>
+<div id="loading-spinner">
+	<div class="spinner"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2024/12/15201453/ISS_Logo_png.png" alt="ISS Logo" class="spinner-logo fr-fil fr-dib fr-draggable"></div></div>
+<!-- Dashboard Container -->
+<div class="dashboard-container">
+	<div class="dashboard-item">
+		<a href="https://instituteofsustainabilitystudies.thinkific.com/enrollments"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/21105517/Student-Dashboard-Designs.png" alt="Course 1" class="dashboard-img fr-fic fr-dii fr-draggable"></a></div>
+	<div class="dashboard-item locked" id="certificates">
+		<a href="https://accounts.accredible.com/retrieve-credentials" target="_blank" class="locked-link"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/15145037/myCert_3.png" alt="Course 2" class="dashboard-img fr-fic fr-dii fr-draggable"></a> <span class="lock-icon">🔒</span></div>
+	<div class="dashboard-item locked" id="community">
+		<a href="https://courses.instituteofsustainabilitystudies.com/communities/Q29tbXVuaXR5LTMxMDQz/" class="locked-link"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/15145054/myComm_2.png" alt="Course 2" class="dashboard-img fr-fic fr-dii fr-draggable"></a> <span class="lock-icon">🔒</span></div>
+	<div class="dashboard-item locked" id="master">
+		<a href="https://courses.instituteofsustainabilitystudies.com/communities/Q29tbXVuaXR5LTMxMDQz/spaces/Q29tbXVuaXR5U3BhY2UtMTg4ODQ4/" class="locked-link"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/15145125/myMaster.png" alt="Course 1" class="dashboard-img fr-fic fr-dii fr-draggable"></a> <span class="lock-icon">🔒</span></div>
+	<!--TO BE Deleted-->
+	<div class="dashboard-item" id="maintenance">
+		<a href="https://courses.instituteofsustainabilitystudies.com/pages/my-courses"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/31224142/maintenance.avif" alt="Course 1" class="dashboard-img fr-fic fr-dii fr-draggable"></a></div></div>
+<!-- Modal -->
+<div id="lockedModal" class="modal">
+	<div class="modal-content"><span class="close">&times;</span>
+		<div class="modal-header"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/25014228/key-icon.webp" alt="Lock Icon" class="modal-lock-icon fr-fic fr-dib fr-draggable">
+
+			<h2>Enrol in our business sustainability courses and unlock your full learning potential</h2>
+		</div>
+
+		<ul class="modal-features">
+			<li>Practical and comprehensive course content</li>
+			<li>Access to masterclasses and webinars with industry experts</li>
+			<li>Join an active community of like-minded professionals</li>
+			<li>Stay current with best in class content</li>
+		</ul>
+		<button class="modal-enroll-button">&nbsp;<a href="https://instituteofsustainabilitystudies.com/sustainability-courses/diploma-in-business-sustainability">&nbsp;Enroll
+Now&nbsp;</a>&nbsp;</button>
+	</div></div>
+<script>
+	setTimeout(() =>
+			{
+				document.getElementById("loading-spinner").style.display = "none"; // Hide Spinner
+				document.querySelector(".dashboard-container").style.display = "grid"; // Show Dashboard
+			}
+
+			, 1000); // 10 Seconds Delay
+		// Modal logic
+	const modal = document.getElementById("lockedModal");
+	const closeModal = document.querySelector(".close");
+
+	const showModal = () =>
+	{
+		modal.style.display = "block";
+	};
+	const hideModal = () =>
+	{
+		modal.style.display = "none";
+	};
+
+	closeModal.addEventListener("click", hideModal);
+	window.addEventListener("click", (event) =>
+	{
+		if (event.target === modal) hideModal();
+	});
+
+	// Define the free course
+	const freeCourse = "Certificate in Business Sustainability - Free Course";
+
+	// Function to wait for userId from Mixpanel or Thinkific Variables
+	function waitForUserId(callback)
+	{
+		const interval = setInterval(() =>
+			{
+				if (typeof userId !== 'undefined')
+				{
+					clearInterval(interval); // Stop checking
+					callback(userId); // Execute your callback with the data
+				}
+			}, 100); // Check every 100ms
+	}
+
+	// Function to check Mixpanel user details (define properly)
+	function waitForMixpanelPerson(callback)
+	{
+		const interval = setInterval(() =>
+		{
+			if (typeof mixpanelPerson !== 'undefined')
+			{
+				clearInterval(interval);
+				callback(mixpanelPerson);
+			}
+		}, 100);
+	}
+
+	const SERVERLESS_FUNCTION_URL = "https://nexus-sys.netlify.app/.netlify/functions/getEnrollments";
+
+	// Locking and unlocking logic(Fetching Student Enrollment)
+	async function fetchEnrollments(userId)
+	{
+		try
+		{
+			const response = await fetch(`${SERVERLESS_FUNCTION_URL}?userId=${userId}`);
+			if (!response.ok)
+			{
+				console.error(`API Error: ${response.status}`);
+				return [];
+			}
+
+			const data = await response.json();
+			console.log("Enrollment API Response:", data);
+
+			// Extract the `items` array from the response
+			return Array.isArray(data.items) ? data.items : [];
+		}
+		catch (error)
+		{
+			console.error("Error fetching enrollments:", error);
+			return [];
+		}
+	}
+
+	// Locking and unlocking logic
+	async function handleGridLocking(userId)
+	{
+		const enrollments = await fetchEnrollments(userId);
+
+		// Debugging Step: Log the extracted enrollments to check structure
+		console.log("Processed Enrollment Data:", enrollments);
+
+		// Ensure enrollments is an array before applying filter
+		if (!Array.isArray(enrollments))
+		{
+			console.error("Unexpected API Response: Expected an array but got:", enrollments);
+			return;
+		}
+
+		//To be removed after development
+		const hideMaintenanceGrid = enrollments.some(
+			(enrollment) => enrollment.user_email === "christian+test00004@instituteofsustainabilitystudies.com"
+		);
+
+
+		if (!hideMaintenanceGrid)
+		{
+			const mainGrid = document.getElementById("maintenance");
+
+			if (mainGrid)
+			{
+				mainGrid.style.display = "none";
+			}
+			else
+			{
+				console.warn("⚠️ Element with ID 'maintenance' not found.");
+			}
+		}
+
+
+
+		// Separate active and expired courses
+		const activeCourses = enrollments
+			.filter((enrollment) => !enrollment.expired && enrollment.course_name !== "") // Active if `expired: false`
+			.map((enrollment) => enrollment.course_name);
+
+		const expiredCourses = enrollments
+			.filter((enrollment) => enrollment.expired ||
+				(enrollment.expiry_date && new Date(enrollment.expiry_date) < new Date()))
+			.map((enrollment) => enrollment.course_name);
+
+
+		console.log("Expired Courses:", expiredCourses);
+
+		const nonPaidCourses = [
+			"Certificate in Business Sustainability - Free Course",
+			"Preview - ISS Online Platform", // Demo 1
+			"ISS Courseware (Preview)", // Demo 2
+		];
+
+		// Determine locking logic
+		const hasFreeCourse = activeCourses.includes("Certificate in Business Sustainability - Free Course");
+		const hasActivePaidCourses = activeCourses.some((course) => !nonPaidCourses.includes(course));
+		console.log("Active Courses:", activeCourses);
+
+		const allPaidCoursesExpired = expiredCourses.length > 0 && !hasActivePaidCourses;
+
+		// DOM Elements
+		const certGrid = document.getElementById("certificates");
+		const commGrid = document.getElementById("community");
+		const masterGrid = document.getElementById("master");
+		const lockedKeys = document.querySelectorAll(".lock-icon");
+
+		// **🔒 Lock the grids if:**
+		// 1. The user has only the free course (no active paid courses).
+		// 2. All paid courses are expired.
+		if (hasFreeCourse && !hasActivePaidCourses || allPaidCoursesExpired)
+		{
+			console.log("Locking grids: User has only the free course OR all paid courses are expired.");
+
+			// Lock grids
+			certGrid.classList.add("locked")
+			commGrid.classList.add("locked");
+			masterGrid.classList.add("locked");
+
+			lockedKeys.forEach((icon) =>
+			{
+				icon.style.display = "block";
+				icon.addEventListener("click", (event) =>
+				{
+					event.preventDefault();
+					showModal(); // Show modal for locked items
+				});
+			});
+
+			// Disable links
+			const certLink = certGrid.querySelector("a")
+			const commLink = commGrid.querySelector("a");
+			const masterLink = masterGrid.querySelector("a");
+
+			certLink.classList.add("locked-link");
+			certLink.style.pointerEvents = "none";
+			commLink.classList.add("locked-link");
+			commLink.style.pointerEvents = "none";
+			masterLink.classList.add("locked-link");
+			masterLink.style.pointerEvents = "none";
+
+		}
+		else
+		{
+			console.log("Unlocking grids: User has at least one active paid course.");
+
+			// Unlock grids
+			certGrid.classList.remove("locked");
+			commGrid.classList.remove("locked");
+			masterGrid.classList.remove("locked");
+
+			const certLink = certGrid.querySelector('a');
+			const commLink = commGrid.querySelector("a");
+			const masterLink = masterGrid.querySelector("a");
+
+			// Re-enable links
+			certLink.classList.remove("locked-link");
+			certLink.style.pointerEvents = "auto";
+			commLink.classList.remove("locked-link");
+			commLink.style.pointerEvents = "auto";
+			masterLink.classList.remove("locked-link");
+			masterLink.style.pointerEvents = "auto";
+
+			// Hide lock icons
+			lockedKeys.forEach((icon) =>
+			{
+				icon.style.display = "none";
+			});
+		}
+	}
+
+
+	// Fetch user ID dynamically (from Thinkific or Mixpanel)
+	waitForUserId((userId) =>
+	{
+		console.log("User ID:", userId);
+		handleGridLocking(userId);
+	});
+
+</script>
