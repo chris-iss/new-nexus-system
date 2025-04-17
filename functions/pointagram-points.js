@@ -1,43 +1,45 @@
-// /netlify/functions/leaderboard.js
 export async function handler(event, context) {
-    console.log("EVENT CHECK+++++++", event.body)
     const API_KEY = "JjKc6Z12gHxyKRQfKkSJFLGhZXMGJnMM";
     const API_URL = "https://app.pointagram.com/api/v2";
   
     const headers = {
       "Api-Key": API_KEY,
       "Content-Type": "application/json",
-      "Api-User": "learning@instituteofsustainabilitystudies.com" 
+      "Api-User": "learning@instituteofsustainabilitystudies.com"
     };
   
-    try {
-      // STEP 1: Get all competitions
-      const competitionsRes = await fetch(`${API_URL}/competitions`, {
-        headers
-      });
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
+    };
   
+    // Handle preflight CORS request
+    if (event.httpMethod === "OPTIONS") {
+      return {
+        statusCode: 200,
+        headers: corsHeaders,
+        body: "OK"
+      };
+    }
+  
+    try {
+      const competitionsRes = await fetch(`${API_URL}/competitions`, { headers });
       const competitions = await competitionsRes.json();
-
-      console.log("CHECKING DATA NOW:", competitions)
   
       if (!competitions?.data?.length) {
         return {
           statusCode: 404,
+          headers: corsHeaders,
           body: JSON.stringify({ message: "No competitions found." })
         };
       }
   
-      // STEP 2: Use the first competition ID (or loop through if you have multiples)
       const competitionId = competitions.data[0].id;
   
-      // STEP 3: Get players in the competition
-      const playersRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, {
-        headers
-      });
-  
+      const playersRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
       const playersData = await playersRes.json();
   
-      // Optional: format result (e.g. rank, name, points)
       const leaderboard = playersData.data.map((player, index) => ({
         rank: index + 1,
         name: player.name || player.email,
@@ -46,12 +48,13 @@ export async function handler(event, context) {
   
       return {
         statusCode: 200,
+        headers: corsHeaders,
         body: JSON.stringify({ competition: competitions.data[0].name, leaderboard })
       };
-  
     } catch (error) {
       return {
         statusCode: 500,
+        headers: corsHeaders,
         body: JSON.stringify({ error: error.message })
       };
     }
