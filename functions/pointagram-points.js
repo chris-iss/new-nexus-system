@@ -1,7 +1,7 @@
 // /netlify/functions/pointagram-points.js
 export async function handler(event, context) {
     const API_KEY = "JjKc6Z12gHxyKRQfKkSJFLGhZXMGJnMM";
-    const API_URL = "https://app.pointagram.com/api/v2";
+    const API_URL = "https://www.pointagram.com/wp-json/proxy-api/v1/competitions";
     const headers = {
       "Api-Key": API_KEY,
       "Content-Type": "application/json",
