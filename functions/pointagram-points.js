@@ -12,7 +12,7 @@ export async function handler(event, context) {
       const competitionsRes = await fetch(`${API_URL}/competitions`, { headers });
       const competitions = await competitionsRes.json();
 
-      console.log("SHOW ME:", competitions)
+      console.log("SHOW ME:", competitions.data)
   
       if (!competitions?.data?.length) {
         return {
