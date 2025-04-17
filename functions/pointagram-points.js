@@ -34,13 +34,11 @@ export async function handler(event, context) {
       const playersRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
       const playersData = await playersRes.json();
   
-      console.log("PLAYERS LOG:", playersData);
-  
       if (!playersData?.data) {
         throw new Error("No players returned");
       }
   
-      const leaderboard = playersData.data.map((player, index) => ({
+      const leaderboard = playersData.data.players.map((player, index) => ({
         rank: index + 1,
         name: player.name || player.email,
         score: player.total_points
