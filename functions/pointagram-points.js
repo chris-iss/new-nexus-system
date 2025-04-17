@@ -26,7 +26,7 @@ export async function handler(event, context) {
         };
       }
   
-      // STEP 2: Use the first competition ID (or loop through if you have multiple)
+      // STEP 2: Use the first competition ID (or loop through if you have multiples)
       const competitionId = competitions.data[0].id;
   
       // STEP 3: Get players in the competition
