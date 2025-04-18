@@ -51,7 +51,7 @@ export const handler = async (event) => {
 
         // Second Insert: Invoice Payments
         const proccessPaymentInvoices = {
-            item_code: requestBody.Item_code,
+            // item_code: requestBody.Item_code,
             description: requestBody.item,
             quantity: requestBody.quantity,
             currency: requestBody.currency,
