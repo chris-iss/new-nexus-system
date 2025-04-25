@@ -154,11 +154,8 @@
 //   }
 // };
 
-const fetch = require("node-fetch");
 const { createClient } = require("@supabase/supabase-js");
-const formidable = require("formidable");
-const fs = require("fs");
-const { Buffer } = require("buffer");
+const fetch = require("node-fetch");
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
@@ -187,57 +184,14 @@ exports.handler = async (event) => {
   }
 
   try {
-    const contentType = event.headers["content-type"] || event.headers["Content-Type"];
-    if (!contentType || !contentType.startsWith("multipart/form-data")) {
+    const { firstName, lastName, email, phone, userId, avatar_url } = JSON.parse(event.body);
+
+    if (!firstName || !lastName || !email || !phone || !userId) {
       return {
         statusCode: 400,
         headers: { "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ error: "Invalid content type" }),
+        body: JSON.stringify({ error: "Missing required fields" }),
       };
-    }
-
-    // Decode event.body from base64
-    const bodyBuffer = Buffer.from(event.body, "base64");
-
-    const form = formidable({
-      multiples: true,
-    });
-
-    const parseForm = () =>
-      new Promise((resolve, reject) => {
-        form.parse(
-          { headers: { "content-type": contentType }, buffer: bodyBuffer },
-          (err, fields, files) => {
-            if (err) reject(err);
-            else resolve({ fields, files });
-          }
-        );
-      });
-
-    const { fields, files } = await parseForm();
-
-    const { firstName, lastName, email, phone, userId } = fields;
-    let avatar_url = "";
-
-    if (files.file) {
-      const filePath = files.file[0].filepath || files.file.filepath; // Formidable v2 vs v3
-      const fileBuffer = fs.readFileSync(filePath);
-      const fileName = files.file[0].originalFilename || files.file.originalFilename;
-
-      const { data, error } = await supabase.storage
-        .from("avatars")
-        .upload(`avatars/${Date.now()}_${fileName}`, fileBuffer, {
-          contentType: files.file[0].mimetype || files.file.mimetype,
-          upsert: true,
-        });
-
-      if (error) throw error;
-
-      const { data: publicData } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(data.path);
-
-      avatar_url = publicData.publicUrl;
     }
 
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
@@ -249,20 +203,20 @@ exports.handler = async (event) => {
       email,
       phone_number: phone,
     };
-    if (avatar_url) updateData.avatar_url = avatar_url;
 
-    const thinkificRes = await fetch(
-      `https://api.thinkific.com/api/public/v1/users/${userId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Auth-API-Key": THINKIFIC_API_KEY,
-          "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
-        },
-        body: JSON.stringify(updateData),
-      }
-    );
+    if (avatar_url) {
+      updateData.avatar_url = avatar_url;
+    }
+
+    const thinkificRes = await fetch(`https://${THINKIFIC_SUB_DOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-API-Key": THINKIFIC_API_KEY,
+        "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
+      },
+      body: JSON.stringify(updateData),
+    });
 
     if (!thinkificRes.ok) {
       const errorText = await thinkificRes.text();
@@ -274,14 +228,14 @@ exports.handler = async (event) => {
     }
 
     const { error: supabaseError } = await supabase
-      .from("profiles") // Your Supabase table name
+      .from("profiles")
       .insert([
         {
           first_name: firstName,
           last_name: lastName,
           email,
           phone,
-          avatar_url,
+          avatar_url: avatar_url || null,
         },
       ]);
 
@@ -296,14 +250,14 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ message: "Profile updated successfully", avatar_url }),
+      body: JSON.stringify({ message: "Profile updated successfully" }),
     };
   } catch (error) {
-    console.error("Update failed:", error);
+    console.error("Error:", error.message);
     return {
       statusCode: 500,
       headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ error: error.message || "Server error" }),
+      body: JSON.stringify({ error: error.message }),
     };
   }
 };
