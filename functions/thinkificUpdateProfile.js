@@ -159,31 +159,55 @@ const fetch = require("node-fetch");
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
+
 const supabase = createClient(supabase_url, supabase_service_key);
 
 exports.handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+      body: "Preflight OK",
+    };
+  }
+
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+    return {
+      statusCode: 405,
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ error: "Method not allowed" }),
+    };
   }
 
   try {
     const { firstName, lastName, email, phone, userId, avatar_url } = JSON.parse(event.body);
+    console.log("", firstName, lastName, email, phone, avatar_url)
 
     if (!firstName || !lastName || !email || !phone || !userId) {
-      return { statusCode: 400, body: JSON.stringify({ error: "Missing required fields" }) };
+      return {
+        statusCode: 400,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Missing required fields" }),
+      };
     }
 
-    // Update Thinkific
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
     const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
-    const thinkificUpdate = {
+    const updateData = {
       first_name: firstName,
       last_name: lastName,
       email,
       phone_number: phone,
     };
-    if (avatar_url) thinkificUpdate.avatar_url = avatar_url;
+
+    if (avatar_url) {
+      updateData.avatar_url = avatar_url;
+    }
 
     const thinkificRes = await fetch(`https://${THINKIFIC_SUB_DOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
       method: "PUT",
@@ -192,26 +216,51 @@ exports.handler = async (event) => {
         "X-Auth-API-Key": THINKIFIC_API_KEY,
         "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
       },
-      body: JSON.stringify(thinkificUpdate),
+      body: JSON.stringify(updateData),
     });
 
     if (!thinkificRes.ok) {
       const errorText = await thinkificRes.text();
-      return { statusCode: 500, body: JSON.stringify({ error: "Thinkific update failed", details: errorText }) };
+      return {
+        statusCode: 500,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Thinkific update failed", details: errorText }),
+      };
     }
 
-    // Insert into Supabase
-    const { error } = await supabase.from("profiles").insert([
-      { first_name: firstName, last_name: lastName, email, phone, avatar_url: avatar_url || null },
-    ]);
+    const { error: supabaseError, data } = await supabase
+      .from("profiles")
+      .insert([
+        {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone,
+          avatar_url: avatar_url || null,
+        },
+      ]);
 
-    if (error) {
-      return { statusCode: 500, body: JSON.stringify({ error: "Supabase insert failed", details: error.message }) };
+      console.log("HELLO:", data)
+
+    if (supabaseError) {
+      return {
+        statusCode: 500,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Supabase insert failed", details: supabaseError.message }),
+      };
     }
 
-    return { statusCode: 200, body: JSON.stringify({ message: "Profile updated successfully" }) };
+    return {
+      statusCode: 200,
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ message: "Profile updated successfully" }),
+    };
   } catch (error) {
-    console.error("Server error:", error.message);
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    console.error("Error:", error.message);
+    return {
+      statusCode: 500,
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ error: error.message }),
+    };
   }
 };
