@@ -258,8 +258,9 @@ exports.handler = async (event) => {
     console.error("Error:", error.message);
     return {
       statusCode: 500,
-      headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ error: error.message }),
+      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ error: error.message || "Server error" }),
     };
+    
   }
 };
