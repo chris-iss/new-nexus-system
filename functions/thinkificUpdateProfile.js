@@ -112,7 +112,13 @@ exports.handler = async (event, context) => {
       body: JSON.stringify(updateData),
     });
 
-    const thinkificData = await thinkificRes.json();
+    const thinkificText = await thinkificRes.text();
+    let thinkificData;
+    try {
+      thinkificData = JSON.parse(thinkificText);
+    } catch (err) {
+      thinkificData = null; // empty or invalid JSON
+    }
 
     if (!thinkificRes.ok) {
       return {
