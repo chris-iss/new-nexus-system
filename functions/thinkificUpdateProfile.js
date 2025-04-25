@@ -155,9 +155,10 @@
 // };
 
 const fetch = require("node-fetch");
+const { createClient } = require("@supabase/supabase-js");
 const formidable = require("formidable");
 const fs = require("fs");
-const { createClient } = require("@supabase/supabase-js");
+const { Buffer } = require("buffer");
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
@@ -186,28 +187,47 @@ exports.handler = async (event) => {
   }
 
   try {
-    const form = new formidable.IncomingForm({ multiples: true });
+    const contentType = event.headers["content-type"] || event.headers["Content-Type"];
+    if (!contentType || !contentType.startsWith("multipart/form-data")) {
+      return {
+        statusCode: 400,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Invalid content type" }),
+      };
+    }
+
+    // Decode event.body from base64
+    const bodyBuffer = Buffer.from(event.body, "base64");
+
+    const form = formidable({
+      multiples: true,
+    });
 
     const parseForm = () =>
       new Promise((resolve, reject) => {
-        form.parse(event, (err, fields, files) => {
-          if (err) reject(err);
-          else resolve({ fields, files });
-        });
+        form.parse(
+          { headers: { "content-type": contentType }, buffer: bodyBuffer },
+          (err, fields, files) => {
+            if (err) reject(err);
+            else resolve({ fields, files });
+          }
+        );
       });
 
     const { fields, files } = await parseForm();
+
     const { firstName, lastName, email, phone, userId } = fields;
     let avatar_url = "";
 
     if (files.file) {
-      const fileBuffer = fs.readFileSync(files.file.path);
-      const fileName = files.file.name;
+      const filePath = files.file[0].filepath || files.file.filepath; // Formidable v2 vs v3
+      const fileBuffer = fs.readFileSync(filePath);
+      const fileName = files.file[0].originalFilename || files.file.originalFilename;
 
       const { data, error } = await supabase.storage
         .from("avatars")
         .upload(`avatars/${Date.now()}_${fileName}`, fileBuffer, {
-          contentType: files.file.type,
+          contentType: files.file[0].mimetype || files.file.mimetype,
           upsert: true,
         });
 
@@ -217,7 +237,7 @@ exports.handler = async (event) => {
         .from("avatars")
         .getPublicUrl(data.path);
 
-      avatar_url = publicData.publicUrl;  // ← Correct way
+      avatar_url = publicData.publicUrl;
     }
 
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
@@ -253,9 +273,8 @@ exports.handler = async (event) => {
       };
     }
 
-    // ✅ Insert into Supabase Database
     const { error: supabaseError } = await supabase
-      .from("profiles") // <<< make sure "profiles" matches your Supabase table name exactly
+      .from("profiles") // Your Supabase table name
       .insert([
         {
           first_name: firstName,
