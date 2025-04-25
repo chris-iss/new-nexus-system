@@ -1,6 +1,5 @@
 const fetch = require("node-fetch");
 const FormData = require("form-data");
-const formidable = require("formidable");
 
 exports.handler = async (event, context) => {
   if (event.httpMethod === "OPTIONS") {
@@ -24,33 +23,51 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const form = new formidable.IncomingForm({ multiples: true });
-    const formParse = () =>
-      new Promise((resolve, reject) => {
-        form.parse(event, (err, fields, files) => {
-          if (err) reject(err);
-          else resolve({ fields, files });
-        });
-      });
+    const contentType = event.headers["content-type"] || event.headers["Content-Type"];
+    const boundary = contentType.split("boundary=")[1];
 
-    const { fields, files } = await formParse();
+    const bodyBuffer = Buffer.from(event.body, "base64");
+
+    const parts = bodyBuffer
+      .toString()
+      .split(`--${boundary}`)
+      .filter((part) => part.includes("name=") && part.trim() !== "--");
+
+    const fields = {};
+    let fileBuffer = null;
+    let fileName = "";
+
+    for (const part of parts) {
+      const matchName = part.match(/name="([^"]+)"/);
+      const name = matchName && matchName[1];
+
+      if (part.includes("filename=")) {
+        const fileMatch = part.match(/filename="([^"]+)"/);
+        fileName = fileMatch && fileMatch[1];
+        const fileContent = part.split("\r\n\r\n")[1];
+        fileBuffer = Buffer.from(fileContent.trim(), "binary");
+      } else {
+        const value = part.split("\r\n\r\n")[1]?.trim();
+        if (name) fields[name] = value;
+      }
+    }
 
     const { firstName, lastName, email, phone, userId } = fields;
     let avatar_url = "";
 
-    if (files.file) {
+    if (fileBuffer && fileName) {
       const WP_BASE_URL = process.env.WP_BASE_URL;
       const WP_USERNAME = process.env.WP_USERNAME;
       const WP_APP_PASSWORD = process.env.WP_APP_PASSWORD;
 
       if (!WP_BASE_URL) {
         throw new Error("Missing WP_BASE_URL environment variable");
-      }      
+      }
 
       const formData = new FormData();
-      formData.append("file", fs.createReadStream(files.file.path), files.file.name);
+      formData.append("file", fileBuffer, fileName);
 
-      const wpRes = await fetch(`https://instituteofsustainabilitystudies.com/wp-json/wp/v2/media`, {
+      const wpRes = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/media`, {
         method: "POST",
         headers: {
           Authorization: `Basic ${Buffer.from(`${WP_USERNAME}:${WP_APP_PASSWORD}`).toString("base64")}`,
@@ -80,14 +97,6 @@ exports.handler = async (event, context) => {
       email,
       phone_number: phone,
     };
-
-    console.log("UPDATE-DATA", updateData);
-  console.log("THINKIFIC API URL", `https://api.thinkific.com/api/public/v1/users/${userId}`);
-  console.log("HEADERS", {
-    "Content-Type": "application/json",
-    "X-Auth-API-Key": THINKIFIC_API_KEY,
-    "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
-  });
 
     if (avatar_url) updateData.avatar_url = avatar_url;
 
