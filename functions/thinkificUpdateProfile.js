@@ -227,7 +227,7 @@ exports.handler = async (event) => {
       };
     }
 
-    const { error: supabaseError } = await supabase
+    const { error: supabaseError, data } = await supabase
       .from("profiles")
       .insert([
         {
@@ -238,6 +238,8 @@ exports.handler = async (event) => {
           avatar_url: avatar_url || null,
         },
       ]);
+
+      console.log("HELLO:", data)
 
     if (supabaseError) {
       return {
