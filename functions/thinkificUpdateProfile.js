@@ -208,6 +208,8 @@ exports.handler = async (event) => {
       );
     });
 
+    console.log("FIELDS-DATA:", fields)
+
     const { firstName, lastName, email, phone, userId } = fields;
     if (!firstName || !lastName || !email || !phone || !userId) {
       return {
