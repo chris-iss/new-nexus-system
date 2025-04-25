@@ -1,7 +1,11 @@
 const fetch = require("node-fetch");
 const FormData = require("form-data");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
 exports.handler = async (event, context) => {
+  // Handle CORS
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -23,15 +27,15 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    // Decode base64 body
     const contentType = event.headers["content-type"] || event.headers["Content-Type"];
     const boundary = contentType.split("boundary=")[1];
-
     const bodyBuffer = Buffer.from(event.body, "base64");
 
     const parts = bodyBuffer
       .toString()
       .split(`--${boundary}`)
-      .filter((part) => part.includes("name=") && part.trim() !== "--");
+      .filter(part => part.includes("name=") && part.trim() !== "--");
 
     const fields = {};
     let fileBuffer = null;
@@ -55,17 +59,17 @@ exports.handler = async (event, context) => {
     const { firstName, lastName, email, phone, userId } = fields;
     let avatar_url = "";
 
+    // Upload file to WordPress if exists
     if (fileBuffer && fileName) {
       const WP_BASE_URL = process.env.WP_BASE_URL;
       const WP_USERNAME = process.env.WP_USERNAME;
       const WP_APP_PASSWORD = process.env.WP_APP_PASSWORD;
 
-      if (!WP_BASE_URL) {
-        throw new Error("Missing WP_BASE_URL environment variable");
-      }
+      const tmpFilePath = path.join(os.tmpdir(), fileName);
+      fs.writeFileSync(tmpFilePath, fileBuffer);
 
       const formData = new FormData();
-      formData.append("file", fileBuffer, fileName);
+      formData.append("file", fs.createReadStream(tmpFilePath), fileName);
 
       const wpRes = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/media`, {
         method: "POST",
@@ -88,6 +92,7 @@ exports.handler = async (event, context) => {
       avatar_url = wpData.source_url;
     }
 
+    // Update Thinkific user
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
     const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
