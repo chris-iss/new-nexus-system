@@ -260,7 +260,7 @@ exports.handler = async (event, context) => {
     }
 
     // ✅ Insert into Supabase DB
-    const { error: dbError } = await supabase.from("thinkifcUpdateProfile").upsert(
+    const { error: dbError } = await supabase.from("thinkifcUpdateProfile").insert(
       {
         id: userId,
         first_name: firstName,
