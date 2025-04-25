@@ -77,6 +77,14 @@ exports.handler = async (event, context) => {
       phone_number: phone,
     };
 
+    console.log("UPDATE-DATA", updateData);
+console.log("THINKIFIC API URL", `https://api.thinkific.com/api/public/v1/users/${userId}`);
+console.log("HEADERS", {
+  "Content-Type": "application/json",
+  "X-Auth-API-Key": THINKIFIC_API_KEY,
+  "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
+});
+
     if (avatar_url) updateData.avatar_url = avatar_url;
 
     const thinkificRes = await fetch(`https://api.thinkific.com/api/public/v1/users/${userId}`, {
