@@ -3,10 +3,26 @@ const fs = require("fs");
 const fetch = require("node-fetch");
 const FormData = require("form-data");
 
+const headers = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS"
+};
+
 exports.handler = async function (event) {
+  // Handle CORS preflight
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers,
+      body: "Preflight OK",
+    };
+  }
+
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
+      headers,
       body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
@@ -15,25 +31,24 @@ exports.handler = async function (event) {
 
   return new Promise((resolve, reject) => {
     form.parse(event, async function (err, fields, files) {
-        console.log("FIELDS DATA:", fields)
-        console.log("FIELDS FILE:", file)
+      console.log("FIELDS DATA:", fields);
+      console.log("FIELDS FILE:", files);
+
       if (err) {
         return resolve({
           statusCode: 500,
+          headers,
           body: JSON.stringify({ error: "Error parsing form" }),
         });
       }
 
-      // Extract text fields
       const firstName = fields.firstName?.[0];
       const lastName = fields.lastName?.[0];
       const email = fields.email?.[0];
       const phone = fields.phone?.[0];
-      const userId = fields.userId?.[0]; // Thinkific user ID
-
+      const userId = fields.userId?.[0];
       const file = files.file?.[0];
 
-      // 1. Upload image to WordPress (if exists)
       let avatar_url = "";
       if (file) {
         try {
@@ -41,10 +56,9 @@ exports.handler = async function (event) {
           const fileName = file.originalFilename;
           const fileStream = fs.createReadStream(filePath);
 
-          // 🧠 CHANGE THIS
           const WP_BASE_URL = process.env.WP_BASE_URL;
           const WP_USERNAME = process.env.WP_USERNAME;
-          const WP_APP_PASSWORD = WP_APP_PASSWORD;
+          const WP_APP_PASSWORD = process.env.WP_APP_PASSWORD;
 
           const formData = new FormData();
           formData.append("file", fileStream, fileName);
@@ -63,6 +77,7 @@ exports.handler = async function (event) {
           if (!wpRes.ok) {
             return resolve({
               statusCode: 500,
+              headers,
               body: JSON.stringify({ error: wpData.message || "Failed to upload to WordPress" }),
             });
           }
@@ -71,12 +86,12 @@ exports.handler = async function (event) {
         } catch (uploadErr) {
           return resolve({
             statusCode: 500,
+            headers,
             body: JSON.stringify({ error: "Image upload failed", details: uploadErr.message }),
           });
         }
       }
 
-      // 2. Update Thinkific user
       try {
         const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
         const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
@@ -97,7 +112,7 @@ exports.handler = async function (event) {
           headers: {
             "Content-Type": "application/json",
             "X-Auth-API-Key": THINKIFIC_API_KEY,
-            "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN ,
+            "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
           },
           body: JSON.stringify(updateData),
         });
@@ -107,17 +122,20 @@ exports.handler = async function (event) {
         if (!thinkificRes.ok) {
           return resolve({
             statusCode: 500,
+            headers,
             body: JSON.stringify({ error: thinkificData.message || "Failed to update user" }),
           });
         }
 
         return resolve({
           statusCode: 200,
+          headers,
           body: JSON.stringify({ message: "Profile updated", avatar_url }),
         });
       } catch (err) {
         return resolve({
           statusCode: 500,
+          headers,
           body: JSON.stringify({ error: "Thinkific update failed", details: err.message }),
         });
       }
