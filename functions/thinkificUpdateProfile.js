@@ -251,7 +251,7 @@ exports.handler = async (event) => {
       };
     }
 
-    const { error: supabaseError } = await supabase.from("profile_updates").insert([
+    const { error: supabaseError } = await supabase.from("thinkifcUpdateProfile").insert([
       {
         first_name: firstName,
         last_name: lastName,
