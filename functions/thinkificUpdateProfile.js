@@ -77,6 +77,7 @@ exports.handler = async (event, context) => {
         },
         body: formData,
       });
+      
 
       const wpData = await wpRes.json();
       if (!wpRes.ok) {
