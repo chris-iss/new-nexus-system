@@ -154,16 +154,17 @@
 //   }
 // };
 
-const { createClient } = require("@supabase/supabase-js");
 const fetch = require("node-fetch");
 const formidable = require("formidable");
 const fs = require("fs");
+const { createClient } = require("@supabase/supabase-js");
 
-const supabase_url = process.env.SUPABASE_URL;
-const supabase_service_key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabase_url, supabase_service_key);
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SERVICE_KEY
+);
 
-exports.handler = async (event, context) => {
+exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -185,7 +186,8 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const form = new formidable.IncomingForm({ multiples: true, keepExtensions: true });
+    const form = new formidable.IncomingForm({ multiples: true });
+
     const parseForm = () =>
       new Promise((resolve, reject) => {
         form.parse(event, (err, fields, files) => {
@@ -195,89 +197,75 @@ exports.handler = async (event, context) => {
       });
 
     const { fields, files } = await parseForm();
+
     const { firstName, lastName, email, phone, userId } = fields;
     let avatar_url = "";
 
-    // ✅ Upload image to Supabase Storage if exists
     if (files.file) {
-      const file = files.file;
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${userId}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      const fileBuffer = fs.readFileSync(files.file.path);
+      const fileName = files.file.name;
 
-      const { data, error: uploadError } = await supabase.storage
+      const { data, error } = await supabase.storage
         .from("avatars")
-        .upload(filePath, fs.createReadStream(file.path), {
-          cacheControl: "3600",
+        .upload(`avatars/${Date.now()}_${fileName}`, fileBuffer, {
+          contentType: files.file.type,
           upsert: true,
-          contentType: file.type,
         });
 
-      if (uploadError) {
-        console.error("Supabase Upload Error:", uploadError);
-        return {
-          statusCode: 500,
-          headers: { "Access-Control-Allow-Origin": "*" },
-          body: JSON.stringify({ error: "Failed to upload avatar to Supabase" }),
-        };
-      }
+      if (error) throw error;
 
-      avatar_url = `${supabase_url}/storage/v1/object/public/${data.fullPath}`;
+      const { publicURL } = supabase.storage.from("avatars").getPublicUrl(data.path);
+      avatar_url = publicURL;
     }
 
-    // ✅ Update Thinkific User
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
     const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
-    const thinkificData = {
+    const updateData = {
       first_name: firstName,
       last_name: lastName,
       email,
       phone_number: phone,
     };
-    if (avatar_url) {
-      thinkificData.avatar_url = avatar_url;
-    }
+    if (avatar_url) updateData.avatar_url = avatar_url;
 
-    const thinkificRes = await fetch(`https://api.thinkific.com/api/public/v1/users/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Auth-API-Key": THINKIFIC_API_KEY,
-        "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
-      },
-      body: JSON.stringify(thinkificData),
-    });
+    const thinkificRes = await fetch(
+      `https://api.thinkific.com/api/public/v1/users/${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-API-Key": THINKIFIC_API_KEY,
+          "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
+        },
+        body: JSON.stringify(updateData),
+      }
+    );
 
     if (!thinkificRes.ok) {
       const errorText = await thinkificRes.text();
-      console.error("Thinkific Update Error:", errorText);
       return {
         statusCode: 500,
         headers: { "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ error: "Thinkific update failed" }),
+        body: JSON.stringify({ error: "Thinkific update failed", details: errorText }),
       };
     }
 
-    // ✅ Insert into Supabase DB
-    const { error: dbError } = await supabase.from("thinkifcUpdateProfile").insert(
+    const { error: supabaseError } = await supabase.from("profile_updates").insert([
       {
-        id: userId,
         first_name: firstName,
         last_name: lastName,
         email,
-        phone_number: phone,
+        phone,
         avatar_url,
       },
-      { onConflict: "id" } // upsert based on `id`
-    );
+    ]);
 
-    if (dbError) {
-      console.error("Supabase DB Insert Error:", dbError);
+    if (supabaseError) {
       return {
         statusCode: 500,
         headers: { "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ error: "Failed to insert/update record in Supabase" }),
+        body: JSON.stringify({ error: "Supabase insert failed", details: supabaseError.message }),
       };
     }
 
@@ -295,4 +283,3 @@ exports.handler = async (event, context) => {
     };
   }
 };
-
