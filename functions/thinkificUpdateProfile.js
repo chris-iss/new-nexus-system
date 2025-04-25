@@ -1,11 +1,8 @@
 const fetch = require("node-fetch");
 const FormData = require("form-data");
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
+const formidable = require("formidable");
 
 exports.handler = async (event, context) => {
-  // Enable CORS
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -27,47 +24,27 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const contentType = event.headers["content-type"] || event.headers["Content-Type"];
-    const boundary = contentType.split("boundary=")[1];
-    const bodyBuffer = Buffer.from(event.body, "base64");
+    const form = new formidable.IncomingForm({ multiples: true });
+    const formParse = () =>
+      new Promise((resolve, reject) => {
+        form.parse(event, (err, fields, files) => {
+          if (err) reject(err);
+          else resolve({ fields, files });
+        });
+      });
 
-    const parts = bodyBuffer
-      .toString()
-      .split(`--${boundary}`)
-      .filter((part) => part.includes("name=") && part.trim() !== "--");
-
-    const fields = {};
-    let fileBuffer = null;
-    let fileName = "";
-
-    for (const part of parts) {
-      const matchName = part.match(/name="([^"]+)"/);
-      const name = matchName && matchName[1];
-
-      if (part.includes("filename=")) {
-        const fileMatch = part.match(/filename="([^"]+)"/);
-        fileName = fileMatch && fileMatch[1];
-        const fileContent = part.split("\r\n\r\n")[1];
-        fileBuffer = Buffer.from(fileContent.trim(), "binary");
-      } else {
-        const value = part.split("\r\n\r\n")[1]?.trim();
-        if (name) fields[name] = value;
-      }
-    }
+    const { fields, files } = await formParse();
 
     const { firstName, lastName, email, phone, userId } = fields;
     let avatar_url = "";
 
-    if (fileBuffer && fileName) {
+    if (files.file) {
       const WP_BASE_URL = process.env.WP_BASE_URL;
       const WP_USERNAME = process.env.WP_USERNAME;
       const WP_APP_PASSWORD = process.env.WP_APP_PASSWORD;
 
-      const tmpFilePath = path.join(os.tmpdir(), fileName);
-      fs.writeFileSync(tmpFilePath, fileBuffer);
-
       const formData = new FormData();
-      formData.append("file", fs.createReadStream(tmpFilePath), fileName);
+      formData.append("file", fs.createReadStream(files.file.path), files.file.name);
 
       const wpRes = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/media`, {
         method: "POST",
@@ -77,7 +54,6 @@ exports.handler = async (event, context) => {
         },
         body: formData,
       });
-      
 
       const wpData = await wpRes.json();
       if (!wpRes.ok) {
@@ -118,14 +94,14 @@ exports.handler = async (event, context) => {
     try {
       thinkificData = JSON.parse(thinkificText);
     } catch (err) {
-      thinkificData = null; // empty or invalid JSON
+      thinkificData = null;
     }
 
     if (!thinkificRes.ok) {
       return {
         statusCode: 500,
         headers: { "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ error: thinkificData.message || "Thinkific update failed" }),
+        body: JSON.stringify({ error: thinkificData?.message || "Thinkific update failed" }),
       };
     }
 
