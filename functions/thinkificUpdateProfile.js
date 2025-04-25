@@ -1,11 +1,7 @@
 const fetch = require("node-fetch");
 const FormData = require("form-data");
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
 
 exports.handler = async (event, context) => {
-  // Handle CORS
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -27,27 +23,36 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Decode base64 body
     const contentType = event.headers["content-type"] || event.headers["Content-Type"];
+
+    if (!contentType.includes("multipart/form-data")) {
+      return {
+        statusCode: 400,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Invalid content type" }),
+      };
+    }
+
+    // Parse the form manually
     const boundary = contentType.split("boundary=")[1];
     const bodyBuffer = Buffer.from(event.body, "base64");
-
     const parts = bodyBuffer
       .toString()
       .split(`--${boundary}`)
-      .filter(part => part.includes("name=") && part.trim() !== "--");
+      .filter((part) => part.includes("name=") && !part.includes("--"));
 
     const fields = {};
     let fileBuffer = null;
-    let fileName = "";
+    let fileName = "profile.jpg"; // default filename if none provided
 
     for (const part of parts) {
-      const matchName = part.match(/name="([^"]+)"/);
-      const name = matchName && matchName[1];
+      const nameMatch = part.match(/name="([^"]+)"/);
+      const name = nameMatch && nameMatch[1];
 
       if (part.includes("filename=")) {
-        const fileMatch = part.match(/filename="([^"]+)"/);
-        fileName = fileMatch && fileMatch[1];
+        const filenameMatch = part.match(/filename="([^"]+)"/);
+        if (filenameMatch) fileName = filenameMatch[1];
+
         const fileContent = part.split("\r\n\r\n")[1];
         fileBuffer = Buffer.from(fileContent.trim(), "binary");
       } else {
@@ -59,17 +64,17 @@ exports.handler = async (event, context) => {
     const { firstName, lastName, email, phone, userId } = fields;
     let avatar_url = "";
 
-    // Upload file to WordPress if exists
-    if (fileBuffer && fileName) {
+    // ✅ Upload file to WordPress if file exists
+    if (fileBuffer) {
       const WP_BASE_URL = process.env.WP_BASE_URL;
       const WP_USERNAME = process.env.WP_USERNAME;
       const WP_APP_PASSWORD = process.env.WP_APP_PASSWORD;
 
-      const tmpFilePath = path.join(os.tmpdir(), fileName);
-      fs.writeFileSync(tmpFilePath, fileBuffer);
-
       const formData = new FormData();
-      formData.append("file", fs.createReadStream(tmpFilePath), fileName);
+      formData.append("file", fileBuffer, {
+        filename: fileName,
+        contentType: "image/jpeg", // you can improve this later to detect file type
+      });
 
       const wpRes = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/media`, {
         method: "POST",
@@ -92,7 +97,7 @@ exports.handler = async (event, context) => {
       avatar_url = wpData.source_url;
     }
 
-    // Update Thinkific user
+    // ✅ Update Thinkific
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
     const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
@@ -103,7 +108,9 @@ exports.handler = async (event, context) => {
       phone_number: phone,
     };
 
-    if (avatar_url) updateData.avatar_url = avatar_url;
+    if (avatar_url) {
+      updateData.avatar_url = avatar_url;
+    }
 
     const thinkificRes = await fetch(`https://api.thinkific.com/api/public/v1/users/${userId}`, {
       method: "PUT",
@@ -119,7 +126,7 @@ exports.handler = async (event, context) => {
     let thinkificData;
     try {
       thinkificData = JSON.parse(thinkificText);
-    } catch (err) {
+    } catch {
       thinkificData = null;
     }
 
@@ -136,6 +143,7 @@ exports.handler = async (event, context) => {
       headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify({ message: "Profile updated successfully", avatar_url }),
     };
+
   } catch (error) {
     console.error("Update failed:", error);
     return {
