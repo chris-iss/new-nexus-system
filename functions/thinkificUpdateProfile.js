@@ -208,7 +208,7 @@ exports.handler = async (event) => {
       );
     });
 
-    console.log("FIELDS-DATA:", fields)
+    console.log("FIELDS-DATAs:", fields)
 
     const { firstName, lastName, email, phone, userId } = fields;
     if (!firstName || !lastName || !email || !phone || !userId) {
