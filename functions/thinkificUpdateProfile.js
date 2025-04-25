@@ -159,10 +159,10 @@ const formidable = require("formidable");
 const fs = require("fs");
 const { createClient } = require("@supabase/supabase-js");
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SERVICE_KEY
-);
+const supabase_url = process.env.SUPABASE_URL;
+const supabase_service_key = process.env.SERVICE_KEY;
+
+const supabase = createClient(supabase_url, supabase_service_key);
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
