@@ -156,142 +156,170 @@
 
 const { createClient } = require("@supabase/supabase-js");
 const fetch = require("node-fetch");
-const formidable = require("formidable");
+const Busboy = require("busboy"); // ✅ Use busboy instead of formidable
 const fs = require("fs");
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
-
 const supabase = createClient(supabase_url, supabase_service_key);
 
 exports.handler = async (event) => {
-    if (event.httpMethod === "OPTIONS") {
-        return {
-            statusCode: 200,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type",
-            },
-            body: "Preflight OK",
-        };
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+      body: "Preflight OK",
+    };
+  }
+
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 405,
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ error: "Method not allowed" }),
+    };
+  }
+
+  try {
+    const contentType = event.headers['content-type'] || event.headers['Content-Type'];
+    if (!contentType.startsWith('multipart/form-data')) {
+      return {
+        statusCode: 400,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Invalid content type" }),
+      };
     }
 
-    if (event.httpMethod !== "POST") {
-        return {
-            statusCode: 405,
-            headers: { "Access-Control-Allow-Origin": "*" },
-            body: JSON.stringify({ error: "Method not allowed" }),
-        };
+    const fields = {};
+    let fileBuffer;
+    let fileName = "";
+    let mimeType = "";
+
+    const busboy = Busboy({ headers: { 'content-type': contentType } });
+    const bodyBuffer = Buffer.from(event.body, 'base64');
+
+    await new Promise((resolve, reject) => {
+      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        const buffers = [];
+        file.on('data', (data) => buffers.push(data));
+        file.on('end', () => {
+          fileBuffer = Buffer.concat(buffers);
+          fileName = filename;
+          mimeType = mimetype;
+        });
+      });
+
+      busboy.on('field', (fieldname, value) => {
+        fields[fieldname] = value;
+      });
+
+      busboy.on('finish', resolve);
+      busboy.on('error', reject);
+
+      busboy.end(bodyBuffer);
+    });
+
+    const { firstName, lastName, email, phone, userId } = fields;
+    if (!firstName || !lastName || !email || !phone || !userId) {
+      return {
+        statusCode: 400,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Missing required fields" }),
+      };
     }
 
-    try {
-        const form = formidable({ multiples: false, keepExtensions: true });
+    let avatar_url = "";
 
-        const parseForm = () => {
-            return new Promise((resolve, reject) => {
-                form.parse(event, (err, fields, files) => {
-                    if (err) reject(err);
-                    else resolve({ fields, files });
-                });
-            });
-        };
-
-        const { fields, files } = await parseForm();
-        const { firstName, lastName, email, phone, userId } = fields;
-
-        let avatar_url = "";
-
-        if (files.file) {
-            const filePath = files.file.filepath;
-            const fileBuffer = fs.readFileSync(filePath);
-            const fileName = files.file.originalFilename;
-
-            const { data, error } = await supabase.storage
-                .from("avatars") // your Supabase storage bucket name
-                .upload(`avatars/${Date.now()}_${fileName}`, fileBuffer, {
-                    contentType: files.file.mimetype,
-                    upsert: true,
-                });
-
-            if (error) {
-                console.error("Supabase upload error:", error.message);
-                throw error;
-            }
-
-            const { data: publicUrlData } = supabase
-                .storage
-                .from("avatars")
-                .getPublicUrl(data.path);
-
-            avatar_url = publicUrlData.publicUrl;
-        }
-
-        const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
-        const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
-
-        const updateData = {
-            first_name: firstName,
-            last_name: lastName,
-            email,
-            phone_number: phone,
-        };
-
-        if (avatar_url) {
-            updateData.avatar_url = avatar_url;
-        }
-
-        const thinkificRes = await fetch(`https://${THINKIFIC_SUB_DOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Auth-API-Key": THINKIFIC_API_KEY,
-                "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
-            },
-            body: JSON.stringify(updateData),
+    if (fileBuffer) {
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .upload(`avatars/${Date.now()}_${fileName}`, fileBuffer, {
+          contentType: mimeType,
+          upsert: true,
         });
 
-        if (!thinkificRes.ok) {
-            const errorText = await thinkificRes.text();
-            return {
-                statusCode: 500,
-                headers: { "Access-Control-Allow-Origin": "*" },
-                body: JSON.stringify({ error: "Thinkific update failed", details: errorText }),
-            };
-        }
+      if (error) {
+        console.error("Supabase upload error:", error.message);
+        throw error;
+      }
 
-        const { error: supabaseError } = await supabase
-            .from("profiles")
-            .insert([
-                {
-                    first_name: firstName,
-                    last_name: lastName,
-                    email,
-                    phone,
-                    avatar_url: avatar_url || null,
-                },
-            ]);
+      const { data: publicUrlData } = supabase
+        .storage
+        .from("avatars")
+        .getPublicUrl(data.path);
 
-        if (supabaseError) {
-            return {
-                statusCode: 500,
-                headers: { "Access-Control-Allow-Origin": "*" },
-                body: JSON.stringify({ error: "Supabase insert failed", details: supabaseError.message }),
-            };
-        }
-
-        return {
-            statusCode: 200,
-            headers: { "Access-Control-Allow-Origin": "*" },
-            body: JSON.stringify({ message: "Profile updated successfully", avatar_url }),
-        };
-
-    } catch (error) {
-        console.error("Error:", error.message);
-        return {
-            statusCode: 500,
-            headers: { "Access-Control-Allow-Origin": "*" },
-            body: JSON.stringify({ error: error.message }),
-        };
+      avatar_url = publicUrlData.publicUrl;
     }
+
+    const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
+    const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
+
+    const updateData = {
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      phone_number: phone,
+    };
+
+    if (avatar_url) {
+      updateData.avatar_url = avatar_url;
+    }
+
+    const thinkificRes = await fetch(`https://${THINKIFIC_SUB_DOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-API-Key": THINKIFIC_API_KEY,
+        "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    if (!thinkificRes.ok) {
+      const errorText = await thinkificRes.text();
+      return {
+        statusCode: 500,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Thinkific update failed", details: errorText }),
+      };
+    }
+
+    const { error: supabaseError } = await supabase
+      .from("profiles")
+      .insert([
+        {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone,
+          avatar_url: avatar_url || null,
+        },
+      ]);
+
+    if (supabaseError) {
+      console.error("Supabase Insert error:", supabaseError.message);
+      return {
+        statusCode: 500,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Supabase insert failed", details: supabaseError.message }),
+      };
+    }
+
+    return {
+      statusCode: 200,
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ message: "Profile updated successfully", avatar_url }),
+    };
+  } catch (error) {
+    console.error("Catch Error:", error.message);
+    return {
+      statusCode: 500,
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ error: error.message }),
+    };
+  }
 };
