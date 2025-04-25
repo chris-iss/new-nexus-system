@@ -43,10 +43,14 @@ exports.handler = async (event, context) => {
       const WP_USERNAME = process.env.WP_USERNAME;
       const WP_APP_PASSWORD = process.env.WP_APP_PASSWORD;
 
+      if (!WP_BASE_URL) {
+        throw new Error("Missing WP_BASE_URL environment variable");
+      }      
+
       const formData = new FormData();
       formData.append("file", fs.createReadStream(files.file.path), files.file.name);
 
-      const wpRes = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/media`, {
+      const wpRes = await fetch(`https://instituteofsustainabilitystudies.com/wp-json/wp/v2/media`, {
         method: "POST",
         headers: {
           Authorization: `Basic ${Buffer.from(`${WP_USERNAME}:${WP_APP_PASSWORD}`).toString("base64")}`,
@@ -78,12 +82,12 @@ exports.handler = async (event, context) => {
     };
 
     console.log("UPDATE-DATA", updateData);
-console.log("THINKIFIC API URL", `https://api.thinkific.com/api/public/v1/users/${userId}`);
-console.log("HEADERS", {
-  "Content-Type": "application/json",
-  "X-Auth-API-Key": THINKIFIC_API_KEY,
-  "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
-});
+  console.log("THINKIFIC API URL", `https://api.thinkific.com/api/public/v1/users/${userId}`);
+  console.log("HEADERS", {
+    "Content-Type": "application/json",
+    "X-Auth-API-Key": THINKIFIC_API_KEY,
+    "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
+  });
 
     if (avatar_url) updateData.avatar_url = avatar_url;
 
