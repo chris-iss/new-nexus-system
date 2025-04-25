@@ -197,7 +197,6 @@ exports.handler = async (event) => {
       });
 
     const { fields, files } = await parseForm();
-
     const { firstName, lastName, email, phone, userId } = fields;
     let avatar_url = "";
 
@@ -214,8 +213,11 @@ exports.handler = async (event) => {
 
       if (error) throw error;
 
-      const { publicURL } = supabase.storage.from("avatars").getPublicUrl(data.path);
-      avatar_url = publicURL;
+      const { data: publicData } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(data.path);
+
+      avatar_url = publicData.publicUrl;  // ← Correct way
     }
 
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
@@ -251,15 +253,18 @@ exports.handler = async (event) => {
       };
     }
 
-    const { error: supabaseError } = await supabase.from("thinkifcUpdateProfile").insert([
-      {
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        phone,
-        avatar_url,
-      },
-    ]);
+    // ✅ Insert into Supabase Database
+    const { error: supabaseError } = await supabase
+      .from("profiles") // <<< make sure "profiles" matches your Supabase table name exactly
+      .insert([
+        {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone,
+          avatar_url,
+        },
+      ]);
 
     if (supabaseError) {
       return {
