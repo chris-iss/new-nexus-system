@@ -182,9 +182,7 @@
 		<a href="https://courses.instituteofsustainabilitystudies.com/communities/Q29tbXVuaXR5LTMxMDQz/" class="locked-link"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/15145054/myComm_2.png" alt="Course 2" class="dashboard-img fr-fic fr-dii fr-draggable"></a> <span class="lock-icon">🔒</span></div>
 	<div class="dashboard-item locked" id="master">
 		<a href="https://courses.instituteofsustainabilitystudies.com/communities/Q29tbXVuaXR5LTMxMDQz/spaces/Q29tbXVuaXR5U3BhY2UtMTg4ODQ4/" class="locked-link"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/15145125/myMaster.png" alt="Course 1" class="dashboard-img fr-fic fr-dii fr-draggable"></a> <span class="lock-icon">🔒</span></div>
-	<!--TO BE Deleted-->
-	<div class="dashboard-item" id="maintenance">
-		<a href="https://courses.instituteofsustainabilitystudies.com/pages/my-courses"><img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2025/01/31224142/maintenance.avif" alt="Course 1" class="dashboard-img fr-fic fr-dii fr-draggable"></a></div></div>
+
 <!-- Modal -->
 <div id="lockedModal" class="modal">
 	<div class="modal-content"><span class="close">&times;</span>
@@ -298,26 +296,6 @@ Now&nbsp;</a>&nbsp;</button>
 		{
 			console.error("Unexpected API Response: Expected an array but got:", enrollments);
 			return;
-		}
-
-		//To be removed after development
-		const hideMaintenanceGrid = enrollments.some(
-			(enrollment) => enrollment.user_email === "christian+test00004@instituteofsustainabilitystudies.com"
-		);
-
-
-		if (!hideMaintenanceGrid)
-		{
-			const mainGrid = document.getElementById("maintenance");
-
-			if (mainGrid)
-			{
-				mainGrid.style.display = "none";
-			}
-			else
-			{
-				console.warn("⚠️ Element with ID 'maintenance' not found.");
-			}
 		}
 
 
