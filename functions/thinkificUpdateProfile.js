@@ -154,51 +154,24 @@
 //   }
 // };
 
-const { createClient } = require("@supabase/supabase-js");
-const fetch = require("node-fetch");
+import fetch from 'node-fetch';
 
-const supabase_url = process.env.SUPABASE_URL;
-const supabase_service_key = process.env.SERVICE_KEY;
-
-const supabase = createClient(supabase_url, supabase_service_key);
-
-exports.handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-      body: "Preflight OK",
-    };
-  }
-
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
-  }
-
+export async function handler(event) {
   try {
-    const { firstName, lastName, email, phone, userId, avatar_url } = JSON.parse(event.body);
-    console.log("", firstName, lastName, email, phone, avatar_url)
+    const body = JSON.parse(event.body);
+    const { userId, firstName, lastName, email, phone, avatar_url } = body;
 
-    if (!firstName || !lastName || !email || !phone || !userId) {
+    if (!userId) {
       return {
         statusCode: 400,
-        headers: { "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ error: "Missing required fields" }),
+        body: JSON.stringify({ error: "Missing user ID" }),
       };
     }
 
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
-    const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
+    const THINKIFIC_SUBDOMAIN = process.env.THINKIFIC_SUBDOMAIN; // example: "your-company"
 
-    const updateData = {
+    const thinkificUpdateData = {
       first_name: firstName,
       last_name: lastName,
       email,
@@ -206,61 +179,43 @@ exports.handler = async (event) => {
     };
 
     if (avatar_url) {
-      updateData.avatar_url = avatar_url;
+      thinkificUpdateData.avatar_url = avatar_url;
     }
 
-    const thinkificRes = await fetch(`https://${THINKIFIC_SUB_DOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
-      method: "PUT",
+    // 🔥 Send the update to Thinkific
+    const thinkificResponse = await fetch(`https://${THINKIFIC_SUBDOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
-        "X-Auth-API-Key": THINKIFIC_API_KEY,
-        "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
+        'Content-Type': 'application/json',
+        'X-Auth-API-Key': THINKIFIC_API_KEY,
+        'X-Auth-Subdomain': THINKIFIC_SUBDOMAIN,
       },
-      body: JSON.stringify(updateData),
+      body: JSON.stringify(thinkificUpdateData),
     });
 
-    if (!thinkificRes.ok) {
-      const errorText = await thinkificRes.text();
+    const thinkificResult = await thinkificResponse.json();
+
+    if (!thinkificResponse.ok) {
+      console.error("Thinkific Update Error:", thinkificResult);
       return {
         statusCode: 500,
-        headers: { "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ error: "Thinkific update failed", details: errorText }),
-      };
-    }
-
-    const { error: supabaseError, data } = await supabase
-      .from("profiles")
-      .insert([
-        {
-          first_name: firstName,
-          last_name: lastName,
-          email,
-          phone,
-          avatar_url: avatar_url || null,
-        },
-      ]);
-
-      console.log("HELLO:", data)
-
-    if (supabaseError) {
-      return {
-        statusCode: 500,
-        headers: { "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ error: "Supabase insert failed", details: supabaseError.message }),
+        body: JSON.stringify({ error: "Failed to update Thinkific", details: thinkificResult }),
       };
     }
 
     return {
       statusCode: 200,
-      headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ message: "Profile updated successfully" }),
+      body: JSON.stringify({
+        message: "Profile updated successfully on Thinkific!",
+        updated: thinkificUpdateData,
+      }),
     };
-  } catch (error) {
-    console.error("Error:", error.message);
+
+  } catch (err) {
+    console.error("Serverless Function Error:", err);
     return {
       statusCode: 500,
-      headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ error: error.message }),
+      body: JSON.stringify({ error: "Internal Server Error" }),
     };
   }
-};
+}
