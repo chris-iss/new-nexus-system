@@ -59,7 +59,7 @@ export async function handler(event) {
       first_name: firstName,
       last_name: lastName,
       email: email,
-      phone_number: phone,
+      phone: phone,
       avatar_url: avatar_url || null,
     }]);
 
