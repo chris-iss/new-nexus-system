@@ -158,7 +158,6 @@ import fetch from 'node-fetch'; // or global fetch if Netlify already supports i
 
 export async function handler(event) {
   if (event.httpMethod === "OPTIONS") {
-    // Handle CORS preflight
     return {
       statusCode: 200,
       headers: {
@@ -190,13 +189,9 @@ export async function handler(event) {
       last_name: lastName,
       email: email,
       phone_number: phone,
+      // 🚫 Do not include avatar_url here
     };
 
-    if (avatar_url) {
-      updateData.avatar_url = avatar_url;
-    }
-
-    // 🔥 REAL Thinkific API call
     const thinkificRes = await fetch(`https://${THINKIFIC_SUBDOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
       method: "PUT",
       headers: {
@@ -218,12 +213,14 @@ export async function handler(event) {
       };
     }
 
+    // ✅ Everything updated (except avatar_url)
     return {
       statusCode: 200,
       headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify({
         message: "Profile updated successfully!",
-        updated_user: thinkificResult
+        updated_user: thinkificResult,
+        avatar_url: avatar_url // still return it so you can show the new image on your frontend
       }),
     };
 
@@ -236,4 +233,3 @@ export async function handler(event) {
     };
   }
 }
-
