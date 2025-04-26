@@ -154,9 +154,10 @@
 //   }
 // };
 
-import fetch from 'node-fetch'; // or global fetch if Netlify already supports it
+import fetch from 'node-fetch'; // Use native fetch if available
 
 export async function handler(event) {
+  // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -177,20 +178,31 @@ export async function handler(event) {
       return {
         statusCode: 400,
         headers: { "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ error: "Missing user ID" })
+        body: JSON.stringify({ error: "Missing user ID" }),
       };
     }
 
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
     const THINKIFIC_SUBDOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
+    if (!THINKIFIC_API_KEY || !THINKIFIC_SUBDOMAIN) {
+      return {
+        statusCode: 500,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: "Missing Thinkific credentials in environment variables" }),
+      };
+    }
+
     const updateData = {
       first_name: firstName,
       last_name: lastName,
       email: email,
       phone_number: phone,
-      // 🚫 Do not include avatar_url here
     };
+
+    if (avatar_url) {
+      updateData.avatar_url = avatar_url;
+    }
 
     const thinkificRes = await fetch(`https://${THINKIFIC_SUBDOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
       method: "PUT",
@@ -202,25 +214,32 @@ export async function handler(event) {
       body: JSON.stringify(updateData),
     });
 
-    const thinkificResult = await thinkificRes.json();
+    // Safely parse the response
+    const responseText = await thinkificRes.text();
+    let thinkificResult = null;
+
+    try {
+      thinkificResult = responseText ? JSON.parse(responseText) : null;
+    } catch (parseError) {
+      console.warn("Thinkific response could not be parsed as JSON.");
+      thinkificResult = { raw: responseText };
+    }
 
     if (!thinkificRes.ok) {
       console.error("Thinkific Error:", thinkificResult);
       return {
         statusCode: 500,
         headers: { "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ error: "Failed to update Thinkific", details: thinkificResult })
+        body: JSON.stringify({ error: "Failed to update Thinkific", details: thinkificResult }),
       };
     }
 
-    // ✅ Everything updated (except avatar_url)
     return {
       statusCode: 200,
       headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify({
         message: "Profile updated successfully!",
-        updated_user: thinkificResult,
-        avatar_url: avatar_url // still return it so you can show the new image on your frontend
+        updated_user: thinkificResult || { userId, ...updateData }
       }),
     };
 
