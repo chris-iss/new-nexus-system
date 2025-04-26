@@ -182,7 +182,7 @@ export async function handler(event) {
     }
 
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
-    const THINKIFIC_SUBDOMAIN = process.env.THINKIFIC_SUBDOMAIN;
+    const THINKIFIC_SUBDOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
     const updateData = {
       first_name: firstName,
