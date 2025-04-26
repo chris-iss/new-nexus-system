@@ -200,6 +200,8 @@ export async function handler(event) {
       phone_number: phone,
     };
 
+    console.log("DATA", updateData)
+
     if (avatar_url) {
       updateData.avatar_url = avatar_url;
     }
