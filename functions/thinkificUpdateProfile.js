@@ -155,6 +155,12 @@
 // };
 
 import fetch from 'node-fetch'; // Use native fetch if available
+import { createClient } from '@supabase/supabase-js';
+
+const supabase_url = process.env.SUPABASE_URL;
+const supabase_service_key = process.env.SERVICE_KEY;
+
+export const supabase = createClient(supabase_url, supabase_service_key);
 
 export async function handler(event) {
   // Handle CORS preflight
@@ -204,6 +210,20 @@ export async function handler(event) {
       updateData.avatar_url = avatar_url;
     }
 
+    // Save data to Supabase
+    const { data, error } = await supabase.from("profiles").insert(updateData);
+
+    if (error) {
+        console.error("Error inserting into Supabase:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: "Error inserting into Supabase", error: error.message }),
+        };
+    }
+
+    console.log("INSERTED SUCCESSFULLY to Supabase:", data);  
+
+    // Save data to thinkific
     const thinkificRes = await fetch(`https://${THINKIFIC_SUBDOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
       method: "PUT",
       headers: {
