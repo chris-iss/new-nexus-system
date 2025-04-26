@@ -157,6 +157,19 @@
 import fetch from 'node-fetch';
 
 export async function handler(event) {
+  // Handle CORS preflight (OPTIONS method)
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*", // allow all domains, or set to your specific frontend URL
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+      },
+      body: "OK",
+    };
+  }
+
   try {
     const body = JSON.parse(event.body);
     const { userId, firstName, lastName, email, phone, avatar_url } = body;
@@ -164,57 +177,70 @@ export async function handler(event) {
     if (!userId) {
       return {
         statusCode: 400,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
         body: JSON.stringify({ error: "Missing user ID" }),
       };
     }
 
+    // Thinkific API credentials
     const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
-    const THINKIFIC_SUBDOMAIN = process.env.THINKIFIC_SUBDOMAIN; // example: "your-company"
+    const THINKIFIC_SUBDOMAIN = process.env.THINKIFIC_SUBDOMAIN; // example: "your-subdomain"
 
-    const thinkificUpdateData = {
+    const thinkificData = {
       first_name: firstName,
       last_name: lastName,
-      email,
+      email: email,
       phone_number: phone,
     };
 
     if (avatar_url) {
-      thinkificUpdateData.avatar_url = avatar_url;
+      thinkificData.avatar_url = avatar_url;
     }
 
-    // 🔥 Send the update to Thinkific
-    const thinkificResponse = await fetch(`https://${THINKIFIC_SUBDOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
+    // 🔥 Update Thinkific user
+    const thinkificRes = await fetch(`https://${THINKIFIC_SUBDOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'X-Auth-API-Key': THINKIFIC_API_KEY,
         'X-Auth-Subdomain': THINKIFIC_SUBDOMAIN,
       },
-      body: JSON.stringify(thinkificUpdateData),
+      body: JSON.stringify(thinkificData),
     });
 
-    const thinkificResult = await thinkificResponse.json();
+    const thinkificResult = await thinkificRes.json();
 
-    if (!thinkificResponse.ok) {
-      console.error("Thinkific Update Error:", thinkificResult);
+    if (!thinkificRes.ok) {
+      console.error("Thinkific update failed:", thinkificResult);
       return {
         statusCode: 500,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
         body: JSON.stringify({ error: "Failed to update Thinkific", details: thinkificResult }),
       };
     }
 
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
       body: JSON.stringify({
-        message: "Profile updated successfully on Thinkific!",
-        updated: thinkificUpdateData,
+        message: "Profile updated successfully!",
+        user: thinkificData,
       }),
     };
 
-  } catch (err) {
-    console.error("Serverless Function Error:", err);
+  } catch (error) {
+    console.error("Server error:", error);
     return {
       statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
       body: JSON.stringify({ error: "Internal Server Error" }),
     };
   }
