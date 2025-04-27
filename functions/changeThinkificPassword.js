@@ -2,12 +2,20 @@ import fetch from 'node-fetch';
 
 exports.handler = async (event) => {
     try {
-        const { userId, newPassword } = JSON.parse(event.body);
+        if (!event.body) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ message: "Request body is missing." })
+            };
+        }
+
+        const parsedBody = JSON.parse(event.body);
+        const { userId, newPassword } = parsedBody;
 
         if (!userId || !newPassword) {
             return {
                 statusCode: 400,
-                body: JSON.stringify({ message: "Missing required fields" })
+                body: JSON.stringify({ message: "Missing required fields." })
             };
         }
 
@@ -46,4 +54,4 @@ exports.handler = async (event) => {
             body: JSON.stringify({ message: "Server error occurred." })
         };
     }
-}
+};
