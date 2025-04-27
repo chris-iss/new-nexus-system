@@ -5,6 +5,11 @@ exports.handler = async (event) => {
         if (!event.body) {
             return {
                 statusCode: 400,
+                headers: {
+                    "Access-Control-Allow-Origin": "*",  // <--- ADD THIS
+                    "Access-Control-Allow-Headers": "Content-Type",
+                    "Access-Control-Allow-Methods": "POST, OPTIONS"
+                },
                 body: JSON.stringify({ message: "Request body is missing." })
             };
         }
@@ -15,6 +20,11 @@ exports.handler = async (event) => {
         if (!userId || !newPassword) {
             return {
                 statusCode: 400,
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Content-Type",
+                    "Access-Control-Allow-Methods": "POST, OPTIONS"
+                },
                 body: JSON.stringify({ message: "Missing required fields." })
             };
         }
@@ -39,18 +49,33 @@ exports.handler = async (event) => {
         if (!updateResponse.ok) {
             return {
                 statusCode: updateResponse.status,
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Content-Type",
+                    "Access-Control-Allow-Methods": "POST, OPTIONS"
+                },
                 body: JSON.stringify({ message: updateData.error || "Failed to update password." })
             };
         }
 
         return {
             statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*",   // <--- ADD THIS IN ALL RETURNS
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "POST, OPTIONS"
+            },
             body: JSON.stringify({ message: "Password updated successfully." })
         };
     } catch (err) {
         console.error("Server error:", err);
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "POST, OPTIONS"
+            },
             body: JSON.stringify({ message: "Server error occurred." })
         };
     }
