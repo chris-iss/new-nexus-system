@@ -1,29 +1,10 @@
 import fetch from 'node-fetch';
 
 exports.handler = async (event) => {
-    // 1. Handle preflight request
-    if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers: {
-                "Access-Control-Allow-Origin": "*",  // or your domain
-                "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-            },
-            body: JSON.stringify({ message: "CORS preflight OK" }),
-        };
-    }
-
-    // 2. Handle actual POST request
     try {
         if (!event.body) {
             return {
                 statusCode: 400,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Headers": "Content-Type",
-                    "Access-Control-Allow-Methods": "POST, OPTIONS",
-                },
                 body: JSON.stringify({ message: "Request body is missing." })
             };
         }
@@ -33,11 +14,6 @@ exports.handler = async (event) => {
         if (!userId || !newPassword) {
             return {
                 statusCode: 400,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Headers": "Content-Type",
-                    "Access-Control-Allow-Methods": "POST, OPTIONS",
-                },
                 body: JSON.stringify({ message: "Missing required fields." })
             };
         }
@@ -51,45 +27,35 @@ exports.handler = async (event) => {
                 "Content-Type": "application/json",
                 "X-Auth-API-Key": THINKIFIC_API_KEY,
                 "X-Auth-Subdomain": THINKIFIC_SUBDOMAIN,
-            },
+              },
             body: JSON.stringify({
                 password: newPassword,
                 password_confirmation: newPassword
             })
         });
 
-        const updateData = await updateResponse.json();
+        const contentType = updateResponse.headers.get('content-type');
+        let updateData = {};
+
+        if (contentType && contentType.includes('application/json')) {
+            updateData = await updateResponse.json();
+        }
 
         if (!updateResponse.ok) {
             return {
                 statusCode: updateResponse.status,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Headers": "Content-Type",
-                    "Access-Control-Allow-Methods": "POST, OPTIONS",
-                },
                 body: JSON.stringify({ message: updateData.error || "Failed to update password." })
             };
         }
 
         return {
             statusCode: 200,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-            },
             body: JSON.stringify({ message: "Password updated successfully." })
         };
     } catch (err) {
         console.error("Server error:", err);
         return {
             statusCode: 500,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-            },
             body: JSON.stringify({ message: "Server error occurred." })
         };
     }
