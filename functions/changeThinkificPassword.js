@@ -1,21 +1,34 @@
 import fetch from 'node-fetch';
 
 exports.handler = async (event) => {
+    // 1. Handle preflight request
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*",  // or your domain
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+            },
+            body: JSON.stringify({ message: "CORS preflight OK" }),
+        };
+    }
+
+    // 2. Handle actual POST request
     try {
         if (!event.body) {
             return {
                 statusCode: 400,
                 headers: {
-                    "Access-Control-Allow-Origin": "*",  // <--- ADD THIS
+                    "Access-Control-Allow-Origin": "*",
                     "Access-Control-Allow-Headers": "Content-Type",
-                    "Access-Control-Allow-Methods": "POST, OPTIONS"
+                    "Access-Control-Allow-Methods": "POST, OPTIONS",
                 },
                 body: JSON.stringify({ message: "Request body is missing." })
             };
         }
 
-        const parsedBody = JSON.parse(event.body);
-        const { userId, newPassword } = parsedBody;
+        const { userId, newPassword } = JSON.parse(event.body);
 
         if (!userId || !newPassword) {
             return {
@@ -23,7 +36,7 @@ exports.handler = async (event) => {
                 headers: {
                     "Access-Control-Allow-Origin": "*",
                     "Access-Control-Allow-Headers": "Content-Type",
-                    "Access-Control-Allow-Methods": "POST, OPTIONS"
+                    "Access-Control-Allow-Methods": "POST, OPTIONS",
                 },
                 body: JSON.stringify({ message: "Missing required fields." })
             };
@@ -52,7 +65,7 @@ exports.handler = async (event) => {
                 headers: {
                     "Access-Control-Allow-Origin": "*",
                     "Access-Control-Allow-Headers": "Content-Type",
-                    "Access-Control-Allow-Methods": "POST, OPTIONS"
+                    "Access-Control-Allow-Methods": "POST, OPTIONS",
                 },
                 body: JSON.stringify({ message: updateData.error || "Failed to update password." })
             };
@@ -61,9 +74,9 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                "Access-Control-Allow-Origin": "*",   // <--- ADD THIS IN ALL RETURNS
+                "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "POST, OPTIONS"
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
             },
             body: JSON.stringify({ message: "Password updated successfully." })
         };
@@ -74,7 +87,7 @@ exports.handler = async (event) => {
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "POST, OPTIONS"
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
             },
             body: JSON.stringify({ message: "Server error occurred." })
         };
