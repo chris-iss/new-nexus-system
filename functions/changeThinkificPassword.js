@@ -48,8 +48,9 @@ exports.handler = async (event) => {
         const updateResponse = await fetch(`https://${THINKIFIC_SUBDOMAIN}.thinkific.com/api/public/v1/users/${userId}`, {
             method: 'PUT',
             headers: {
-                "Authorization": `Bearer ${THINKIFIC_API_KEY}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-Auth-API-Key": THINKIFIC_API_KEY,
+                "X-Auth-Subdomain": THINKIFIC_SUBDOMAIN,
             },
             body: JSON.stringify({
                 password: newPassword,
