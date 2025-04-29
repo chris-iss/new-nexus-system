@@ -77,12 +77,10 @@
 //   }
 
 
-// Enriched Leaderboard using /players + /competitions/{id}/players
-
 export async function handler(event, context) {
-  const API_URL = "https://www.pointagram.com/wp-json/proxy-api/v1";
   const API_KEY = "JjKc6Z12gHxyKRQfKkSJFLGhZXMGJnMM";
   const API_USER = "learning@instituteofsustainabilitystudies.com";
+  const API_URL = "https://www.pointagram.com/wp-json/proxy-api/v1";
 
   const headers = {
     "Api-Key": API_KEY,
@@ -91,47 +89,50 @@ export async function handler(event, context) {
   };
 
   try {
-    // 1. Get competitions
-    const compsRes = await fetch(`${API_URL}/competitions`, { headers });
-    const comps = await compsRes.json();
-    const competition = comps?.data?.competitions?.[0];
+    // Step 1: Fetch all competitions
+    const competitionsRes = await fetch(`${API_URL}/competitions`, { headers });
+    const competitionsData = await competitionsRes.json();
 
-    if (!competition?.id) {
+    const allCompetitions = competitionsData?.data?.competitions || [];
+    if (!allCompetitions.length) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: "No competition found" }),
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type"
+        },
+        body: JSON.stringify({ message: "No competitions found." })
       };
     }
 
-    const compId = competition.id;
+    const competitionId = allCompetitions[0].id;
 
-    // 2. Get scores from /competitions/{id}/players
-    const leaderboardRes = await fetch(`${API_URL}/competitions/${compId}/players`, { headers });
+    // Step 2: Fetch leaderboard scores
+    const leaderboardRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
     const leaderboardData = await leaderboardRes.json();
-    const leaderboardRaw = leaderboardData?.data?.players || [];
+    const leaderboardPlayers = leaderboardData?.data?.players || [];
 
-    // 3. Get player details from /players
-    const playersRes = await fetch(`${API_URL}/players`, { headers });
-    const playersData = await playersRes.json();
-    const allPlayers = playersData?.data?.players || [];
+    // Step 3: Fetch all player details (for email and team)
+    const allPlayersRes = await fetch(`${API_URL}/players`, { headers });
+    const allPlayersData = await allPlayersRes.json();
+    const allPlayers = allPlayersData?.data?.players || [];
 
-    // 4. Enrich leaderboard
-    const defaultAvatar = "https://devopiss.wpenginepowered.com/wp-content/uploads/2025/04/defualt-user.avif";
-
-    const enrichedLeaderboard = leaderboardRaw.map(lbEntry => {
-      const match = allPlayers.find(p => p.id === lbEntry.id);
+    // Step 4: Combine leaderboard and player details
+    const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
+      const playerInfo = allPlayers.find(p => p.id === lbPlayer.id);
 
       return {
-        id: lbEntry.id,
-        name: lbEntry.Name,
-        rank: parseInt(lbEntry.rank),
-        score: parseFloat(lbEntry.current_score),
-        email: match?.email || null,
-        team: match?.team?.name || null,
-        avatar: match?.avatar || defaultAvatar
+        id: lbPlayer.id,
+        name: lbPlayer.Name,
+        rank: parseInt(lbPlayer.rank),
+        score: parseFloat(lbPlayer.current_score),
+        icon: lbPlayer.icon,
+        email: playerInfo?.email || null,
+        team: playerInfo?.team?.name || null
       };
     });
 
+    // Step 5: Sort by rank
     enrichedLeaderboard.sort((a, b) => a.rank - b.rank);
 
     return {
@@ -141,16 +142,19 @@ export async function handler(event, context) {
         "Access-Control-Allow-Headers": "Content-Type"
       },
       body: JSON.stringify({
-        competition: competition.name,
+        competition: allCompetitions[0].name,
         leaderboard: enrichedLeaderboard
       })
     };
-
-  } catch (err) {
-    console.error("Enriched leaderboard error:", err.message);
+  } catch (error) {
+    console.error("Leaderboard Fetch Error:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message || "Unknown error" })
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type"
+      },
+      body: JSON.stringify({ error: error.message || "Unknown error" })
     };
   }
 }
