@@ -106,11 +106,12 @@ export async function handler(event, context) {
     }
 
     const competitionId = allCompetitions[0].id;
-    console.log("COM ID:", competitionId)
+  
 
     // Step 2: Fetch leaderboard scores
     const leaderboardRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
     const leaderboardData = await leaderboardRes.json();
+    console.log("LEADERBOARD DATA:", leaderboardData)
     const leaderboardPlayers = leaderboardData?.data?.players || [];
 
     console.log("LEADERBOARD-PLAYER:", leaderboardPlayers)
