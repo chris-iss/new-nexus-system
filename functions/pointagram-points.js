@@ -213,45 +213,36 @@ export async function handler(event, context) {
     // Step 5: Fetch players in each team
     const teamPlayersMap = {};
 
+    // for (const team of teams) {
+    //   console.log("TEAM NAME PARENT:", team)
+    //   const teamId = team.id;
+    //   try {
+    //     const teamPlayersRes = await fetch(`${API_URL}/teams/${teamId}/players`, { headers });
+    //     const teamPlayersData = await teamPlayersRes.json();
+    //     const playersInTeam = teamPlayersData?.data?.players || [];
+    //     console.log("MAIN SOURCE TEAM", teamPlayersData.data.players)
+    //     teamPlayersMap[team.name] = playersInTeam.map(player => player.id); // store by ID
+    //   } catch (teamError) {
+    //     console.error(`Failed to fetch players for team ${team.name}:`, teamError.message);
+    //   }
+    // }
+
     for (const team of teams) {
-      console.log("TEAM NAME PARENT:", team)
+      console.log("TEAM NAME PARENT:", team);
       const teamId = team.id;
       try {
         const teamPlayersRes = await fetch(`${API_URL}/teams/${teamId}/players`, { headers });
         const teamPlayersData = await teamPlayersRes.json();
         const playersInTeam = teamPlayersData?.data?.players || [];
-        console.log("MAIN SOURCE TEAM", teamPlayersData.data.players)
-        teamPlayersMap[team.name] = playersInTeam.map(player => player.id); // store by ID
+        console.log("MAIN SOURCE TEAM", playersInTeam);
+    
+        // FIX: store by profile_id as string
+        teamPlayersMap[team.name] = playersInTeam.map(player => String(player.profile_id));
       } catch (teamError) {
         console.error(`Failed to fetch players for team ${team.name}:`, teamError.message);
       }
     }
-
-    // Step 6: Combine leaderboard + player info
-    // const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
-    //   const playerInfo = allPlayers.find(p => p.id === lbPlayer.profile_id);
-
-    //   // Determine team name from player ID mapping
-    //   let teamName = null;
-    //   for (const [name, playerIds] of Object.entries(teamPlayersMap)) {
-    //     if (playerIds.includes(lbPlayer.profile_id)) {
-    //       teamName = name;
-    //       break;
-    //     }
-    //   }
-
-    //   console.log("TEAM NAME", teamName)
-
-    //   return {
-    //     id: lbPlayer.id,
-    //     name: lbPlayer.Name,
-    //     rank: parseInt(lbPlayer.rank),
-    //     score: parseFloat(lbPlayer.current_score),
-    //     icon: lbPlayer.icon,
-    //     email: playerInfo?.emailaddress || null,
-    //     team: teamName || playerInfo?.team?.name || null
-    //   };
-    // });
+    
 
     const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
       const playerInfo = allPlayers.find(p => p.id === lbPlayer.profile_id);
