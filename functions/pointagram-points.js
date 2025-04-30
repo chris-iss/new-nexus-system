@@ -107,6 +107,8 @@ export async function handler(event, context) {
 
     const competitionId = allCompetitions[0].id;
 
+    console.log("SEARCH FOR COM DATA:", allCompetitions)
+
     // Step 2: Fetch leaderboard scores
     const leaderboardRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
     const leaderboardData = await leaderboardRes.json();
