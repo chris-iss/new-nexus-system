@@ -122,10 +122,8 @@ export async function handler(event, context) {
     // Step 4: Combine leaderboard and player details
     const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
       console.log("LEADERBOARD-PLAYERS-ID", lbPlayer)
-      // const playerInfo = allPlayers.find(p => p.id === lbPlayer.id);
-      const playerInfo = allPlayers.map((players) => {
-        console.log("ALL PLAYER-IDS", players)
-      })
+      const playerInfo = allPlayers.find(p => p.id === lbPlayer.id);
+      console.log("ALL PLAYER-IDS", playerInfo)
       
 
       return {
