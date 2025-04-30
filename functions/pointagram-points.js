@@ -123,20 +123,17 @@ export async function handler(event, context) {
 
     // Step 4: Combine leaderboard and player details
     const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
-      console.log("LEADERBOARD-PLAYERS-ID", lbPlayer)
       const playerInfo = allPlayers.find(p => p.id === lbPlayer.profile_id);
 
       console.log("CONDITION RESULT:", playerInfo)
      
-      
-
       return {
         id: lbPlayer.id,
         name: lbPlayer.Name,
         rank: parseInt(lbPlayer.rank),
         score: parseFloat(lbPlayer.current_score),
         icon: lbPlayer.icon,
-        email: playerInfo?.email || null,
+        email: playerInfo?.emailaddress || null,
         team: playerInfo?.team?.name || null
       };
     });
