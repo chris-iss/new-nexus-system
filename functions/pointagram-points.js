@@ -213,28 +213,14 @@ export async function handler(event, context) {
     // Step 5: Fetch players in each team
     const teamPlayersMap = {};
 
-    // for (const team of teams) {
-    //   console.log("TEAM NAME PARENT:", team)
-    //   const teamId = team.id;
-    //   try {
-    //     const teamPlayersRes = await fetch(`${API_URL}/teams/${teamId}/players`, { headers });
-    //     const teamPlayersData = await teamPlayersRes.json();
-    //     const playersInTeam = teamPlayersData?.data?.players || [];
-    //     console.log("MAIN SOURCE TEAM", teamPlayersData.data.players)
-    //     teamPlayersMap[team.name] = playersInTeam.map(player => player.id); // store by ID
-    //   } catch (teamError) {
-    //     console.error(`Failed to fetch players for team ${team.name}:`, teamError.message);
-    //   }
-    // }
-
     for (const team of teams) {
-      console.log("TEAM NAME PARENT:", team);
+
       const teamId = team.id;
+
       try {
         const teamPlayersRes = await fetch(`${API_URL}/teams/${teamId}/players`, { headers });
         const teamPlayersData = await teamPlayersRes.json();
         const playersInTeam = teamPlayersData?.data?.players || [];
-        console.log("MAIN SOURCE TEAM", playersInTeam);
     
         // FIX: store by profile_id as string
         teamPlayersMap[team.name] = playersInTeam.map(player => String(player.profile_id));
@@ -250,7 +236,6 @@ export async function handler(event, context) {
       // Fix: Ensure IDs are compared as strings
       let teamName = null;
       for (const [name, playerIds] of Object.entries(teamPlayersMap)) {
-        console.log("LIST TeamName and Name:", name, playerIds)
         if (playerIds.includes(String(lbPlayer.profile_id))) {
           teamName = name;
           break;
@@ -268,8 +253,6 @@ export async function handler(event, context) {
       };
     });
     
-    
-
     enrichedLeaderboard.sort((a, b) => a.rank - b.rank);
 
     return {
