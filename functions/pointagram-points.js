@@ -119,11 +119,15 @@ export async function handler(event, context) {
     const allPlayersData = await allPlayersRes.json();
     const allPlayers = allPlayersData?.data?.players || [];
 
+    console.log("ALL PLAYER", allPlayers)
+
     // Step 4: Combine leaderboard and player details
     const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
       console.log("LEADERBOARD-PLAYERS-ID", lbPlayer)
-      const playerInfo = allPlayers.find(p => p.id === lbPlayer.id);
-      console.log("ALL PLAYER-IDS", playerInfo)
+      const playerInfo = allPlayers.find(p => p.id === lbPlayer.profile_id);
+
+      console.log("CONDITION RESULT:", playerInfo)
+     
       
 
       return {
