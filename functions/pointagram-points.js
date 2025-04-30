@@ -256,10 +256,10 @@ export async function handler(event, context) {
     const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
       const playerInfo = allPlayers.find(p => p.id === lbPlayer.profile_id);
     
-      // Determine team name from player ID mapping
+      // Fix: Ensure IDs are compared as strings
       let teamName = null;
       for (const [name, playerIds] of Object.entries(teamPlayersMap)) {
-        if (playerIds.map(String).includes(String(lbPlayer.profile_id))) {
+        if (playerIds.includes(String(lbPlayer.profile_id))) {
           teamName = name;
           break;
         }
@@ -275,6 +275,7 @@ export async function handler(event, context) {
         team: teamName || playerInfo?.team?.name || null
       };
     });
+    
     
 
     enrichedLeaderboard.sort((a, b) => a.rank - b.rank);
