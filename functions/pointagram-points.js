@@ -91,9 +91,10 @@ export async function handler(event, context) {
   try {
     // Step 1: Fetch all competitions
     const competitionsRes = await fetch(`${API_URL}/competitions`, { headers });
-    const competitionsData = await competitionsRes.json();
+    const competitionsData = await competitionsRes.json(); 
 
     const allCompetitions = competitionsData?.data?.competitions || [];
+    console.log("COMPETITIONS", allCompetitions)
     if (!allCompetitions.length) {
       return {
         statusCode: 404,
@@ -111,7 +112,7 @@ export async function handler(event, context) {
     // Step 2: Fetch leaderboard scores
     const leaderboardRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
     const leaderboardData = await leaderboardRes.json();
-    console.log("LEADERBOARD DATA:", leaderboardData)
+    console.log("LEADERBOARD PLAYER COMM DATA:", leaderboardData)
     const leaderboardPlayers = leaderboardData?.data?.players || [];
 
     console.log("LEADERBOARD-PLAYER:", leaderboardPlayers)
