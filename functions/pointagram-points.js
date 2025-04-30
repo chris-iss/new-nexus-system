@@ -259,6 +259,7 @@ export async function handler(event, context) {
       // Fix: Ensure IDs are compared as strings
       let teamName = null;
       for (const [name, playerIds] of Object.entries(teamPlayersMap)) {
+        console.log("LIST TeamName and Name:", name, playerIds)
         if (playerIds.includes(String(lbPlayer.profile_id))) {
           teamName = name;
           break;
