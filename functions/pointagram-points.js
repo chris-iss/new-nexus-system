@@ -34,7 +34,7 @@ export async function handler(event, context) {
       const playersRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
       const playersData = await playersRes.json();
   
-      console.log("PLAYERS RAW:", playersData.data.players);
+      console.log("PLAYERS IN COMPETITION:", playersData.data.players);
   
       if (!playersData?.data?.players) {
         throw new Error("No players returned");
