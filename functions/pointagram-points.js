@@ -238,6 +238,8 @@ export async function handler(event, context) {
         }
       }
 
+      console.log("TEAM NAME", teamName)
+
       return {
         id: lbPlayer.id,
         name: lbPlayer.Name,
