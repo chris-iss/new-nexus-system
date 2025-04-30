@@ -214,12 +214,13 @@ export async function handler(event, context) {
     const teamPlayersMap = {};
 
     for (const team of teams) {
+      console.log("TEAM NAME PARENT:", team)
       const teamId = team.id;
       try {
         const teamPlayersRes = await fetch(`${API_URL}/teams/${teamId}/players`, { headers });
         const teamPlayersData = await teamPlayersRes.json();
         const playersInTeam = teamPlayersData?.data?.players || [];
-        console.log("MAIN SOURCE TEAM", teamPlayersData)
+        console.log("MAIN SOURCE TEAM", teamPlayersData.data.players)
         teamPlayersMap[team.name] = playersInTeam.map(player => player.id); // store by ID
       } catch (teamError) {
         console.error(`Failed to fetch players for team ${team.name}:`, teamError.message);
