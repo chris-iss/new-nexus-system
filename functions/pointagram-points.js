@@ -228,20 +228,43 @@ export async function handler(event, context) {
     }
 
     // Step 6: Combine leaderboard + player info
+    // const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
+    //   const playerInfo = allPlayers.find(p => p.id === lbPlayer.profile_id);
+
+    //   // Determine team name from player ID mapping
+    //   let teamName = null;
+    //   for (const [name, playerIds] of Object.entries(teamPlayersMap)) {
+    //     if (playerIds.includes(lbPlayer.profile_id)) {
+    //       teamName = name;
+    //       break;
+    //     }
+    //   }
+
+    //   console.log("TEAM NAME", teamName)
+
+    //   return {
+    //     id: lbPlayer.id,
+    //     name: lbPlayer.Name,
+    //     rank: parseInt(lbPlayer.rank),
+    //     score: parseFloat(lbPlayer.current_score),
+    //     icon: lbPlayer.icon,
+    //     email: playerInfo?.emailaddress || null,
+    //     team: teamName || playerInfo?.team?.name || null
+    //   };
+    // });
+
     const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
       const playerInfo = allPlayers.find(p => p.id === lbPlayer.profile_id);
-
+    
       // Determine team name from player ID mapping
       let teamName = null;
       for (const [name, playerIds] of Object.entries(teamPlayersMap)) {
-        if (playerIds.includes(lbPlayer.profile_id)) {
+        if (playerIds.map(String).includes(String(lbPlayer.profile_id))) {
           teamName = name;
           break;
         }
       }
-
-      console.log("TEAM NAME", teamName)
-
+    
       return {
         id: lbPlayer.id,
         name: lbPlayer.Name,
@@ -252,6 +275,7 @@ export async function handler(event, context) {
         team: teamName || playerInfo?.team?.name || null
       };
     });
+    
 
     enrichedLeaderboard.sort((a, b) => a.rank - b.rank);
 
