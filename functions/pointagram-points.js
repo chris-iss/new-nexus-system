@@ -115,6 +115,7 @@ export async function handler(event, context) {
     // Step 3: Fetch all player details (for email and team)
     const allPlayersRes = await fetch(`${API_URL}/players`, { headers });
     const allPlayersData = await allPlayersRes.json();
+    console.log("ALL PLAYERS:", allPlayersData)
     const allPlayers = allPlayersData?.data?.players || [];
 
     // Step 4: Combine leaderboard and player details
