@@ -112,6 +112,8 @@ export async function handler(event, context) {
     const leaderboardData = await leaderboardRes.json();
     const leaderboardPlayers = leaderboardData?.data?.players || [];
 
+    console.log("LEADERBOARD-PLAYER:", leaderboardPlayers)
+
     // Step 3: Fetch all player details (for email and team)
     const allPlayersRes = await fetch(`${API_URL}/players`, { headers });
     const allPlayersData = await allPlayersRes.json();
@@ -119,7 +121,6 @@ export async function handler(event, context) {
 
     // Step 4: Combine leaderboard and player details
     const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
-      console.log("LEADERBOARD-PLAYER-IDS:", lbPlayer.id)
       console.log("PLAYER-IDS", allPlayersData?.data?.players)
       const playerInfo = allPlayers.find(p => p.id === lbPlayer.id);
 
