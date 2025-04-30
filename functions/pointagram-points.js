@@ -123,7 +123,7 @@ export async function handler(event, context) {
     const enrichedLeaderboard = leaderboardPlayers.map(lbPlayer => {
       console.log("LEADERBOARD-PLAYERS-ID", lbPlayer.id)
       const playerInfo = allPlayers.find(p => p.id === lbPlayer.id);
-      console.log("ALL PLAYER-IDS", allPlayers)
+      console.log("ALL PLAYER-IDS", playerInfo)
 
       return {
         id: lbPlayer.id,
