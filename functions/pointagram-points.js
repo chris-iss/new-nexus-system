@@ -27,9 +27,7 @@ export async function handler(event, context) {
     }
 
     const competitionId = allCompetitions[0].id;
-    const getCompetitionEnd_Date = allCompetitions
-
-    console.log("SEARCH-DATE:", getCompetitionEnd_Date)
+    const getCompetitionEnd_Date = allCompetitions[3].end_date
 
     // Step 2: Fetch leaderboard players
     const leaderboardRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
@@ -87,7 +85,7 @@ export async function handler(event, context) {
         score: parseFloat(lbPlayer.current_score),
         icon: lbPlayer.icon,
         email: playerInfo?.emailaddress || null,
-        team: teamName || playerInfo?.team?.name || null
+        team: teamName || playerInfo?.team?.name || null,
       };
     });
     
@@ -101,6 +99,7 @@ export async function handler(event, context) {
       },
       body: JSON.stringify({
         competition: allCompetitions[0].name,
+        competition_end_date: getCompetitionEnd_Date,
         leaderboard: enrichedLeaderboard
       })
     };
