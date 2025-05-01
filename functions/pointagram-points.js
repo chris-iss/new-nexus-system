@@ -27,7 +27,7 @@ export async function handler(event, context) {
     }
 
     const competitionId = allCompetitions[0].id;
-    const competitionEnd_Date = allCompetitions[3].end_date;
+    const competitionEnd_Date = allCompetitions
 
     console.log("END-DATE:", competitionEnd_Date)
 
