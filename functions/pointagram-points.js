@@ -91,6 +91,9 @@ export async function handler(event, context) {
     
     enrichedLeaderboard.sort((a, b) => a.rank - b.rank);
 
+    const getDate = getCompetitionEnd_Date;
+    console.log("FETCH DATE:", getDate)
+
     return {
       statusCode: 200,
       headers: {
@@ -99,7 +102,6 @@ export async function handler(event, context) {
       },
       body: JSON.stringify({
         competition: allCompetitions[0].name,
-        competition_end_date: getCompetitionEnd_Date,
         leaderboard: enrichedLeaderboard
       })
     };
