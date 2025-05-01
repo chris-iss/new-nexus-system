@@ -29,8 +29,6 @@ export async function handler(event, context) {
     const competitionId = allCompetitions[0].id;
     const competitionEnd_Date = allCompetitions
 
-    console.log("END-DATE:", competitionEnd_Date[0].end_date)
-
     // Step 2: Fetch leaderboard players
     const leaderboardRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
     const leaderboardData = await leaderboardRes.json();
@@ -100,7 +98,8 @@ export async function handler(event, context) {
       },
       body: JSON.stringify({
         competition: allCompetitions[0].name,
-        leaderboard: enrichedLeaderboard
+        leaderboard: enrichedLeaderboard,
+        competition_end_date: competitionEnd_Date
       })
     };
 
