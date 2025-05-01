@@ -29,6 +29,8 @@ export async function handler(event, context) {
     const competitionId = allCompetitions[0].id;
     const getCompetitionEnd_Date = allCompetitions[3].end_date
 
+    console.log("DATE:", getCompetitionEnd_Date)
+
     // Step 2: Fetch leaderboard players
     const leaderboardRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
     const leaderboardData = await leaderboardRes.json();
@@ -91,8 +93,6 @@ export async function handler(event, context) {
     
     enrichedLeaderboard.sort((a, b) => a.rank - b.rank);
 
-    const getDate = getCompetitionEnd_Date;
-    console.log("FETCH DATE:", getDate)
 
     return {
       statusCode: 200,
