@@ -27,9 +27,6 @@ export async function handler(event, context) {
     }
 
     const competitionId = allCompetitions[0].id;
-    const getCompetitionEnd_Date = allCompetitions[3].end_date
-
-    console.log("DATE:", getCompetitionEnd_Date)
 
     // Step 2: Fetch leaderboard players
     const leaderboardRes = await fetch(`${API_URL}/competitions/${competitionId}/players`, { headers });
@@ -71,7 +68,6 @@ export async function handler(event, context) {
     
       // Fix: Ensure IDs are compared as strings
       let teamName = null;
-      let comExpiryDate = null;
 
       for (const [name, playerIds] of Object.entries(teamPlayersMap)) {
         if (playerIds.includes(String(lbPlayer.profile_id))) {
@@ -87,12 +83,11 @@ export async function handler(event, context) {
         score: parseFloat(lbPlayer.current_score),
         icon: lbPlayer.icon,
         email: playerInfo?.emailaddress || null,
-        team: teamName || playerInfo?.team?.name || null,
+        team: teamName || playerInfo?.team?.name || null
       };
     });
     
     enrichedLeaderboard.sort((a, b) => a.rank - b.rank);
-
 
     return {
       statusCode: 200,
