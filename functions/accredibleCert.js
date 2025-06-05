@@ -64,6 +64,8 @@ exports.handler = async (event) => {
         const hubspotContactResponse = await searchContact.json();
         const hubspotContactData = hubspotContactResponse.results[0].properties
 
+        console.log("DATA-NOW:", hubspotContactData)
+
         // Return data back to LMS frontend
         return {
           statusCode: 200,
@@ -72,7 +74,7 @@ exports.handler = async (event) => {
           },
           body: JSON.stringify({
             message: "Success",
-            contact: hubspotContactData
+            hubspotContactData
           }),
         };
       } catch (error) {
