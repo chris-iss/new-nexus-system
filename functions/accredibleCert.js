@@ -63,7 +63,7 @@ exports.handler = async (event) => {
 
         const hubspotContactResponse = await searchContact.json();
 
-        console.log("HUBSPOT SEARCH:", hubspotContactResponse.results.properties)
+        console.log("HUBSPOT SEARCH:", hubspotContactResponse.results[0].properties)
 
         // Return a success response
         return {
