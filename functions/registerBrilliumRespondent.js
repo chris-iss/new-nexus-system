@@ -4,9 +4,25 @@ require("dotenv").config();
 let isExecuting = false;
 
 exports.handler = async (event) => {
+  const headers = {
+    "Access-Control-Allow-Origin": "*", // or restrict to a specific domain
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS"
+  };
+
+  // Handle preflight request
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers,
+      body: "Preflight OK"
+    };
+  }
+
   if (isExecuting) {
     return {
       statusCode: 409,
+      headers,
       body: JSON.stringify({ message: "Function is already executing" }),
     };
   }
@@ -14,7 +30,6 @@ exports.handler = async (event) => {
   isExecuting = true;
 
   try {
-    // Optional: API key check
     const queryApiKey = event.queryStringParameters?.API_KEY;
     const validNetlifyApiKey = process.env.Netlify_API_KEY;
 
@@ -22,11 +37,11 @@ exports.handler = async (event) => {
       isExecuting = false;
       return {
         statusCode: 401,
+        headers,
         body: JSON.stringify({ message: "Unauthorized Access" }),
       };
     }
 
-    // Parse the body
     const { firstName, lastName, email_ } = JSON.parse(event.body);
 
     const brilliumApiKey = process.env.BRILLIUM_API_KEY;
@@ -37,8 +52,6 @@ exports.handler = async (event) => {
       FirstName: firstName,
       LastName: lastName,
       EmailAddress: email_,
-    //   UserName: email,
-    //   Password: "Temp123!",
       RedirectUrl: redirectUrl,
     };
 
@@ -60,6 +73,7 @@ exports.handler = async (event) => {
     isExecuting = false;
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({ message: "Success", redirectUrl }),
     };
 
@@ -68,6 +82,7 @@ exports.handler = async (event) => {
     isExecuting = false;
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ message: error.message }),
     };
   }
