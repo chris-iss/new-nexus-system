@@ -4,9 +4,25 @@ require("dotenv").config();
 let isExecuting = false;
 
 exports.handler = async (event) => {
+  // Handle preflight OPTIONS request
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+      body: "Preflight OK",
+    };
+  }
+
   if (isExecuting) {
     return {
       statusCode: 409,
+      headers: {
+        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+      },
       body: JSON.stringify({ message: "Function is already executing" }),
     };
   }
@@ -14,7 +30,7 @@ exports.handler = async (event) => {
   isExecuting = true;
 
   try {
-    // Optional: API key check via query param
+    // Optional API key check
     const queryApiKey = event.queryStringParameters?.API_KEY;
     const validNetlifyApiKey = process.env.Netlify_API_KEY;
 
@@ -22,31 +38,37 @@ exports.handler = async (event) => {
       isExecuting = false;
       return {
         statusCode: 401,
+        headers: {
+          "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        },
         body: JSON.stringify({ message: "Unauthorized Access" }),
       };
     }
 
-    // Ensure we have a POST body
     if (!event.body) {
       isExecuting = false;
       return {
         statusCode: 400,
+        headers: {
+          "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        },
         body: JSON.stringify({ message: "Missing request body" }),
       };
     }
 
-    // Parse input body
-    const { firstName, lastName, email } = JSON.parse(event.body);
+    const { firstName, lastName, email_ } = JSON.parse(event.body);
 
-    if (!firstName || !lastName || !email) {
+    if (!firstName || !lastName || !email_) {
       isExecuting = false;
       return {
         statusCode: 400,
+        headers: {
+          "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        },
         body: JSON.stringify({ message: "Missing required fields" }),
       };
     }
 
-    // API credentials
     const brilliumApiKey = process.env.BRILLIUM_API_KEY;
     const redirectUrl = "https://instituteofsustainability.onlinetests.app/assess.aspx?aid=A0R9EDCMLJ4P&key=aZEzHUB95vdAuLH7";
 
@@ -54,23 +76,24 @@ exports.handler = async (event) => {
       AssessmentId: "A0R9EDCMLJ4P",
       FirstName: firstName,
       LastName: lastName,
-      EmailAddress: email,
+      EmailAddress: email_,
       RedirectUrl: redirectUrl
     };
+
+    console.log("DATA:", payload)
 
     const response = await fetch("https://api.brillium.com/api/respondents", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // ✅ Corrected Authorization header
-        Authorization: `Brillium-Api-Key ${brilliumApiKey}`,
+        Authorization: `Brillium-Api-Key ${brilliumApiKey}`, // ✅ Make sure this is the correct format
       },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Brillium API error: ${errorText}`);
+      const err = await response.text();
+      throw new Error(`Brillium API error: ${err}`);
     }
 
     const data = await response.json();
@@ -78,6 +101,9 @@ exports.handler = async (event) => {
     isExecuting = false;
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+      },
       body: JSON.stringify({ message: "Success", redirectUrl }),
     };
 
@@ -86,6 +112,9 @@ exports.handler = async (event) => {
     isExecuting = false;
     return {
       statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+      },
       body: JSON.stringify({ message: error.message }),
     };
   }
