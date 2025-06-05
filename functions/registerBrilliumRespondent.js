@@ -56,9 +56,9 @@ exports.handler = async (event) => {
       };
     }
 
-    const { firstName, lastName, email_ } = JSON.parse(event.body);
+    const { firstName, lastName, email } = JSON.parse(event.body);
 
-    if (!firstName || !lastName || !email_) {
+    if (!firstName || !lastName || !email) {
       isExecuting = false;
       return {
         statusCode: 400,
@@ -76,7 +76,7 @@ exports.handler = async (event) => {
       AssessmentId: "A0R9EDCMLJ4P",
       FirstName: firstName,
       LastName: lastName,
-      EmailAddress: email_,
+      EmailAddress: email,
       RedirectUrl: redirectUrl
     };
 
