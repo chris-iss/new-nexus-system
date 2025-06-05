@@ -62,14 +62,17 @@ exports.handler = async (event) => {
         });
 
         const hubspotContactResponse = await searchContact.json();
+        const hubspotContactData = hubspotContactResponse.results[0].properties
 
-        console.log("HUBSPOT SEARCH:", hubspotContactResponse.results[0].properties)
-
-        // Return a success response
+        // Return data back to LMS frontend
         return {
           statusCode: 200,
+          headers: {
+            "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+          },
           body: JSON.stringify({
-            message: "Search was Successful",
+            message: "Success",
+            contact: hubspotContactData
           }),
         };
       } catch (error) {
