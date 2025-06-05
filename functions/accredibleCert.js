@@ -2,9 +2,9 @@ const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
   const headers = {
-    "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
   };
 
   if (event.httpMethod === "OPTIONS") {
@@ -38,11 +38,10 @@ exports.handler = async (event) => {
     // const response = await fetch(...)
 
     return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
         message: "Success",
-        redirectUrl: "https://example.com/certificate", // if needed
       }),
     };
 
