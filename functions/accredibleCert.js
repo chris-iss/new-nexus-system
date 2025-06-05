@@ -1,55 +1,58 @@
 const fetch = require("node-fetch");
-require("dotenv").config();
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com", // restrict to only your frontend
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS"
-};
 
 exports.handler = async (event) => {
-  // Handle preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: corsHeaders,
-      body: ""
+      headers: {
+        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+      body: "Preflight OK",
     };
   }
 
+  const { firstName, lastName, email } = JSON.parse(event.body || "{}");
+
+  if (!firstName || !lastName || !email) {
+    return {
+      statusCode: 400,
+      headers: {
+        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+      },
+      body: JSON.stringify({ message: "Missing required fields" }),
+    };
+  }
+
+  const payload = {
+    FirstName: firstName,
+    LastName: lastName,
+    EmailAddress: email,
+  };
+
+  
+
+
   try {
-    const requestBody = JSON.parse(event.body || "{}");
-
-    // OPTIONAL: Validate incoming fields
-    const { action, payload } = requestBody;
-    if (!action || !payload) {
-      return {
-        statusCode: 400,
-        headers: corsHeaders,
-        body: JSON.stringify({ message: "Missing required fields" })
-      };
-    }
-
-    // // Forward to Zapier or external service
-    // await fetch("https://hooks.zapier.com/hooks/catch/14129819/2vgev9d/", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ status: action, payload })
-    // });
-
     console.log("DATA:", payload)
-
     return {
       statusCode: 200,
-      headers: corsHeaders,
-      body: JSON.stringify({ message: "Success" })
+      headers: {
+        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+      },
+      body: JSON.stringify({
+        message: "Success",
+        redirectUrl: payload.RedirectUrl
+      })
     };
 
   } catch (error) {
-    console.error("Error:", error.message);
     return {
       statusCode: 500,
-      headers: corsHeaders,
+      headers: {
+        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+      },
       body: JSON.stringify({ message: error.message })
     };
   }
