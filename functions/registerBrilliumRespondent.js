@@ -33,6 +33,8 @@ exports.handler = async (event) => {
     RedirectUrl: "https://instituteofsustainability.onlinetests.app/assess.aspx?aid=A0R9EDCMLJ4P&key=aZEzHUB95vdAuLH7"
   };
 
+  console.log("DATA:", payload)
+
   const apiNamespace = "ASSESSMENTS-API";
   const apiPassword = process.env.BRILLIUM_API_PASSWORD;
   const auth = Buffer.from(`${apiNamespace}:${apiPassword}`).toString("base64");
