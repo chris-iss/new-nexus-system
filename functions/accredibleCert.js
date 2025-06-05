@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
+  // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -32,83 +33,68 @@ exports.handler = async (event) => {
   };
 
   try {
-    
-    // Function to search for a HubSpot contact using Thinkific email
-    const hubspotSearchContact = async () => {
+    const hubspotBaseURL = `https://api.hubapi.com/crm/v3/objects/contacts/search`;
 
-      const hubspotBaseURL = `https://api.hubapi.com/crm/v3/objects/contacts/search`;
-
-      try {
-        // Define properties for searching HubSpot contacts by email
-        const hubspotSearchProperties = {
-          after: "0",
-          filterGroups: [
-            { filters: [{ operator: "EQ", propertyName: "email", value: payload.EmailAddress }] },
-            { filters: [{ operator: "EQ", propertyName: "hs_additional_emails", value: payload.EmailAddress }] },
-          ],
-          limit: "100",
-          properties: ["email", "bs_diploma___credential_link", "diploma___final_score____", "paid_in_full", "id"], // Include id for updating
-          sorts: [{ propertyName: "lastmodifieddate", direction: "ASCENDING" }],
-        };
-
-        // Make a POST request to search for HubSpot contacts
-        const searchContact = await fetch(`${hubspotBaseURL}`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${process.env.HUBSPOT_OAUTH_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(hubspotSearchProperties),
-        });
-
-        const hubspotContactResponse = await searchContact.json();
-        const hubspotContactData = hubspotContactResponse.results[0].properties
-
-        console.log("DATA-NOW:", hubspotContactData)
-
-        // Return data back to LMS frontend
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
-          },
-          body: JSON.stringify({
-            message: "Success",
-            hubspotContactData
-          }),
-        };
-      } catch (error) {
-        // Return an error response if the search encounters an issue
-        return {
-          statusCode: 422,
-          body: JSON.stringify({
-            message: error.message,
-          }),
-        };
-      }
+    const hubspotSearchProperties = {
+      after: "0",
+      filterGroups: [
+        { filters: [{ operator: "EQ", propertyName: "email", value: payload.EmailAddress }] },
+        { filters: [{ operator: "EQ", propertyName: "hs_additional_emails", value: payload.EmailAddress }] },
+      ],
+      limit: 1,
+      properties: [
+        "email",
+        "bs_diploma___credential_link",
+        "diploma___final_score____",
+        "paid_in_full",
+        "id"
+      ],
+      sorts: [{ propertyName: "lastmodifieddate", direction: "ASCENDING" }],
     };
 
-    // Invoke the function to search for and update HubSpot contacts
-    await hubspotSearchContact();
+    const searchContact = await fetch(hubspotBaseURL, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.HUBSPOT_OAUTH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(hubspotSearchProperties),
+    });
+
+    const hubspotContactResponse = await searchContact.json();
+
+    if (!hubspotContactResponse.results || hubspotContactResponse.results.length === 0) {
+      return {
+        statusCode: 404,
+        headers: {
+          "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        },
+        body: JSON.stringify({ message: "No contact found in HubSpot." }),
+      };
+    }
+
+    const hubspotContactData = hubspotContactResponse.results[0].properties;
 
     return {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        "Access-Control-Allow-Headers": "Content-Type",
       },
       body: JSON.stringify({
         message: "Success",
-        redirectUrl: payload.RedirectUrl
-      })
+        contact: hubspotContactData,
+      }),
     };
 
   } catch (error) {
+    console.error("HubSpot Search Error:", error);
     return {
       statusCode: 500,
       headers: {
         "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
       },
-      body: JSON.stringify({ message: error.message })
+      body: JSON.stringify({ message: error.message }),
     };
   }
 };
