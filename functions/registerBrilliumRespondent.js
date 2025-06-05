@@ -27,11 +27,11 @@ exports.handler = async (event) => {
   isExecuting = true;
 
   try {
-    const { firstName, lastName, email_ } = JSON.parse(event.body);
+    const { firstName, lastName, email } = JSON.parse(event.body);
 
     console.log("DATA-1", firstName)
     console.log("DATA-2", lastName)
-    console.log("DATA-3", email_)
+    console.log("DATA-3", email)
 
     const brilliumApiKey = process.env.BRILLIUM_API_KEY;
     const redirectUrl = "https://instituteofsustainability.onlinetests.app/assess.aspx?aid=A0R9EDCMLJ4P&key=aZEzHUB95vdAuLH7";
@@ -40,7 +40,7 @@ exports.handler = async (event) => {
       AssessmentId: "A0R9EDCMLJ4P",
       FirstName: firstName,
       LastName: lastName,
-      EmailAddress: email_,
+      EmailAddress: email,
       RedirectUrl: redirectUrl,
     };
 
