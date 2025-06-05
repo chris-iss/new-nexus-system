@@ -5,7 +5,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
       },
@@ -19,7 +19,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 400,
       headers: {
-        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({ message: "Missing required fields" }),
     };
@@ -54,7 +54,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
         message: "Success",
@@ -66,7 +66,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: {
-        "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({ message: error.message })
     };
