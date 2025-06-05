@@ -1,74 +1,56 @@
 const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
+  const headers = {
+    "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
+      headers,
       body: "Preflight OK",
     };
   }
 
-  const { firstName, lastName, email } = JSON.parse(event.body || "{}");
-
-  if (!firstName || !lastName || !email) {
-    return {
-      statusCode: 400,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify({ message: "Missing required fields" }),
-    };
-  }
-
-  const payload = {
-    FirstName: firstName,
-    LastName: lastName,
-    EmailAddress: email,
-  };
-
-  
-
-
-
   try {
-    console.log("DATA:", payload)
-    // const response = await fetch("https://instituteofsustainability.onlinetests.app/api/respondents", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Authorization": `Basic ${auth}`
-    //   },
-    //   body: JSON.stringify(payload)
-    // });
+    const { firstName, lastName, email } = JSON.parse(event.body || "{}");
 
-    // if (!response.ok) {
-    //   const err = await response.text();
-    //   throw new Error(`Brillium API error: ${err}`);
-    // }
+    if (!firstName || !lastName || !email) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ message: "Missing required fields" }),
+      };
+    }
+
+    const payload = {
+      FirstName: firstName,
+      LastName: lastName,
+      EmailAddress: email,
+    };
+
+    console.log("DATA:", payload);
+
+    // You can uncomment and customize your API call here if needed
+    // const response = await fetch(...)
 
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+      headers,
       body: JSON.stringify({
         message: "Success",
-        redirectUrl: payload.RedirectUrl
-      })
+        redirectUrl: "https://example.com/certificate", // if needed
+      }),
     };
 
   } catch (error) {
     return {
       statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify({ message: error.message })
+      headers,
+      body: JSON.stringify({ message: error.message }),
     };
   }
 };
