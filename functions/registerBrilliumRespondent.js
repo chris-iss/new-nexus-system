@@ -1,28 +1,25 @@
 const fetch = require("node-fetch");
-require("dotenv").config();
 
 let isExecuting = false;
 
 exports.handler = async (event) => {
-  const headers = {
-    "Access-Control-Allow-Origin": "*", // or restrict to a specific domain
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS"
-  };
-
-  // Handle preflight request
+  // CORS Preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers,
-      body: "Preflight OK"
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+      body: "Preflight OK",
     };
   }
 
   if (isExecuting) {
     return {
       statusCode: 409,
-      headers,
+      headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify({ message: "Function is already executing" }),
     };
   }
@@ -30,19 +27,11 @@ exports.handler = async (event) => {
   isExecuting = true;
 
   try {
-    const queryApiKey = event.queryStringParameters?.API_KEY;
-    const validNetlifyApiKey = process.env.Netlify_API_KEY;
-
-    if (queryApiKey && queryApiKey !== validNetlifyApiKey) {
-      isExecuting = false;
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ message: "Unauthorized Access" }),
-      };
-    }
-
     const { firstName, lastName, email_ } = JSON.parse(event.body);
+
+    console.log("DATA-1", firstName)
+    console.log("DATA-2", lastName)
+    console.log("DATA-3", email_)
 
     const brilliumApiKey = process.env.BRILLIUM_API_KEY;
     const redirectUrl = "https://instituteofsustainability.onlinetests.app/assess.aspx?aid=A0R9EDCMLJ4P&key=aZEzHUB95vdAuLH7";
@@ -64,25 +53,28 @@ exports.handler = async (event) => {
       body: JSON.stringify(payload),
     });
 
+    const text = await response.text();
+
     if (!response.ok) {
+      console.error("Brillium error:", text);
       throw new Error(`Brillium API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    console.log("Brillium success:", text);
 
     isExecuting = false;
     return {
       statusCode: 200,
-      headers,
+      headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify({ message: "Success", redirectUrl }),
     };
 
   } catch (error) {
-    console.error("Error registering respondent:", error.message);
+    console.error("Server error:", error.message);
     isExecuting = false;
     return {
       statusCode: 500,
-      headers,
+      headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify({ message: error.message }),
     };
   }
