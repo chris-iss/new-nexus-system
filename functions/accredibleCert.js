@@ -55,7 +55,7 @@ exports.handler = async (event) => {
         const searchContact = await fetch(`${hubspotBaseURL}`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${process.env.HUBSPOT_API_KEY}`,
+            "Authorization": `Bearer ${process.env.HUBSPOT_OAUTH_TOKEN}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(hubspotSearchProperties),
