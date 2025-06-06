@@ -43,7 +43,12 @@ exports.handler = async (event) => {
       ],
       limit: 1,
       properties: [
+        "id",
         "email",
+        "bs_diploma___credential_link",
+        "diploma___final_score____",
+        "paid_in_full",   
+    
         "unbundled_module_1_credential_link",
         "unbundled_module_2_credential_link",
         "unbundled_module_3_credential_link",
@@ -56,10 +61,7 @@ exports.handler = async (event) => {
         "unbundled_module_10_credential_link",
         "unbundled_module_11_credential_link",
         "unbundled_module_12_credential_link",
-        
-        "bs_diploma___credential_link",
-        "diploma___final_score____",
-        "paid_in_full",
+        "unbundled_csrd_credential_link",
 
         "unbundled_module_1",
         "unbundled_module_2",
@@ -73,7 +75,8 @@ exports.handler = async (event) => {
         "unbundled_module_10",
         "unbundled_module_11",
         "unbundled_module_12",
-        "id"
+        "unbundled_csrd",
+    
       ],
       sorts: [{ propertyName: "lastmodifieddate", direction: "ASCENDING" }],
     };
