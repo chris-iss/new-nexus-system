@@ -47,7 +47,8 @@ exports.handler = async (event) => {
         "email",
         "bs_diploma___credential_link",
         "diploma___final_score____",
-        "paid_in_full",   
+        "paid_in_full",
+        "credential_issue_date",   
     
         "unbundled_module_1_credential_link",
         "unbundled_module_2_credential_link",
