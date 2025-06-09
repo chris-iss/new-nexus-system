@@ -47,6 +47,8 @@ exports.handler = async (event) => {
 
     const result = await response.json();
 
+    console.log("RESPONSE-RESULT:", result)
+
     if (result?.InvitationLink) {
       return {
         statusCode: 200,
