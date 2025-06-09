@@ -17,6 +17,8 @@ exports.handler = async (event) => {
 
   const { firstName, lastName, email } = JSON.parse(event.body || "{}");
 
+  console.log("DATA:", firstName, lastName, email)
+
   if (!firstName || !lastName || !email) {
     return {
       statusCode: 400,
