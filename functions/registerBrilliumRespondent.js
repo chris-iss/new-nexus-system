@@ -15,9 +15,10 @@ exports.handler = async (event) => {
     };
   }
 
+  // Parse the incoming data
   const { firstName, lastName, email } = JSON.parse(event.body || "{}");
 
-  console.log("DATA:", firstName, lastName, email)
+  console.log("DATA:", firstName, lastName, email);
 
   if (!firstName || !lastName || !email) {
     return {
@@ -30,14 +31,15 @@ exports.handler = async (event) => {
   }
 
   try {
+    // Call Brillium Invitations API
     const response = await fetch("https://app.brillium.com/api/invitations", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.BRILLIUM_API_KEY}`,
+        "Authorization": `Bearer ${process.env.BRILLIUM_API_KEY}`, // Ensure this is set in Netlify's env vars
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        AssessmentId: "A0R9EDCMLJ4P",  // Replace with your real Assessment ID
+        AssessmentId: "A0R9EDCMLJ4P",  // ✅ Confirm this is your actual Brillium AssessmentId
         FirstName: firstName,
         LastName: lastName,
         EmailAddress: email,
@@ -47,7 +49,8 @@ exports.handler = async (event) => {
 
     const result = await response.json();
 
-    console.log("RESPONSE-RESULT:", result)
+    console.log("BRILLIUM-STATUS:", response.status);
+    console.log("BRILLIUM-RESPONSE:", result);
 
     if (result?.InvitationLink) {
       return {
@@ -55,18 +58,21 @@ exports.handler = async (event) => {
         headers: {
           "Access-Control-Allow-Origin": allowedOrigin,
         },
-        body: JSON.stringify({ link: result.InvitationLink })
+        body: JSON.stringify({ redirectUrl: result.InvitationLink })
       };
     } else {
-      throw new Error("No invitation link returned");
+      throw new Error(result.Message || "No invitation link returned from Brillium.");
     }
+
   } catch (error) {
+    console.error("ERROR-CALLING-BRILLIUM:", error);
+
     return {
       statusCode: 500,
       headers: {
         "Access-Control-Allow-Origin": allowedOrigin,
       },
-      body: JSON.stringify({ error: error.message })
+      body: JSON.stringify({ error: error.message || "Internal Server Error" })
     };
   }
 };
