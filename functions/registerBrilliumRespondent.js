@@ -3,7 +3,6 @@ const fetch = require("node-fetch");
 exports.handler = async (event) => {
   const allowedOrigin = "https://courses.instituteofsustainabilitystudies.com";
 
-  // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -16,7 +15,6 @@ exports.handler = async (event) => {
     };
   }
 
-  // Parse request body
   const { firstName, lastName, email } = JSON.parse(event.body || "{}");
 
   if (!firstName || !lastName || !email) {
@@ -24,25 +22,22 @@ exports.handler = async (event) => {
       statusCode: 400,
       headers: {
         "Access-Control-Allow-Origin": allowedOrigin,
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
       },
       body: JSON.stringify({ error: "Missing student info" }),
     };
   }
 
   try {
-    // POST invitation to Brillium
-    const brilliumResponse = await fetch("https://app.brillium.com/api/Invitations", {
+    const response = await fetch("https://instituteofsustainability.onlinetests.app/api/Invitations", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.BRILLIUM_API_KEY}`, // ✅ Must be set in Netlify env vars
+        "Authorization": `Bearer ${process.env.BRILLIUM_API_KEY}`, // Make sure this is set in Netlify
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
         Invitations: [
           {
-            AssessId: "A0R9EDCMLJ4P", // ✅ Your actual assessment ID
+            AssessId: "A0R9EDCMLJ4P",
             FirstName: firstName,
             LastName: lastName,
             Email: email
@@ -52,35 +47,27 @@ exports.handler = async (event) => {
       })
     });
 
-    const result = await brilliumResponse.json();
+    const result = await response.json();
 
     if (
-      result &&
-      result.Invitations &&
-      result.Invitations.length > 0 &&
-      result.Invitations[0].Code
+      result?.Invitations?.[0]?.Code
     ) {
-      const invitationCode = result.Invitations[0].Code;
-
-      const redirectUrl = `https://instituteofsustainability.onlinetests.app/assess.aspx?aid=A0R9EDCMLJ4P&key=${invitationCode}`;
+      const code = result.Invitations[0].Code;
+      const redirectUrl = `https://instituteofsustainability.onlinetests.app/assess.aspx?aid=A0R9EDCMLJ4P&key=${code}`;
 
       return {
         statusCode: 200,
         headers: {
           "Access-Control-Allow-Origin": allowedOrigin,
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
         },
         body: JSON.stringify({ redirectUrl })
       };
     } else {
-      console.error("Brillium invitation response did not contain a code", result);
+      console.error("No invitation code returned:", result);
       return {
         statusCode: 502,
         headers: {
           "Access-Control-Allow-Origin": allowedOrigin,
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
         },
         body: JSON.stringify({ error: "No invitation code returned by Brillium" })
       };
@@ -92,8 +79,6 @@ exports.handler = async (event) => {
       statusCode: 500,
       headers: {
         "Access-Control-Allow-Origin": allowedOrigin,
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
       },
       body: JSON.stringify({ error: error.message })
     };
