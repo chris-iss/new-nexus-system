@@ -91,6 +91,7 @@ exports.handler = async (event) => {
         "unbundled_module_11",
         "unbundled_module_12",
         "unbundled_csrd",
+        "assignment_status"
     
       ],
       sorts: [{ propertyName: "lastmodifieddate", direction: "ASCENDING" }],
