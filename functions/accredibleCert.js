@@ -35,6 +35,8 @@ exports.handler = async (event) => {
   try {
     const hubspotBaseURL = `https://api.hubapi.com/crm/v3/objects/contacts/search`;
 
+    console.log("HELLO")
+
     const hubspotSearchProperties = {
       after: "0",
       filterGroups: [
