@@ -14,9 +14,9 @@ exports.handler = async (event) => {
     };
   }
 
-  const { firstName, lastName, email } = JSON.parse(event.body || "{}");
+  const { first_Name, last_Name, email } = JSON.parse(event.body || "{}");
 
-  if (!firstName || !lastName || !email) {
+  if (!first_Name || !last_Name || !email) {
     return {
       statusCode: 400,
       headers: {
@@ -27,15 +27,13 @@ exports.handler = async (event) => {
   }
 
   const payload = {
-    FirstName: firstName,
-    LastName: lastName,
+    FirstName: first_Name,
+    LastName: last_Name,
     EmailAddress: email,
   };
 
   try {
     const hubspotBaseURL = `https://api.hubapi.com/crm/v3/objects/contacts/search`;
-
-    console.log("HELLO")
 
     const hubspotSearchProperties = {
       after: "0",
