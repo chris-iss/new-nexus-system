@@ -61,7 +61,7 @@ const headers = {
   };
   
   exports.handler = async (event, context) => {
-    // Handle CORS preflight
+    // Handle CORS preflight request
     if (event.httpMethod === "OPTIONS") {
       return {
         statusCode: 200,
@@ -80,25 +80,24 @@ const headers = {
         };
       }
   
-      // Make sure your env vars are available
       const THINKIFIC_API_KEY = process.env.THINKIFIC_API_KEY;
       const THINKIFIC_SUB_DOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
   
+      // Check for missing API credentials
       if (!THINKIFIC_API_KEY || !THINKIFIC_SUB_DOMAIN) {
         return {
           statusCode: 500,
           headers,
-          body: JSON.stringify({ error: "Server misconfiguration: missing Thinkific credentials" }),
+          body: JSON.stringify({ error: "Missing Thinkific credentials" }),
         };
       }
   
-      // Example: Fetch the user's enrollments
-      const response = await fetch(`https://api.thinkific.com/api/public/v1/users/${userId}/enrollments`, {
+      const response = await fetch(`https://api.thinkific.com/api/public/v1/users/${userId}`, {
         headers: {
           "Content-Type": "application/json",
           "X-Auth-API-Key": THINKIFIC_API_KEY,
-          "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN,
-        },
+          "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN
+        }
       });
   
       if (!response.ok) {
@@ -110,12 +109,12 @@ const headers = {
       }
   
       const data = await response.json();
+  
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify(data),
       };
-  
     } catch (error) {
       return {
         statusCode: 500,
@@ -124,4 +123,5 @@ const headers = {
       };
     }
   };
+  
   
