@@ -88,7 +88,7 @@ export async function handler(event, context) {
         {
           method: "PATCH",
           headers: {
-            Authorization: `Bearer ${process.env.HUBSPOT_TOKEN}`,
+            Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ properties }),
