@@ -49,7 +49,7 @@ export async function handler(event, context) {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${process.env.HUBSPOT_TOKEN}`,
+            Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
