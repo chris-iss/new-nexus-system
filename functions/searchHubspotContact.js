@@ -23,6 +23,8 @@ export async function handler(event, context) {
       }
   
       const { email } = JSON.parse(event.body);
+
+      console.log(email)
   
       if (!email || !email.trim()) {
         return {
