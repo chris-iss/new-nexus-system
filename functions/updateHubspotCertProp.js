@@ -19,7 +19,7 @@ export async function handler(event, context) {
         return {
           statusCode: 400,
           headers: corsHeaders,
-          body: JSON.stringify({ message: "Missing request body." }),
+          body: JSON.stringify({ message: "Missing request body." }),‹
         };
       }
   
