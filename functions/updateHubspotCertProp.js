@@ -24,6 +24,8 @@ export async function handler(event, context) {
       }
   
       const { email, properties } = JSON.parse(event.body);
+
+      console.log(email, properties)
   
       if (!email) {
         return {
