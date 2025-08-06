@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import { timeStamp } from "console";
 
 const supabase_url = process.env.SUPABASE_URL;
 const supabase_service_key = process.env.SERVICE_KEY;
@@ -12,6 +11,9 @@ export const handler = async (event) => {
     if (isExecuting) {
         return {
             statusCode: 409,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            },
             body: JSON.stringify({ message: "Function is already executing" }),
         };
     }
@@ -19,11 +21,16 @@ export const handler = async (event) => {
     isExecuting = true;
 
     try {
-        if (!event.body) {
-            console.error("Empty body received");
+        // Handle CORS preflight (OPTIONS request)
+        if (event.httpMethod === "OPTIONS") {
             return {
-                statusCode: 400,
-                body: JSON.stringify({ message: "Request body is empty or missing" }),
+                statusCode: 200,
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type",
+                },
+                body: "",
             };
         }
 
@@ -36,12 +43,18 @@ export const handler = async (event) => {
             console.error("Supabase Error:", error);
             return {
                 statusCode: 500,
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                },
                 body: JSON.stringify({ error: error.message })
             };
         }
 
         return {
             statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            },
             body: JSON.stringify(data)
         };
     } catch (error) {
@@ -49,6 +62,9 @@ export const handler = async (event) => {
 
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            },
             body: JSON.stringify({ message: "Internal Server Error", error: error.message }),
         };
     } finally {
