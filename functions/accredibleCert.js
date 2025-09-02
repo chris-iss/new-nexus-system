@@ -62,7 +62,10 @@ exports.handler = async (event) => {
         "module_10_crendetial_issue_date",
         "module_11_crendetial_issue_date",
         "module_12_crendetial_issue_date",
-        "csrd_crendetial_issue_date",   
+        "csrd_crendetial_issue_date",
+        "understanding_the_basics_of_carbon_footprinting_credential_issue_date",
+        "carbon_footprinting_and_scope_3_emissions_deep_dive_credential_issue_date",
+        "foundations_of_circular_economy_credential_issue_date", 
     
         "unbundled_module_1_credential_link",
         "unbundled_module_2_credential_link",
@@ -77,6 +80,9 @@ exports.handler = async (event) => {
         "unbundled_module_11_credential_link",
         "unbundled_module_12_credential_link",
         "unbundled_csrd_credential_link",
+        "understanding_the_basics_of_carbon_footprinting",
+        "carbon_footprinting_and_scope_3_emissions_deep_dive_credential_link",
+        "foundations_of_circular_economy_credential_link",
 
         "module_1_assignment_status",
         "module_2_assignment_status",
