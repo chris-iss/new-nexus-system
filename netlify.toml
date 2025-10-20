@@ -1,11 +1,11 @@
 [build]
-  functions = "functions"
-  publish = "dist"
+    functions = "functions"
+    publish = "dist"
 
-[headers]
+[[headers]]
   for = "/wp-json/wc/v3/orders"
   [headers.values]
     Access-Control-Allow-Origin = "https://stage.instituteofsustainabilitystudies.com"
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
     Access-Control-Allow-Headers = "Content-Type, Authorization"
-
+    
