@@ -1,6 +1,6 @@
 [build]
     functions = "functions"
-    publish = "dist"
+    publish = ""
 
 [[headers]]
   for = "/wp-json/wc/v3/orders"
