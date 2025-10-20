@@ -99,7 +99,7 @@ export const handler = async (event) => {
   }
 
   try {
-    // Fetch all events from Supabase table 'eventUpdate'
+    // Fetch all events from Supabase table 'eventUpdates'
     const { data, error } = await supabase.from("eventUpdate").select("*");
 
     if (error) {
