@@ -1,7 +1,6 @@
 [build]
-  command = "npm install"
   functions = "functions"
-  publish = "."
+  publish = "dist"
 
 [headers]
   for = "/wp-json/wc/v3/orders"
