@@ -56,21 +56,25 @@ exports.handler = async (event) => {
         const userId = extractPayload.main_thinkific_user_id
 
         if (!extractPayload.main_thinkific_user_id) {
-            const updateResponse = await fetch(
-                `https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`,
+            const updateResponse = await fetch(`https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`,
                 {
                     method: "PATCH",
                     headers: {
                         Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ userId }),
+                    body: JSON.stringify({
+                        properties: {
+                            main_thinkific_user_id: extractedPayload.userId
+                        }
+                    }),
                 }
             );
 
             const updateData = await updateResponse.json();
-            console.log("UPDATED:", updateData)
+            console.log("UPDATED:", updateData);
         }
+
 
         //    console.log("PAYLOAD:", extractPayload)
 
