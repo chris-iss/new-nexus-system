@@ -13,7 +13,7 @@ exports.handler = async (event) => {
                 body: JSON.stringify({ message: "Function is already executing" })
             };
         }
-      
+
         isExecuting = true;
 
         const extractParameteres = JSON.parse(event.body);
@@ -22,39 +22,57 @@ exports.handler = async (event) => {
             email: extractParameteres.payload.email
         }
 
-    
+
 
         const response = await fetch("https://api.hubapi.com/crm/v3/objects/contacts/search", {
             method: "POST",
             headers: {
-            Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
-            "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
-            filterGroups: [
-                {
-                filters: [
+                filterGroups: [
                     {
-                    propertyName: "email",
-                    operator: "EQ",
-                    value: extractedPayload.email.trim(),
+                        filters: [
+                            {
+                                propertyName: "email",
+                                operator: "EQ",
+                                value: extractedPayload.email.trim(),
+                            },
+                        ],
                     },
                 ],
-                },
-            ],
-            properties: ["email", "firstname", "lastname", "main_thinkific_user_id"],
-            limit: 1,
+                properties: ["email", "firstname", "lastname", "main_thinkific_user_id"],
+                limit: 1,
             }),
         });
-  
-       const data = await response.json();
-       const extractPayload = data.results[0].properties
 
-       if (!extractPayload.main_thinkific_user_id) {
-        console.log("EMPTY MAIN USER ID")
-       }
+        const data = await response.json();
+        const extractPayload = data.results[0].properties
 
-    //    console.log("PAYLOAD:", extractPayload)
+
+        //Update Main Thinkific UserId
+        const contactId = data.results[0].id;
+        const userId = extractPayload.main_thinkific_user_id
+
+        if (!extractPayload.main_thinkific_user_id) {
+            const updateResponse = await fetch(
+                `https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ userId }),
+                }
+            );
+
+            const updateData = await updateResponse.json();
+            console.log("UPDATED:", updateData)
+        }
+
+        //    console.log("PAYLOAD:", extractPayload)
 
         //  const sendResponseToZapier = await fetch('https://hooks.zapier.com/hooks/catch/14129819/2u3ts5t/', {
         //         method: "POST",
@@ -63,12 +81,12 @@ exports.handler = async (event) => {
         //         },
         //         body: JSON.stringify({ id: response.id, updatedProperty: contactPropertyToUpdate, firstname: getUser?.first_name, lastname: getUser?.last_name, email: getUser?.email, lessonCompleted: extractParameteres?.payload?.lesson?.name})
         // });
-           
+
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Success" })
         };
-    } catch(error) {
+    } catch (error) {
         return {
             statusCode: 400,
             body: JSON.stringify({ message: error.message })
