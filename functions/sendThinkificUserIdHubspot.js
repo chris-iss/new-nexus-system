@@ -3,7 +3,7 @@ require("dotenv").config();
 
 let isExecuting = false;
 
-// This codebase receives survey lesson completion on real-time and updates hubspot propeerty to trigger Cert generation
+
 exports.handler = async (event) => {
     try {
         // Check if the function is already executing
