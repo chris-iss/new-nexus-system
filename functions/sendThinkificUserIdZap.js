@@ -17,8 +17,12 @@ exports.handler = async (event) => {
         isExecuting = true;
 
         const extractParameteres = JSON.parse(event.body);
+        const extractedPayload = {
+            userId: extractParameteres.payload.id,
+            email: extractParameteres.payload.email
+        }
 
-        console.log("PAYLOAD:", extractParameteres)
+        console.log("PAYLOAD:", extractedPayload)
 
         //  const sendResponseToZapier = await fetch('https://hooks.zapier.com/hooks/catch/14129819/2u3ts5t/', {
         //         method: "POST",
