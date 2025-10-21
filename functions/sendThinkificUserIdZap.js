@@ -22,7 +22,34 @@ exports.handler = async (event) => {
             email: extractParameteres.payload.email
         }
 
-        console.log("PAYLOAD:", extractedPayload)
+    
+
+        const response = await fetch("https://api.hubapi.com/crm/v3/objects/contacts/search", {
+            method: "POST",
+            headers: {
+            Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            filterGroups: [
+                {
+                filters: [
+                    {
+                    propertyName: "email",
+                    operator: "EQ",
+                    value: extractedPayload.email.trim(),
+                    },
+                ],
+                },
+            ],
+            properties: ["email", "firstname", "lastname", "main_thinkific_user_id"],
+            limit: 1,
+            }),
+        });
+  
+       const data = await response.json();
+
+       console.log("PAYLOAD:", data)
 
         //  const sendResponseToZapier = await fetch('https://hooks.zapier.com/hooks/catch/14129819/2u3ts5t/', {
         //         method: "POST",
