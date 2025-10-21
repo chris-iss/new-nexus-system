@@ -53,7 +53,6 @@ exports.handler = async (event) => {
 
         //Update Main Thinkific UserId
         const contactId = data.results[0].id;
-        const userId = extractPayload.main_thinkific_user_id
 
         if (!extractPayload.main_thinkific_user_id) {
             const updateResponse = await fetch(`https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`,
@@ -74,17 +73,6 @@ exports.handler = async (event) => {
             const updateData = await updateResponse.json();
             console.log("UPDATED:", updateData);
         }
-
-
-        //    console.log("PAYLOAD:", extractPayload)
-
-        //  const sendResponseToZapier = await fetch('https://hooks.zapier.com/hooks/catch/14129819/2u3ts5t/', {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json"
-        //         },
-        //         body: JSON.stringify({ id: response.id, updatedProperty: contactPropertyToUpdate, firstname: getUser?.first_name, lastname: getUser?.last_name, email: getUser?.email, lessonCompleted: extractParameteres?.payload?.lesson?.name})
-        // });
 
         return {
             statusCode: 200,
