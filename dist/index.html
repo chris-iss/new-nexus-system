@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Starting Assessment...</title>
+  <style>
+    html,
+	.header {
+		position: fixed; width: 100%; top: 0; z-index: 1000; display: none;
+	}
+	
+	.main-content {
+		margin-top: 100px;
+	}
+	/* Adjust Logo Size */
+	
+	.header__logo img {
+		max-width: 130px !important; height: auto !important;
+	}
+	/* Fix Notification Icons */
+	
+	.notification-pane-instance {
+		width: 24px !important; height: 24px !important; position: relative !important;
+	}
+	/* Resize User Avatar */
+	
+	.header__user-avatar {
+		width: 28px !important; height: 28px !important; border-radius: 50%;
+	}
+	/* Adjust Navigation Alignment */
+	
+	.header__nav {
+		display: flex !important; align-items: center !important; justify-content: flex-end !important; gap: 15px !important;
+	}
+	/* Fix Dropdown Button */
+	
+	.dropdown__toggle-button {
+		font-size: 14px !important; display: flex !important; align-items: center !important; gap: 8px;
+	}
+	/* Fix Header Text Alignment */
+	
+	.header__nav-item a {
+		font-size: 14px !important; color: white !important;
+	}
+	/* Fix Large Notification Icons */
+	
+	.header__mobile-menu-wrapper,
+	.header__mobile-button {
+		transform: scale(0.8) !important; max-width: 40px !important;
+	}
+	/* Hide the first bell icon */
+	
+	.header .notification-pane-instance:first-of-type {
+		display: none !important;
+	}
+	
+	main.custom,
+	.rich-text__container,
+	.section__content,
+	.dashboard-container {
+		display: flex; width: 100vw !important; max-width: none !important; margin: 0 auto; padding: 0 !important; font-family: Georgia, 'Times New Roman', Times, serif;
+	}
+	
+	.dashboard-container {
+		margin-top: -20px;
+	}
+
+
+
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #06c168;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-top: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <p>Redirecting you to your assessment...</p>
+  <div class="dashboard-container">
+    <div class="spinner"></div>
+  </div>
+
+
+  <!-- <script>
+    async function startAssessment() {
+      const firstName = localStorage.getItem("student_firstName");
+      const lastName = localStorage.getItem("student_lastName");
+      const email = localStorage.getItem("student_email");
+
+      if (!firstName || !lastName || !email) {
+        alert("Missing student information. Please contact support.");
+        return;
+      }
+
+      try {
+        const response = await fetch("/.netlify/functions/registerBrilliumRespondent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ firstName, lastName, email })
+        });
+
+        const data = await response.json();
+
+        if (data.redirectUrl) {
+          window.location.href = data.redirectUrl;
+        } else {
+          alert("Failed to start assessment.");
+          console.error(data);
+        }
+      } catch (error) {
+        alert("An error occurred. Please try again.");
+        console.error(error);
+      }
+    }
+
+    startAssessment(); -->
+  </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice Course Enrollment</title>
+    <link rel="stylesheet" href="index.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="form-container">
+        <div class="leftside">
+            <img src="https://cdn.instituteofsustainabilitystudies.com/wp-content/uploads/2024/05/16110040/cropped-ISS-Favicon.png" alt="" />
+         </div>
+
+        <div class="rightside">
+          <p>Invoice Course Enrollment</p>
+          <form class="form-right" id="enrollmentForm">
+            <label for="courses" style="padding-left: 25px; margin-bottom: 10px"
+              >Student Email</label
+            >
+            <div class="input-email">
+              <i class="fa-solid fa-envelope"></i>
+              <input
+                type="email"
+                name="email"
+                class="input"
+                placeholder="Email"
+                required
+              />
+            </div>
+
+            <label for="courses" style="padding-left: 25px"
+              >Select Status</label
+            >
+            <div class="input-status">
+              <i class="fa-solid fa-square-poll-horizontal"></i>
+              <select name="status" class="dropdown" required>
+                <option value="" disabled selected>Select Course Status</option>
+                <option value="new">New</option>
+              </select>
+            </div>
+
+            <label for="courses" style="padding-left: 25px"
+              >Select Courses</label
+            >
+            <div class="input-course_">
+              <i class="fa-regular fa-id-badge"></i>
+              <div class="input-container" name="course">
+                <div class="custom-multi-select" id="courseMultiSelect">
+                  <div class="tags-container"></div>
+                  <div class="dropdown-options"></div>
+                </div>
+              </div>
+            </div>
+
+            <label for="courseIds" style="padding-left: 25px"
+              >Select Course's Id</label
+            >
+            <div class="input-course_">
+              <i class="fa-regular fa-id-badge"></i>
+              <div class="input-container" name="courseIds">
+                <div class="custom-multi-select" id="courseIdMultiSelect">
+                  <div class="tags-container"></div>
+                  <div class="dropdown-options"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="input-qty">
+              <i class="fa-solid fa-calculator"></i>
+              <select name="diplomaQty" class="dropdown" required>
+                <option value="" disabled selected>
+                  Select Diploma Quantity
+                </option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+            </div>
+
+            <div class="input-qty">
+              <i class="fa-solid fa-calculator"></i>
+              <select name="certQty" class="dropdown" required>
+                <option value="" disabled selected>Select Cert Quantity</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+            </div>
+
+            <div class="input-status">
+                <i class="fa-solid fa-calendar-week"></i>
+                <select name="date" class="dropdown" required>
+                  <option value="" disabled selected>Select a Date</option>
+                  <option value="2024-06-01">Feb 5, 2025</option>
+                  <option value="2024-06-15">Feb 19, 2025</option>
+                </select>
+              </div>
+
+            <button type="submit" class="submit">Submit Request</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+   
+    <script type="module" src="../dist/script.js "></script>
+  </body>
+</html>
