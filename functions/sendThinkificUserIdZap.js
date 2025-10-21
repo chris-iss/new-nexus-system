@@ -48,8 +48,9 @@ exports.handler = async (event) => {
         });
   
        const data = await response.json();
+       const extractPayload = data.results[0].properties
 
-       console.log("PAYLOAD:", data.results.properties)
+       console.log("PAYLOAD:", extractPayload)
 
         //  const sendResponseToZapier = await fetch('https://hooks.zapier.com/hooks/catch/14129819/2u3ts5t/', {
         //         method: "POST",
