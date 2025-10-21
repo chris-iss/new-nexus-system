@@ -50,7 +50,11 @@ exports.handler = async (event) => {
        const data = await response.json();
        const extractPayload = data.results[0].properties
 
-       console.log("PAYLOAD:", extractPayload)
+       if (!extractPayload.main_thinkific_user_id) {
+        console.log("EMPTY MAIN USER ID")
+       }
+
+    //    console.log("PAYLOAD:", extractPayload)
 
         //  const sendResponseToZapier = await fetch('https://hooks.zapier.com/hooks/catch/14129819/2u3ts5t/', {
         //         method: "POST",
