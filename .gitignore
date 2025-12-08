@@ -5,3 +5,4 @@
 
 node_modules
 apikeys.js
+.DS_Store
