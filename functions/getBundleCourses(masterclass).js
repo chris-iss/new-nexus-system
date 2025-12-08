@@ -58,14 +58,14 @@ exports.handler = async (event) => {
             }).then(res => res.json())
         );
 
-        const courseLists = await Promise.all(courseRequests);
+        const courseList = await Promise.all(courseRequests);
 
         return {
             statusCode: 200,
             headers: { "Access-Control-Allow-Origin": "*" },
             body: JSON.stringify({
                 bundle: bundleData,
-                courses: courseLists
+                courses: courseList
             })
         };
 
