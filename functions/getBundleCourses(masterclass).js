@@ -24,7 +24,7 @@ exports.handler = async (event) => {
             };
         }
 
-        // Fetch bundle details
+        // Fetch bundle detailss
         const bundleRes = await fetch(
             `https://api.thinkific.com/api/public/v1/bundles/${bundleId}`,
             {
