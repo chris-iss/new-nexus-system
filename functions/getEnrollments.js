@@ -17,46 +17,42 @@ exports.handler = async (event) => {
     try {
         const { THINKIFIC_API_KEY, THINKIFIC_SUB_DOMAIN } = process.env;
 
-        // 🔥 Fetch ALL enrollments
+        // FIX: accept both ?userId= and ?user_id=
+        const userId = event.queryStringParameters.userId 
+                    || event.queryStringParameters.user_id;
+
+        if (!userId) {
+            return {
+                statusCode: 400,
+                headers: { "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({ error: "User ID is required" })
+            };
+        }
+
         const response = await fetch(
-            `https://api.thinkific.com/api/public/v1/enrollments`,
+            `https://api.thinkific.com/api/public/v1/enrollments?query[user_id]=${userId}`,
             {
                 headers: {
-                    "Content-Type": "application/json",
                     "X-Auth-API-Key": THINKIFIC_API_KEY,
                     "X-Auth-Subdomain": THINKIFIC_SUB_DOMAIN
                 }
             }
         );
 
-        if (!response.ok) {
-            throw new Error(`Thinkific API Error: ${response.status}`);
-        }
-
         const data = await response.json();
 
         return {
             statusCode: 200,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type"
-            },
+            headers: { "Access-Control-Allow-Origin": "*" },
             body: JSON.stringify(data)
         };
     } catch (error) {
-        console.error("Error fetching enrollments:", error);
-
         return {
             statusCode: 500,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type"
-            },
-            body: JSON.stringify({
-                error: "Failed to fetch enrollments",
-                details: error.message
+            headers: { "Access-Control-Allow-Origin": "*" },
+            body: JSON.stringify({ 
+                error: "Failed to fetch enrollments", 
+                details: error.message 
             })
         };
     }
