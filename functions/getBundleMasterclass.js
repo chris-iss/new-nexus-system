@@ -38,9 +38,11 @@ exports.handler = async (event) => {
             `https://api.thinkific.com/api/admin/v1/bundles/${bundleId}/courses`,
             {
                 headers: {
+                    "Content-Type": "application/json",
                     "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
-                    "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
+                    "X-Auth-User": process.env.THINKIFIC_ADMIN_EMAIL
                 }
+
             }
         );
 
