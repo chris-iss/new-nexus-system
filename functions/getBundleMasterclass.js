@@ -7,14 +7,12 @@ exports.handler = async (event) => {
         "Access-Control-Allow-Headers": "Content-Type",
     };
 
-    // Handle OPTIONS preflight
     if (event.httpMethod === "OPTIONS") {
         return { statusCode: 200, headers: corsHeaders };
     }
 
     try {
-        const body = JSON.parse(event.body || "{}");
-        const bundleId = body.bundleId;
+        const { bundleId } = JSON.parse(event.body || "{}");
 
         if (!bundleId) {
             return {
@@ -24,14 +22,11 @@ exports.handler = async (event) => {
             };
         }
 
-        // ------------------------------
-        // 1️⃣ FETCH BUNDLE
-        // ------------------------------
+        // 1️⃣ Fetch bundle
         const bundleRes = await fetch(
             `https://api.thinkific.com/api/public/v1/bundles/${bundleId}`,
             {
                 headers: {
-                    "Content-Type": "application/json",
                     "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
                     "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
                 }
@@ -39,18 +34,17 @@ exports.handler = async (event) => {
         );
 
         if (!bundleRes.ok) {
-            const errorText = await bundleRes.text();
-            throw new Error(`Bundle fetch failed: ${bundleRes.status} — ${errorText}`);
+            throw new Error(`Bundle fetch failed: ${bundleRes.status}`);
         }
 
         const bundleData = await bundleRes.json();
 
-        // Extract course IDs from the bundle
-        const courseIds = (bundleData.included_items || [])
-            .filter(item => item.type === "Course")
-            .map(item => item.id);
+        // 2️⃣ Extract real course IDs
+        const courseIds = Array.isArray(bundleData.course_ids)
+            ? bundleData.course_ids
+            : [];
 
-        if (!courseIds.length) {
+        if (courseIds.length === 0) {
             return {
                 statusCode: 200,
                 headers: corsHeaders,
@@ -61,53 +55,39 @@ exports.handler = async (event) => {
             };
         }
 
-        // ------------------------------
-        // 2️⃣ FETCH EACH COURSE INDIVIDUALLY
-        // ------------------------------
-        const courseRequests = courseIds.map(async (courseId) => {
-            try {
-                const res = await fetch(
-                    `https://api.thinkific.com/api/public/v1/courses/${courseId}`,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
-                            "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
+        // 3️⃣ Fetch course details one-by-one
+        const courses = await Promise.all(
+            courseIds.map(async (courseId) => {
+                try {
+                    const res = await fetch(
+                        `https://api.thinkific.com/api/public/v1/courses/${courseId}`,
+                        {
+                            headers: {
+                                "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
+                                "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
+                            }
                         }
-                    }
-                );
+                    );
 
-                if (!res.ok) {
-                    console.error(`Failed to fetch course ${courseId}:`, res.status);
+                    if (!res.ok) return null;
+                    return await res.json();
+                } catch (err) {
+                    console.error("Course fetch error:", err);
                     return null;
                 }
+            })
+        );
 
-                return await res.json();
-            } catch (err) {
-                console.error("Error fetching course:", courseId, err);
-                return null;
-            }
-        });
-
-        const courseResults = await Promise.all(courseRequests);
-
-        // Filter out failed fetches
-        const matchedCourses = courseResults.filter(Boolean);
-
-        // ------------------------------
-        // 3️⃣ RETURN FINAL RESPONSE
-        // ------------------------------
         return {
             statusCode: 200,
             headers: corsHeaders,
             body: JSON.stringify({
                 bundle: bundleData,
-                courses: matchedCourses
+                courses: courses.filter(Boolean)
             })
         };
 
     } catch (err) {
-        console.error("Server Error:", err);
         return {
             statusCode: 500,
             headers: corsHeaders,
