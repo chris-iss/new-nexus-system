@@ -1,15 +1,21 @@
 exports.handler = async (event) => {
+
     const corsHeaders = {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
     };
 
+    // Handle CORS preflight
     if (event.httpMethod === "OPTIONS") {
-        return { statusCode: 204, headers: corsHeaders };
+        return {
+            statusCode: 204,
+            headers: corsHeaders,
+        };
     }
 
     try {
+        // Require POST + body
         if (!event.body) {
             return {
                 statusCode: 400,
@@ -20,44 +26,58 @@ exports.handler = async (event) => {
 
         const { bundleId } = JSON.parse(event.body);
 
-        // 1. GET BUNDLE DETAILS (ADMIN API)
+        if (!bundleId) {
+            return {
+                statusCode: 400,
+                headers: corsHeaders,
+                body: JSON.stringify({ error: "Missing bundleId" })
+            };
+        }
+
+        // Fetch bundle details
         const bundleRes = await fetch(
-            `https://api.thinkific.com/api/admin/v1/bundles/${bundleId}`,
+            `https://api.thinkific.com/api/public/v1/bundles/${bundleId}`,
             {
                 headers: {
+                    "Content-Type": "application/json",
                     "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
                     "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
                 }
             }
         );
 
+        if (!bundleRes.ok) {
+            throw new Error(`Bundle fetch failed: ${bundleRes.status}`);
+        }
+
         const bundleData = await bundleRes.json();
 
-        // 2. GET ALL COURSES IN BUNDLE (ADMIN API)
-        const coursesRes = await fetch(
-            `https://api.thinkific.com/api/admin/v1/bundles/${bundleId}/courses`,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
-                    "X-Auth-User": process.env.THINKIFIC_ADMIN_EMAIL
-                }
+        // Extract course IDs
+        const courseIds = (bundleData.included_items || [])
+            .filter(item => item.type === "Course")
+            .map(item => item.id);
 
-            }
+        // Fetch each course
+        const courseList = await Promise.all(
+            courseIds.map(id =>
+                fetch(`https://api.thinkific.com/api/public/v1/courses/${id}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
+                        "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
+                    }
+                }).then(res => res.json())
+            )
         );
-
-        const courses = await coursesRes.json();
 
         return {
             statusCode: 200,
             headers: corsHeaders,
-            body: JSON.stringify({
-                bundle: bundleData,
-                courses: courses.items || []
-            })
+            body: JSON.stringify({ bundle: bundleData, courses: courseList })
         };
 
     } catch (error) {
+        console.error("Error:", error);
         return {
             statusCode: 500,
             headers: corsHeaders,
