@@ -60,6 +60,7 @@ exports.handler = async () => {
             }
 
             const json = await res.json();
+            console.log("ALL-PRODUCTS")
 
             allProducts = [...allProducts, ...json.items];
 
