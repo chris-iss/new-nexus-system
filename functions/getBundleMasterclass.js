@@ -21,50 +21,84 @@ exports.handler = async (event) => {
             };
         }
 
-        // ------------------------------
-        // 1️⃣ FETCH BUNDLE DATA
-        // ------------------------------
-        const bundleRes = await fetch(
-            `https://api.thinkific.com/api/public/v1/bundles/${bundleId}`,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
-                    "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
+        console.log("➡ Fetching Bundle:", bundleId);
+
+        // ---------------------------------------------------
+        // 1️⃣ PAGINATE BUNDLE PAGES UNTIL NOTHING LEFT
+        // ---------------------------------------------------
+        let page = 1;
+        let allBundlePages = [];
+        let hasMore = true;
+
+        while (hasMore) {
+            console.log(`📄 Fetching bundle page ${page}...`);
+
+            const res = await fetch(
+                `https://api.thinkific.com/api/public/v1/bundles/${bundleId}?page=${page}&limit=25`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
+                        "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
+                    }
                 }
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.log("❌ Thinkific error:", data);
+                return {
+                    statusCode: res.status,
+                    headers: corsHeaders,
+                    body: JSON.stringify(data)
+                };
             }
-        );
 
-        const bundleData = await bundleRes.json();
+            // Push current page
+            allBundlePages.push(data);
 
-        console.log("BUNDLE DATA:", bundleData);
+            console.log(`📦 Bundle page returned:`, data?.included_items?.length || 0);
 
-        if (!bundleRes.ok) {
-            return {
-                statusCode: bundleRes.status,
-                headers: corsHeaders,
-                body: JSON.stringify(bundleData)
-            };
+            // STOP when fewer than 25 items OR no included_items
+            hasMore =
+                data.included_items &&
+                Array.isArray(data.included_items) &&
+                data.included_items.length === 25;
+
+            page++;
         }
 
-        // 🔥 DIRECT course_ids[] (WORKS ON GROW)
-        const courseIds = bundleData.course_ids || [];
+        // ---------------------------------------------------
+        // 2️⃣ MERGE ALL BUNDLE DATA INTO ONE OBJECT
+        // ---------------------------------------------------
+        const mergedBundle = { ...allBundlePages[0] };
 
-        console.log("FOUND COURSE IDS:", courseIds);
+        mergedBundle.included_items = allBundlePages.flatMap(
+            p => p.included_items || []
+        );
+
+        // Prefer direct course_ids (faster, always present)
+        const courseIds = mergedBundle.course_ids || [];
+
+        console.log("📌 FINAL COURSE IDS:", courseIds);
 
         if (courseIds.length === 0) {
             return {
                 statusCode: 200,
                 headers: corsHeaders,
-                body: JSON.stringify({ bundle: bundleData, courses: [] })
+                body: JSON.stringify({
+                    bundle: mergedBundle,
+                    courses: []
+                })
             };
         }
 
-        // ------------------------------
-        // 2️⃣ FETCH COURSES DIRECTLY
-        // ------------------------------
+        // ---------------------------------------------------
+        // 3️⃣ FETCH EACH COURSE DETAILS FROM COURSE IDS
+        // ---------------------------------------------------
         const courseRequests = courseIds.map(async (id) => {
-            console.log(`Fetching Course ${id}...`);
+            console.log(`➡ Fetching Course ${id}`);
 
             const courseRes = await fetch(
                 `https://api.thinkific.com/api/public/v1/courses/${id}`,
@@ -77,29 +111,34 @@ exports.handler = async (event) => {
                 }
             );
 
-            const courseData = await courseRes.json();
-            console.log(`COURSE ${id} DATA:`, courseData);
+            const json = await courseRes.json();
 
-            return courseRes.ok ? courseData : null;
+            if (!courseRes.ok) {
+                console.log(`❌ Failed course ${id}`, json);
+                return null;
+            }
+
+            console.log(`✔ COURSE ${id} RECEIVED`);
+            return json;
         });
 
         const resolvedCourses = await Promise.all(courseRequests);
-        const courses = resolvedCourses.filter(Boolean);
+        const validCourses = resolvedCourses.filter(Boolean);
 
-        // ------------------------------
-        // 3️⃣ RETURN FINAL RESPONSE
-        // ------------------------------
+        // ---------------------------------------------------
+        // 4️⃣ RETURN FINAL MERGED RESPONSE
+        // ---------------------------------------------------
         return {
             statusCode: 200,
             headers: corsHeaders,
             body: JSON.stringify({
-                bundle: bundleData,
-                courses
+                bundle: mergedBundle,
+                courses: validCourses
             })
         };
 
     } catch (error) {
-        console.error("SERVER ERROR:", error);
+        console.error("❌ SERVER ERROR:", error);
 
         return {
             statusCode: 500,
