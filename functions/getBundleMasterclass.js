@@ -1,40 +1,30 @@
+// getBundleCourses.js
 exports.handler = async (event) => {
-
-    const corsHeaders = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-    };
-
-    // Handle CORS preflight
+    // CORS
     if (event.httpMethod === "OPTIONS") {
         return {
-            statusCode: 204,
-            headers: corsHeaders,
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type",
+            },
+            body: ""
         };
     }
 
     try {
-        // Require POST + body
-        if (!event.body) {
-            return {
-                statusCode: 400,
-                headers: corsHeaders,
-                body: JSON.stringify({ error: "Request body missing. bundleId is required." })
-            };
-        }
-
-        const { bundleId } = JSON.parse(event.body);
+        const { bundleId } = JSON.parse(event.body || "{}");
 
         if (!bundleId) {
             return {
                 statusCode: 400,
-                headers: corsHeaders,
+                headers: { "Access-Control-Allow-Origin": "*" },
                 body: JSON.stringify({ error: "Missing bundleId" })
             };
         }
 
-        // Fetch bundle details
+        // Fetch bundle detailss
         const bundleRes = await fetch(
             `https://api.thinkific.com/api/public/v1/bundles/${bundleId}`,
             {
@@ -58,29 +48,32 @@ exports.handler = async (event) => {
             .map(item => item.id);
 
         // Fetch each course
-        const courseList = await Promise.all(
-            courseIds.map(id =>
-                fetch(`https://api.thinkific.com/api/public/v1/courses/${id}`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
-                        "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
-                    }
-                }).then(res => res.json())
-            )
+        const courseRequests = courseIds.map(id =>
+            fetch(`https://api.thinkific.com/api/public/v1/courses/${id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
+                    "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
+                }
+            }).then(res => res.json())
         );
+
+        const courseList = await Promise.all(courseRequests);
 
         return {
             statusCode: 200,
-            headers: corsHeaders,
-            body: JSON.stringify({ bundle: bundleData, courses: courseList })
+            headers: { "Access-Control-Allow-Origin": "*" },
+            body: JSON.stringify({
+                bundle: bundleData,
+                courses: courseList
+            })
         };
 
     } catch (error) {
         console.error("Error:", error);
         return {
             statusCode: 500,
-            headers: corsHeaders,
+            headers: { "Access-Control-Allow-Origin": "*" },
             body: JSON.stringify({ error: error.message })
         };
     }
