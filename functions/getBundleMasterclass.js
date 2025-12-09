@@ -10,13 +10,10 @@ exports.handler = async (event) => {
     }
 
     try {
-        console.log("➡ Incoming Event Body:", event.body);
-
         const body = JSON.parse(event.body || "{}");
         const bundleId = body.bundleId;
 
         if (!bundleId) {
-            console.log("❌ No bundleId provided");
             return {
                 statusCode: 400,
                 headers: corsHeaders,
@@ -24,10 +21,8 @@ exports.handler = async (event) => {
             };
         }
 
-        console.log("🔍 Fetching bundle:", bundleId);
-
         // ------------------------------
-        // 1️⃣ FETCH BUNDLE
+        // 1️⃣ FETCH BUNDLE DATA
         // ------------------------------
         const bundleRes = await fetch(
             `https://api.thinkific.com/api/public/v1/bundles/${bundleId}`,
@@ -41,10 +36,10 @@ exports.handler = async (event) => {
         );
 
         const bundleData = await bundleRes.json();
-        console.log("📦 BUNDLE RESPONSE:", JSON.stringify(bundleData, null, 2));
+
+        console.log("BUNDLE DATA:", bundleData);
 
         if (!bundleRes.ok) {
-            console.log("❌ Bundle fetch failed with status:", bundleRes.status);
             return {
                 statusCode: bundleRes.status,
                 headers: corsHeaders,
@@ -52,15 +47,12 @@ exports.handler = async (event) => {
             };
         }
 
-        // Extract PRODUCT IDs
-        const productIds = bundleData.included_items
-            ?.filter(item => item.type === "Product")
-            .map(item => item.id) || [];
+        // 🔥 DIRECT course_ids[] (WORKS ON GROW)
+        const courseIds = bundleData.course_ids || [];
 
-        console.log("📦 PRODUCT IDS FOUND:", productIds);
+        console.log("FOUND COURSE IDS:", courseIds);
 
-        if (productIds.length === 0) {
-            console.log("⚠ Bundle has NO productIds mapped.");
+        if (courseIds.length === 0) {
             return {
                 statusCode: 200,
                 headers: corsHeaders,
@@ -69,49 +61,13 @@ exports.handler = async (event) => {
         }
 
         // ------------------------------
-        // 2️⃣ FOR EACH PRODUCT → GET REAL COURSE ID
+        // 2️⃣ FETCH COURSES DIRECTLY
         // ------------------------------
-        const productRequests = productIds.map(async (productId) => {
-            console.log(`🔍 Fetching PRODUCT ${productId}...`);
-
-            const productRes = await fetch(
-                `https://api.thinkific.com/api/public/v1/products/${productId}`,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
-                        "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
-                    }
-                }
-            );
-
-            const productData = await productRes.json();
-            console.log(`📦 PRODUCT ${productId} RESPONSE:`, JSON.stringify(productData, null, 2));
-
-            if (!productRes.ok) {
-                console.log(`❌ Product ${productId} failed:`, productData);
-                return null;
-            }
-
-            // Extract REAL course ID
-            const realCourseId = productData?.resource?.id;
-            const productType = productData.product_type;
-
-            console.log(`📌 PRODUCT ${productId} TYPE:`, productType);
-            console.log(`🎯 REAL COURSE ID for PRODUCT ${productId}:`, realCourseId);
-
-            if (productType !== "course" || !realCourseId) {
-                console.log(`⚠ Skipping product ${productId} — not a course.`);
-                return null;
-            }
-
-            // ------------------------------
-            // 3️⃣ GET REAL COURSE DETAILS
-            // ------------------------------
-            console.log(`🔍 Fetching REAL COURSE ${realCourseId}...`);
+        const courseRequests = courseIds.map(async (id) => {
+            console.log(`Fetching Course ${id}...`);
 
             const courseRes = await fetch(
-                `https://api.thinkific.com/api/public/v1/courses/${realCourseId}`,
+                `https://api.thinkific.com/api/public/v1/courses/${id}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -122,21 +78,17 @@ exports.handler = async (event) => {
             );
 
             const courseData = await courseRes.json();
-            console.log(`📘 COURSE ${realCourseId} RESPONSE:`, JSON.stringify(courseData, null, 2));
+            console.log(`COURSE ${id} DATA:`, courseData);
 
-            if (!courseRes.ok) {
-                console.log(`❌ Course ${realCourseId} fetch FAILED`, courseData);
-                return null;
-            }
-
-            return courseData;
+            return courseRes.ok ? courseData : null;
         });
 
-        const resolvedCourses = await Promise.all(productRequests);
+        const resolvedCourses = await Promise.all(courseRequests);
         const courses = resolvedCourses.filter(Boolean);
 
-        console.log("🎉 FINAL COURSE LIST:", JSON.stringify(courses, null, 2));
-
+        // ------------------------------
+        // 3️⃣ RETURN FINAL RESPONSE
+        // ------------------------------
         return {
             statusCode: 200,
             headers: corsHeaders,
@@ -147,7 +99,7 @@ exports.handler = async (event) => {
         };
 
     } catch (error) {
-        console.error("💥 SERVER ERROR:", error);
+        console.error("SERVER ERROR:", error);
 
         return {
             statusCode: 500,
