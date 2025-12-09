@@ -1,3 +1,5 @@
+// getBundleCourses.js
+
 exports.handler = async (event) => {
     const corsHeaders = {
         "Access-Control-Allow-Origin": "*",
@@ -5,22 +7,26 @@ exports.handler = async (event) => {
         "Access-Control-Allow-Headers": "Content-Type",
     };
 
+    // Handle OPTIONS preflight
     if (event.httpMethod === "OPTIONS") {
         return { statusCode: 200, headers: corsHeaders };
     }
 
     try {
-        const { bundleId } = JSON.parse(event.body || "{}");
+        const body = JSON.parse(event.body || "{}");
+        const bundleId = body.bundleId;
 
         if (!bundleId) {
             return {
                 statusCode: 400,
                 headers: corsHeaders,
-                body: JSON.stringify({ error: "Missing bundleId" })
+                body: JSON.stringify({ error: "bundleId is required" })
             };
         }
 
+        // ------------------------------
         // 1️⃣ FETCH BUNDLE
+        // ------------------------------
         const bundleRes = await fetch(
             `https://api.thinkific.com/api/public/v1/bundles/${bundleId}`,
             {
@@ -32,15 +38,35 @@ exports.handler = async (event) => {
             }
         );
 
+        if (!bundleRes.ok) {
+            const errorText = await bundleRes.text();
+            throw new Error(`Bundle fetch failed: ${bundleRes.status} — ${errorText}`);
+        }
+
         const bundleData = await bundleRes.json();
 
+        // Get all course IDs from the bundle
         const courseIds = (bundleData.included_items || [])
-            .filter(i => i.type === "Course")
-            .map(i => i.id);
+            .filter(item => item.type === "Course")
+            .map(item => item.id);
 
+        // If no course IDs, return early
+        if (!courseIds.length) {
+            return {
+                statusCode: 200,
+                headers: corsHeaders,
+                body: JSON.stringify({
+                    bundle: bundleData,
+                    courses: []
+                })
+            };
+        }
+
+        // ------------------------------
         // 2️⃣ FETCH ALL COURSES
+        // ------------------------------
         const allCoursesRes = await fetch(
-            `https://api.thinkific.com/api/public/v1/courses`,
+            "https://api.thinkific.com/api/public/v1/courses",
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -50,24 +76,34 @@ exports.handler = async (event) => {
             }
         );
 
-        const allCoursesData = await allCoursesRes.json();
-        const allCourses = allCoursesData.items || [];
+        if (!allCoursesRes.ok) {
+            throw new Error(`Courses fetch failed: ${allCoursesRes.status}`);
+        }
 
-        // 3️⃣ MATCH COURSES BY ID
-        const filteredCourses = allCourses.filter(course =>
+        const allCoursesJson = await allCoursesRes.json();
+        const allCourses = allCoursesJson.items || [];
+
+        // ------------------------------
+        // 3️⃣ FILTER COURSES BY ID
+        // ------------------------------
+        const matchedCourses = allCourses.filter(course =>
             courseIds.includes(course.id)
         );
 
+        // ------------------------------
+        // 4️⃣ RETURN FINAL RESPONSE
+        // ------------------------------
         return {
             statusCode: 200,
             headers: corsHeaders,
             body: JSON.stringify({
                 bundle: bundleData,
-                courses: filteredCourses
+                courses: matchedCourses
             })
         };
 
     } catch (err) {
+        console.error("Server Error:", err);
         return {
             statusCode: 500,
             headers: corsHeaders,
