@@ -1,4 +1,4 @@
-// getBundleCourses.js
+// getBundleMasterclass.js
 
 exports.handler = async (event) => {
     const corsHeaders = {
@@ -45,12 +45,11 @@ exports.handler = async (event) => {
 
         const bundleData = await bundleRes.json();
 
-        // Get all course IDs from the bundle
+        // Extract course IDs from the bundle
         const courseIds = (bundleData.included_items || [])
             .filter(item => item.type === "Course")
             .map(item => item.id);
 
-        // If no course IDs, return early
         if (!courseIds.length) {
             return {
                 statusCode: 200,
@@ -63,35 +62,40 @@ exports.handler = async (event) => {
         }
 
         // ------------------------------
-        // 2️⃣ FETCH ALL COURSES
+        // 2️⃣ FETCH EACH COURSE INDIVIDUALLY
         // ------------------------------
-        const allCoursesRes = await fetch(
-            "https://api.thinkific.com/api/public/v1/courses",
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
-                    "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
+        const courseRequests = courseIds.map(async (courseId) => {
+            try {
+                const res = await fetch(
+                    `https://api.thinkific.com/api/public/v1/courses/${courseId}`,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
+                            "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
+                        }
+                    }
+                );
+
+                if (!res.ok) {
+                    console.error(`Failed to fetch course ${courseId}:`, res.status);
+                    return null;
                 }
+
+                return await res.json();
+            } catch (err) {
+                console.error("Error fetching course:", courseId, err);
+                return null;
             }
-        );
+        });
 
-        if (!allCoursesRes.ok) {
-            throw new Error(`Courses fetch failed: ${allCoursesRes.status}`);
-        }
+        const courseResults = await Promise.all(courseRequests);
 
-        const allCoursesJson = await allCoursesRes.json();
-        const allCourses = allCoursesJson.items || [];
+        // Filter out failed fetches
+        const matchedCourses = courseResults.filter(Boolean);
 
         // ------------------------------
-        // 3️⃣ FILTER COURSES BY ID
-        // ------------------------------
-        const matchedCourses = allCourses.filter(course =>
-            courseIds.includes(course.id)
-        );
-
-        // ------------------------------
-        // 4️⃣ RETURN FINAL RESPONSE
+        // 3️⃣ RETURN FINAL RESPONSE
         // ------------------------------
         return {
             statusCode: 200,
