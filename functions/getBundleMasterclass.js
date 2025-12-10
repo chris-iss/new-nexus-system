@@ -1,152 +1,3 @@
-// // exports.handler = async (event) => {
-// //     const corsHeaders = {
-// //         "Access-Control-Allow-Origin": "*",
-// //         "Access-Control-Allow-Methods": "POST, OPTIONS",
-// //         "Access-Control-Allow-Headers": "Content-Type",
-// //     };
-
-// //     if (event.httpMethod === "OPTIONS") {
-// //         return { statusCode: 200, headers: corsHeaders };
-// //     }
-
-// //     try {
-// //         const body = JSON.parse(event.body || "{}");
-// //         const bundleId = body.bundleId;
-
-// //         if (!bundleId) {
-// //             return {
-// //                 statusCode: 400,
-// //                 headers: corsHeaders,
-// //                 body: JSON.stringify({ error: "bundleId is required" })
-// //             };
-// //         }
-
-// //         console.log("➡ Fetching Bundle:", bundleId);
-
-// //         // ---------------------------------------------------
-// //         // 1️⃣ PAGINATE BUNDLE PAGES UNTIL NOTHING LEFT
-// //         // ---------------------------------------------------
-// //         let page = 1;
-// //         let allBundlePages = [];
-// //         let hasMore = true;
-
-// //         while (hasMore) {
-// //             console.log(`📄 Fetching bundle page ${page}...`);
-
-// //             const res = await fetch(
-// //                 `https://api.thinkific.com/api/public/v1/bundles/${bundleId}?page=${page}&limit=25`,
-// //                 {
-// //                     headers: {
-// //                         "Content-Type": "application/json",
-// //                         "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
-// //                         "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
-// //                     }
-// //                 }
-// //             );
-
-// //             const data = await res.json();
-
-// //             if (!res.ok) {
-// //                 console.log("❌ Thinkific error:", data);
-// //                 return {
-// //                     statusCode: res.status,
-// //                     headers: corsHeaders,
-// //                     body: JSON.stringify(data)
-// //                 };
-// //             }
-
-// //             // Push current page
-// //             allBundlePages.push(data);
-
-// //             console.log(`📦 Bundle page returned:`, data?.included_items?.length || 0);
-
-// //             // STOP when fewer than 25 items OR no included_items
-// //             hasMore =
-// //                 data.included_items &&
-// //                 Array.isArray(data.included_items) &&
-// //                 data.included_items.length === 25;
-
-// //             page++;
-// //         }
-
-// //         // ---------------------------------------------------
-// //         // 2️⃣ MERGE ALL BUNDLE DATA INTO ONE OBJECT
-// //         // ---------------------------------------------------
-// //         const mergedBundle = { ...allBundlePages[0] };
-
-// //         mergedBundle.included_items = allBundlePages.flatMap(
-// //             p => p.included_items || []
-// //         );
-
-// //         // Prefer direct course_ids (faster, always present)
-// //         const courseIds = mergedBundle.course_ids || [];
-
-// //         console.log("📌 FINAL COURSE IDS:", courseIds);
-
-// //         if (courseIds.length === 0) {
-// //             return {
-// //                 statusCode: 200,
-// //                 headers: corsHeaders,
-// //                 body: JSON.stringify({
-// //                     bundle: mergedBundle,
-// //                     courses: []
-// //                 })
-// //             };
-// //         }
-
-// //         // ---------------------------------------------------
-// //         // 3️⃣ FETCH EACH COURSE DETAILS FROM COURSE IDS
-// //         // ---------------------------------------------------
-// //         const courseRequests = courseIds.map(async (id) => {
-// //             console.log(`➡ Fetching Course ${id}`);
-
-// //             const courseRes = await fetch(
-// //                 `https://api.thinkific.com/api/public/v1/courses/${id}`,
-// //                 {
-// //                     headers: {
-// //                         "Content-Type": "application/json",
-// //                         "X-Auth-API-Key": process.env.THINKIFIC_API_KEY,
-// //                         "X-Auth-Subdomain": process.env.THINKIFIC_SUB_DOMAIN
-// //                     }
-// //                 }
-// //             );
-
-// //             const json = await courseRes.json();
-
-// //             if (!courseRes.ok) {
-// //                 console.log(`❌ Failed course ${id}`, json);
-// //                 return null;
-// //             }
-
-// //             console.log(`✔ COURSE ${id} RECEIVED`);
-// //             return json;
-// //         });
-
-// //         const resolvedCourses = await Promise.all(courseRequests);
-// //         const validCourses = resolvedCourses.filter(Boolean);
-
-// //         // ---------------------------------------------------
-// //         // 4️⃣ RETURN FINAL MERGED RESPONSE
-// //         // ---------------------------------------------------
-// //         return {
-// //             statusCode: 200,
-// //             headers: corsHeaders,
-// //             body: JSON.stringify({
-// //                 bundle: mergedBundle,
-// //                 courses: validCourses
-// //             })
-// //         };
-
-// //     } catch (error) {
-// //         console.error("❌ SERVER ERROR:", error);
-
-// //         return {
-// //             statusCode: 500,
-// //             headers: corsHeaders,
-// //             body: JSON.stringify({ error: error.message })
-// //         };
-// //     }
-// // };
 
 
 // const fetch = require("node-fetch");
@@ -180,7 +31,7 @@
 //         const SUBDOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
 //         // ---------------------------------------------------
-//         // 1️⃣ PAGINATE BUNDLE PAGES
+//         // 1️⃣ PAGINATE BUNDLE
 //         // ---------------------------------------------------
 //         let page = 1;
 //         let allBundlePages = [];
@@ -201,7 +52,6 @@
 //             );
 
 //             const data = await res.json();
-
 //             if (!res.ok) {
 //                 return {
 //                     statusCode: res.status,
@@ -214,6 +64,7 @@
 
 //             hasMore =
 //                 data.included_items &&
+//                 Array.isArray(data.included_items) &&
 //                 data.included_items.length === 25;
 
 //             page++;
@@ -226,11 +77,10 @@
 //         mergedBundle.included_items = allBundlePages.flatMap(p => p.included_items || []);
 
 //         const courseIds = mergedBundle.course_ids || [];
-
 //         console.log("📌 FINAL COURSE IDS:", courseIds);
 
 //         // ---------------------------------------------------
-//         // 3️⃣ FETCH COURSE DETAILS
+//         // 3️⃣ FETCH COURSES DETAILS
 //         // ---------------------------------------------------
 //         const courseRequests = courseIds.map(async (id) => {
 //             const courseRes = await fetch(
@@ -252,10 +102,9 @@
 //         const validCourses = resolvedCourses.filter(Boolean);
 
 //         // ---------------------------------------------------
-//         // 4️⃣ AUTO-ENROLLMENT LOGIC (YOUR 3 RULES)
+//         // 4️⃣ GET USER ENROLLMENTS
 //         // ---------------------------------------------------
-
-//         console.log("➡ Fetching user enrollments:", userId);
+//         console.log("➡ Fetching enrollments for user:", userId);
 
 //         const enrollmentsRes = await fetch(
 //             `https://api.thinkific.com/api/public/v1/enrollments?user_id=${userId}&limit=200`,
@@ -270,37 +119,68 @@
 //         const enrollmentJson = await enrollmentsRes.json();
 //         const userEnrollments = enrollmentJson.items || [];
 
-//         // Rule 1: User must have ACTIVE enrollment
-//         const hasActiveEnrollment = userEnrollments.some(e => e.expired === false);
+//         // ---------------------------------------------------
+//         // 5️⃣ FIND USER EXPIRY DATE
+//         //    (uses any active course; if missing → generates +12 months)
+//         // ---------------------------------------------------
+//         const activeEnrollments = userEnrollments.filter(e => e.expired === false);
 
-//         if (!hasActiveEnrollment) {
-//             console.log("❌ User is NOT active. Skipping auto-enrollment.");
+//         let userMainExpiryDate = null;
+
+//         if (activeEnrollments.length > 0) {
+//             const expiryDates = activeEnrollments
+//                 .map(e => e.expired_date ? new Date(e.expired_date) : null)
+//                 .filter(Boolean);
+
+//             if (expiryDates.length > 0) {
+//                 // Use the latest expiry available
+//                 userMainExpiryDate = new Date(Math.max(...expiryDates));
+//             } else {
+//                 // No expiry_date from Thinkific → default to + 12 months
+//                 userMainExpiryDate = new Date();
+//                 userMainExpiryDate.setFullYear(userMainExpiryDate.getFullYear() + 1);
+//             }
+//         }
+
+//         console.log("📅 Computed user expiry date:", userMainExpiryDate);
+
+//         // ---------------------------------------------------
+//         // 6️⃣ RULE: USER MUST HAVE ANY ACTIVE COURSE
+//         // ---------------------------------------------------
+//         if (!userMainExpiryDate) {
+//             console.log("❌ User has no active enrollment. Skipping auto-enroll.");
 //             return {
 //                 statusCode: 200,
 //                 headers: corsHeaders,
 //                 body: JSON.stringify({
 //                     bundle: mergedBundle,
 //                     courses: validCourses,
-//                     autoEnroll: "User inactive - skipped"
+//                     autoEnroll: "User inactive — skipped"
 //                 })
 //             };
 //         }
 
-//         // Rule 2: Find which bundle courses the user already has
+//         // ---------------------------------------------------
+//         // 7️⃣ DETERMINE WHICH COURSES ARE NEW
+//         // ---------------------------------------------------
 //         const alreadyEnrolledIds = userEnrollments
 //             .filter(e => e.expired === false)
 //             .map(e => e.course_id);
 
-//         // Rule 3: Only enroll NEW bundle courses
 //         const newCoursesToEnroll = courseIds.filter(
 //             id => !alreadyEnrolledIds.includes(id)
 //         );
 
-//         console.log("🆕 New Courses To Enroll:", newCoursesToEnroll);
+//         console.log("🆕 New courses to auto-enroll:", newCoursesToEnroll);
 
+//         // ---------------------------------------------------
+//         // 8️⃣ AUTO-ENROLL USING USER'S EXPIRY DATE
+//         // ---------------------------------------------------
 //         let enrollmentResults = [];
 
 //         for (const courseId of newCoursesToEnroll) {
+//             console.log(`📌 Enrolling user ${userId} into course ${courseId}`);
+
 //             const res = await fetch(
 //                 `https://api.thinkific.com/api/public/v1/enrollments`,
 //                 {
@@ -313,7 +193,8 @@
 //                     body: JSON.stringify({
 //                         user_id: userId,
 //                         course_id: courseId,
-//                         activated_at: new Date().toISOString()
+//                         activated_at: new Date().toISOString(),
+//                         expiry_date: userMainExpiryDate.toISOString()
 //                     })
 //                 }
 //             );
@@ -328,7 +209,7 @@
 //         }
 
 //         // ---------------------------------------------------
-//         // 5️⃣ RETURN ALL DATA
+//         // 9️⃣ RETURN EVERYTHING
 //         // ---------------------------------------------------
 //         return {
 //             statusCode: 200,
@@ -336,11 +217,13 @@
 //             body: JSON.stringify({
 //                 bundle: mergedBundle,
 //                 courses: validCourses,
-//                 autoEnrollResults: enrollmentResults
+//                 autoEnrollResults: enrollmentResults,
+//                 appliedExpiryDate: userMainExpiryDate
 //             })
 //         };
 
 //     } catch (error) {
+//         console.error("❌ SERVER ERROR:", error);
 //         return {
 //             statusCode: 500,
 //             headers: corsHeaders,
@@ -365,7 +248,7 @@ exports.handler = async (event) => {
 
     try {
         const body = JSON.parse(event.body || "{}");
-        const { bundleId, userId } = body;
+        const { bundleId, userId, activePaidCourses } = body;
 
         if (!bundleId || !userId) {
             return {
@@ -375,21 +258,20 @@ exports.handler = async (event) => {
             };
         }
 
-        console.log("➡ Fetching Bundle:", bundleId);
+        console.log("➡ Running for user", userId, "bundle", bundleId);
+        console.log("➡ Received activePaidCourses from FE:", activePaidCourses);
 
         const API_KEY = process.env.THINKIFIC_API_KEY;
         const SUBDOMAIN = process.env.THINKIFIC_SUB_DOMAIN;
 
         // ---------------------------------------------------
-        // 1️⃣ PAGINATE BUNDLE
+        // 1️⃣ Fetch the Bundle (Pagination)
         // ---------------------------------------------------
         let page = 1;
         let allBundlePages = [];
         let hasMore = true;
 
         while (hasMore) {
-            console.log(`📄 Fetching bundle page ${page}...`);
-
             const res = await fetch(
                 `https://api.thinkific.com/api/public/v1/bundles/${bundleId}?page=${page}&limit=25`,
                 {
@@ -411,51 +293,20 @@ exports.handler = async (event) => {
             }
 
             allBundlePages.push(data);
-
-            hasMore =
-                data.included_items &&
-                Array.isArray(data.included_items) &&
-                data.included_items.length === 25;
-
+            hasMore = Array.isArray(data.included_items) && data.included_items.length === 25;
             page++;
         }
 
-        // ---------------------------------------------------
-        // 2️⃣ MERGE BUNDLE DATA
-        // ---------------------------------------------------
+        // Merge bundle pages
         const mergedBundle = { ...allBundlePages[0] };
         mergedBundle.included_items = allBundlePages.flatMap(p => p.included_items || []);
-
         const courseIds = mergedBundle.course_ids || [];
-        console.log("📌 FINAL COURSE IDS:", courseIds);
+
+        console.log("📌 Bundle Course IDs:", courseIds);
 
         // ---------------------------------------------------
-        // 3️⃣ FETCH COURSES DETAILS
+        // 2️⃣ Fetch User Enrollments
         // ---------------------------------------------------
-        const courseRequests = courseIds.map(async (id) => {
-            const courseRes = await fetch(
-                `https://api.thinkific.com/api/public/v1/courses/${id}`,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Auth-API-Key": API_KEY,
-                        "X-Auth-Subdomain": SUBDOMAIN
-                    }
-                }
-            );
-
-            const json = await courseRes.json();
-            return courseRes.ok ? json : null;
-        });
-
-        const resolvedCourses = await Promise.all(courseRequests);
-        const validCourses = resolvedCourses.filter(Boolean);
-
-        // ---------------------------------------------------
-        // 4️⃣ GET USER ENROLLMENTS
-        // ---------------------------------------------------
-        console.log("➡ Fetching enrollments for user:", userId);
-
         const enrollmentsRes = await fetch(
             `https://api.thinkific.com/api/public/v1/enrollments?user_id=${userId}&limit=200`,
             {
@@ -467,70 +318,59 @@ exports.handler = async (event) => {
         );
 
         const enrollmentJson = await enrollmentsRes.json();
-        const userEnrollments = enrollmentJson.items || [];
+        const userEnrollments = Array.isArray(enrollmentJson.items) ? enrollmentJson.items : [];
+
+        console.log("📌 Total user enrollments:", userEnrollments.length);
 
         // ---------------------------------------------------
-        // 5️⃣ FIND USER EXPIRY DATE
-        //    (uses any active course; if missing → generates +12 months)
+        // 3️⃣ Find expiry date using ONLY activePaidCourses
         // ---------------------------------------------------
-        const activeEnrollments = userEnrollments.filter(e => e.expired === false);
+        const validMembershipEnrollments = userEnrollments.filter(e =>
+            activePaidCourses.includes(e.course_name) &&
+            e.expired === false &&
+            e.expired_date
+        );
 
-        let userMainExpiryDate = null;
+        console.log("🎯 Matching membership enrollments:", validMembershipEnrollments);
 
-        if (activeEnrollments.length > 0) {
-            const expiryDates = activeEnrollments
-                .map(e => e.expired_date ? new Date(e.expired_date) : null)
-                .filter(Boolean);
+        const expiryDates = validMembershipEnrollments.map(e => new Date(e.expired_date));
 
-            if (expiryDates.length > 0) {
-                // Use the latest expiry available
-                userMainExpiryDate = new Date(Math.max(...expiryDates));
-            } else {
-                // No expiry_date from Thinkific → default to + 12 months
-                userMainExpiryDate = new Date();
-                userMainExpiryDate.setFullYear(userMainExpiryDate.getFullYear() + 1);
-            }
-        }
+        const userMainExpiryDate = expiryDates.length
+            ? new Date(Math.max(...expiryDates)) // latest
+            : null;
 
-        console.log("📅 Computed user expiry date:", userMainExpiryDate);
+        console.log("📅 Calculated membership expiry:", userMainExpiryDate);
 
-        // ---------------------------------------------------
-        // 6️⃣ RULE: USER MUST HAVE ANY ACTIVE COURSE
-        // ---------------------------------------------------
         if (!userMainExpiryDate) {
-            console.log("❌ User has no active enrollment. Skipping auto-enroll.");
+            console.log("❌ No active membership expiry found. Skipping auto-enroll.");
             return {
                 statusCode: 200,
                 headers: corsHeaders,
                 body: JSON.stringify({
                     bundle: mergedBundle,
-                    courses: validCourses,
-                    autoEnroll: "User inactive — skipped"
+                    autoEnroll: "User inactive — no valid expiry.",
+                    courses: []
                 })
             };
         }
 
         // ---------------------------------------------------
-        // 7️⃣ DETERMINE WHICH COURSES ARE NEW
+        // 4️⃣ Find new courses to enroll into
         // ---------------------------------------------------
         const alreadyEnrolledIds = userEnrollments
             .filter(e => e.expired === false)
             .map(e => e.course_id);
 
-        const newCoursesToEnroll = courseIds.filter(
-            id => !alreadyEnrolledIds.includes(id)
-        );
+        const newCoursesToEnroll = courseIds.filter(id => !alreadyEnrolledIds.includes(id));
 
-        console.log("🆕 New courses to auto-enroll:", newCoursesToEnroll);
+        console.log("🆕 New courses for auto-enroll:", newCoursesToEnroll);
 
         // ---------------------------------------------------
-        // 8️⃣ AUTO-ENROLL USING USER'S EXPIRY DATE
+        // 5️⃣ Auto-enroll with membership expiry
         // ---------------------------------------------------
         let enrollmentResults = [];
 
         for (const courseId of newCoursesToEnroll) {
-            console.log(`📌 Enrolling user ${userId} into course ${courseId}`);
-
             const res = await fetch(
                 `https://api.thinkific.com/api/public/v1/enrollments`,
                 {
@@ -558,15 +398,11 @@ exports.handler = async (event) => {
             });
         }
 
-        // ---------------------------------------------------
-        // 9️⃣ RETURN EVERYTHING
-        // ---------------------------------------------------
         return {
             statusCode: 200,
             headers: corsHeaders,
             body: JSON.stringify({
                 bundle: mergedBundle,
-                courses: validCourses,
                 autoEnrollResults: enrollmentResults,
                 appliedExpiryDate: userMainExpiryDate
             })
@@ -581,3 +417,4 @@ exports.handler = async (event) => {
         };
     }
 };
+
