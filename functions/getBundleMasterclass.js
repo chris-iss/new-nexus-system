@@ -421,7 +421,7 @@ exports.handler = async (event) => {
         }
 
         // ---------------------------------------------------
-        // 2️⃣ MERGE BUNDLE
+        // 2️⃣ MERGE BUNDLE DATA
         // ---------------------------------------------------
         const mergedBundle = { ...allBundlePages[0] };
         mergedBundle.included_items = allBundlePages.flatMap(p => p.included_items || []);
@@ -430,7 +430,7 @@ exports.handler = async (event) => {
         console.log("📌 FINAL COURSE IDS:", courseIds);
 
         // ---------------------------------------------------
-        // 3️⃣ FETCH COURSES
+        // 3️⃣ FETCH COURSES DETAILS
         // ---------------------------------------------------
         const courseRequests = courseIds.map(async (id) => {
             const courseRes = await fetch(
@@ -470,35 +470,48 @@ exports.handler = async (event) => {
         const userEnrollments = enrollmentJson.items || [];
 
         // ---------------------------------------------------
-        // 5️⃣ FIND USER PRIMARY ACTIVE EXPIRY DATE
+        // 5️⃣ FIND USER EXPIRY DATE
+        //    (uses any active course; if missing → generates +12 months)
         // ---------------------------------------------------
-        const activeEnrollments = userEnrollments.filter(e => e.expired === false && e.expired_date);
-        const expiryDates = activeEnrollments.map(e => new Date(e.expired_date));
+        const activeEnrollments = userEnrollments.filter(e => e.expired === false);
 
-        const userMainExpiryDate = expiryDates.length
-            ? new Date(Math.max(...expiryDates))
-            : null;
+        let userMainExpiryDate = null;
 
-        console.log("📅 User main expiry date:", userMainExpiryDate);
+        if (activeEnrollments.length > 0) {
+            const expiryDates = activeEnrollments
+                .map(e => e.expired_date ? new Date(e.expired_date) : null)
+                .filter(Boolean);
+
+            if (expiryDates.length > 0) {
+                // Use the latest expiry available
+                userMainExpiryDate = new Date(Math.max(...expiryDates));
+            } else {
+                // No expiry_date from Thinkific → default to + 12 months
+                userMainExpiryDate = new Date();
+                userMainExpiryDate.setFullYear(userMainExpiryDate.getFullYear() + 1);
+            }
+        }
+
+        console.log("📅 Computed user expiry date:", userMainExpiryDate);
 
         // ---------------------------------------------------
-        // 6️⃣ RULE: USER MUST BE ACTIVE
+        // 6️⃣ RULE: USER MUST HAVE ANY ACTIVE COURSE
         // ---------------------------------------------------
         if (!userMainExpiryDate) {
-            console.log("❌ User is inactive or has no active expiry date. Skipping auto-enroll.");
+            console.log("❌ User has no active enrollment. Skipping auto-enroll.");
             return {
                 statusCode: 200,
                 headers: corsHeaders,
                 body: JSON.stringify({
                     bundle: mergedBundle,
                     courses: validCourses,
-                    autoEnroll: "User inactive — no assignments done."
+                    autoEnroll: "User inactive — skipped"
                 })
             };
         }
 
         // ---------------------------------------------------
-        // 7️⃣ DETERMINE NEW COURSES TO ENROLL
+        // 7️⃣ DETERMINE WHICH COURSES ARE NEW
         // ---------------------------------------------------
         const alreadyEnrolledIds = userEnrollments
             .filter(e => e.expired === false)
@@ -531,7 +544,7 @@ exports.handler = async (event) => {
                         user_id: userId,
                         course_id: courseId,
                         activated_at: new Date().toISOString(),
-                        expiry_date: userMainExpiryDate.toISOString()  // <-- 🔥 KEY UPDATE
+                        expiry_date: userMainExpiryDate.toISOString()
                     })
                 }
             );
@@ -546,7 +559,7 @@ exports.handler = async (event) => {
         }
 
         // ---------------------------------------------------
-        // 9️⃣ RETURN FULL RESPONSE
+        // 9️⃣ RETURN EVERYTHING
         // ---------------------------------------------------
         return {
             statusCode: 200,
@@ -561,7 +574,6 @@ exports.handler = async (event) => {
 
     } catch (error) {
         console.error("❌ SERVER ERROR:", error);
-
         return {
             statusCode: 500,
             headers: corsHeaders,
