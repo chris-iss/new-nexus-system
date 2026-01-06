@@ -1,8 +1,14 @@
 const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
+  console.log("=== accredibleCert invoked ===");
+  console.log("HTTP Method:", event.httpMethod);
+  console.log("Headers:", event.headers);
+  console.log("Raw body:", event.body);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
+    console.log("CORS preflight request");
     return {
       statusCode: 200,
       headers: {
@@ -14,15 +20,35 @@ exports.handler = async (event) => {
     };
   }
 
-  const { firstName, lastName, email } = JSON.parse(event.body || "{}");
+  let parsedBody = {};
+  try {
+    parsedBody = JSON.parse(event.body || "{}");
+  } catch (err) {
+    console.error("❌ JSON parse error:", err.message);
+  }
+
+  console.log("Parsed body:", parsedBody);
+
+  const { firstName, lastName, email } = parsedBody;
+
+  console.log("Extracted fields:", {
+    firstName,
+    lastName,
+    email,
+  });
 
   if (!firstName || !lastName || !email) {
+    console.warn("❌ Missing required fields");
     return {
       statusCode: 400,
       headers: {
         "Access-Control-Allow-Origin": "https://courses.instituteofsustainabilitystudies.com",
       },
-      body: JSON.stringify({ message: "Missing required fields" }),
+      body: JSON.stringify({
+        message: "Missing required fields",
+        received: { firstName, lastName, email },
+        rawBody: event.body,
+      }),
     };
   }
 
@@ -32,14 +58,23 @@ exports.handler = async (event) => {
     EmailAddress: email,
   };
 
+  console.log("Payload for HubSpot search:", payload);
+
   try {
-    const hubspotBaseURL = `https://api.hubapi.com/crm/v3/objects/contacts/search`;
+    const hubspotBaseURL = "https://api.hubapi.com/crm/v3/objects/contacts/search";
 
     const hubspotSearchProperties = {
-      after: "0",
       filterGroups: [
-        { filters: [{ operator: "EQ", propertyName: "email", value: payload.EmailAddress }] },
-        { filters: [{ operator: "EQ", propertyName: "hs_additional_emails", value: payload.EmailAddress }] },
+        {
+          filters: [
+            { operator: "EQ", propertyName: "email", value: payload.EmailAddress },
+          ],
+        },
+        {
+          filters: [
+            { operator: "EQ", propertyName: "hs_additional_emails", value: payload.EmailAddress },
+          ],
+        },
       ],
       limit: 1,
       properties: [
@@ -48,66 +83,30 @@ exports.handler = async (event) => {
         "bs_diploma___credential_link",
         "diploma___final_score____",
         "paid_in_full",
-
-        "credential_issue_date",      
-        "module_1_crendetial_issue_date",
-        "module_2_crendetial_issue_date",
-        "module_3_crendetial_issue_date",
-        "module_4_crendetial_issue_date",
-        "module_5_crendetial_issue_date",
-        "module_6_crendetial_issue_date",
-        "module_7_crendetial_issue_date",
-        "module_8_crendetial_issue_date",
-        "module_9_crendetial_issue_date",
-        "module_10_crendetial_issue_date",
-        "module_11_crendetial_issue_date",
-        "module_12_crendetial_issue_date",
-        "csrd_crendetial_issue_date",   
-    
-        "unbundled_module_1_credential_link",
-        "unbundled_module_2_credential_link",
-        "unbundled_module_3_credential_link",
-        "unbundled_module_4_credential_link",
-        "unbundled_module_5_credential_link",
-        "unbundled_module_6_credential_link",
-        "unbundled_module_7_credential_link",
-        "unbundled_module_8_credential_link",
-        "unbundled_module_9_credential_link",
-        "unbundled_module_10_credential_link",
-        "unbundled_module_11_credential_link",
-        "unbundled_module_12_credential_link",
-        "unbundled_csrd_credential_link",
-
-        "unbundled_module_1",
-        "unbundled_module_2",
-        "unbundled_module_3",
-        "unbundled_module_4",
-        "unbundled_module_5",
-        "unbundled_module_6",
-        "unbundled_module_7",
-        "unbundled_module_8",
-        "unbundled_module_9",
-        "unbundled_module_10",
-        "unbundled_module_11",
-        "unbundled_module_12",
-        "unbundled_csrd",
-    
+        "credential_issue_date",
+        "csrd_crendetial_issue_date",
       ],
       sorts: [{ propertyName: "lastmodifieddate", direction: "ASCENDING" }],
     };
 
+    console.log("Sending HubSpot search request…");
+
     const searchContact = await fetch(hubspotBaseURL, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.HUBSPOT_OAUTH_TOKEN}`,
+        Authorization: `Bearer ${process.env.HUBSPOT_OAUTH_TOKEN}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(hubspotSearchProperties),
     });
 
+    console.log("HubSpot response status:", searchContact.status);
+
     const hubspotContactResponse = await searchContact.json();
+    console.log("HubSpot response body:", hubspotContactResponse);
 
     if (!hubspotContactResponse.results || hubspotContactResponse.results.length === 0) {
+      console.warn("❌ No contact found in HubSpot");
       return {
         statusCode: 404,
         headers: {
@@ -118,6 +117,7 @@ exports.handler = async (event) => {
     }
 
     const hubspotContactData = hubspotContactResponse.results[0].properties;
+    console.log("✅ Contact found:", hubspotContactData.email);
 
     return {
       statusCode: 200,
@@ -132,7 +132,7 @@ exports.handler = async (event) => {
     };
 
   } catch (error) {
-    console.error("HubSpot Search Error:", error);
+    console.error("🔥 HubSpot Search Error:", error);
     return {
       statusCode: 500,
       headers: {
