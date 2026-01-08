@@ -120,7 +120,7 @@ exports.handler = async (event) => {
         "masterclass_designing_for_impact_lca_in_the_fashion_and_automotive_sectors_credential_link",
         "masterclass_digital_product_passport_what_it_means_for_you_credential_link",
         "masterclass_finance_for_good_the_colossal_impact_of_your_bank_credential_link",
-        "food_for_thought_understanding_the_climate_credential_link",
+        "masterclass_food_for_thought_understanding_the_climate_credential_link",
         "masterclass_green_growth_strategies_practical_carbon_footprint_reduction_credential_link",
         "masterclass_how_digitalisation_accelerates_sustainability_credential_link",
         "masterclass_living_your_values_personal_sustainability_credential_link",
