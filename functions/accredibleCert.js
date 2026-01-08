@@ -65,7 +65,7 @@ exports.handler = async (event) => {
         "csrd_crendetial_issue_date",
         "masterclass_accelerating_industrial_decarbonisation_strategies_issue_date",
         "masterclass_ai_for_sustainable_business_growth_issue_date",    
-        "masterclass_contenticon_living_your_values_personal_sustainability_for_business_issue_date",  
+        "masterclass_living_your_values_personal_sustainability_for_business_professionals_issue_date",  
         "masterclass_creating_a_culture_of_sustainability_issue_date",  
         "masterclass_creating_sustainable_pathways_how_to_master_your_supply_chain_issue_date",  
         "masterclass_critical_yeast_creating_a_tipping_point_issue_date",  
