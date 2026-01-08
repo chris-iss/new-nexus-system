@@ -110,7 +110,7 @@ exports.handler = async (event) => {
         "unbundled_csrd_credential_link",
         "masterclass_accelerating_industrial_decarbonisation_strategies_collaboration__credential_link",
         "masterclass_ai_for_sustainable_business_growth_credential_link",
-        "master_double_materiality_mastery_essential_skills_for_csrd_compliance_credential_link",
+        "masterclass_double_materiality_mastery_essential_skill_credential_link",
         "masterclass_creating_a_culture_of_sustainability_credential_link",
         "masterclass_creating_sustainable_pathways_how_to_master_your_supply_chain_credential_link",
         "masterclass_critical_yeast_creating_a_tipping_point_for_sustainability_credential_link",
