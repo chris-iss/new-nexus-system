@@ -123,7 +123,7 @@ exports.handler = async (event) => {
         "food_for_thought_understanding_the_climate_credential_link",
         "masterclass_green_growth_strategies_practical_carbon_footprint_reduction_credential_link",
         "masterclass_how_digitalisation_accelerates_sustainability_credential_link",
-        "masterclass_living_your_values_personal_sustainability_for_business_credential_link",
+        "masterclass_living_your_values_personal_sustainability_credential_link",
         "masterclass_mainstreaming_biodiversity_in_business_credential_link",
         "masterclass_strategic_messaging_engaging_stakeholders_for_sustainable_credential_link",
         "masterclass_sustainability__cx_an_ever_evolving_journey_credential_link",
