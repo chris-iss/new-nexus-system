@@ -760,12 +760,12 @@ const normalizeTitle = (s) =>
 // 1) Course map (Thinkific title -> HubSpot props + Accredible group)
 // ---------------------------
 const COURSE_MAP = {
-  [normalizeTitle("Certificate in Sustainability Plan Development")]: {
+  [normalizeTitle("TEST")]: {
     hubspotIssueDateProp: "masterclass_certificate_in_sustainability_plan_development_issue_date",
     hubspotLinkProp: "masterclass_certificate_in_sustainability_plan_development_credential_link",
     accredibleGroupId: 610156, // ✅ replace with your real group id
     accredibleGroupName: null,
-    credentialName: "Certificate in Sustainability Plan Development",
+    credentialName: "TEST",
   },
 
   [normalizeTitle("AI for Sustainable Business Growth")]: {
