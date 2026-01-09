@@ -588,22 +588,88 @@ exports.handler = async (event) => {
     console.log("📅 FINAL MEMBERSHIP EXPIRY USED:", userMainExpiryDate, "valid:", expiryIsValid);
 
     if (!expiryIsValid) {
-      console.log("❌ Invalid expiry (missing/invalid/not future). Skipping auto-enroll.", userExpiry);
+  console.log("❌ Invalid expiry — skipping auto-enroll, but returning display courses.");
+
+  // Fetch user enrollments anyway (so we can show already-enrolled courses)
+  let userEnrollments = [];
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    const enrollmentsRes = await fetch(
+      `https://api.thinkific.com/api/public/v1/enrollments?query[user_id]=${userId}&page=${page}&limit=200`,
+      {
+        headers: {
+          "X-Auth-API-Key": API_KEY,
+          "X-Auth-Subdomain": SUBDOMAIN,
+        },
+      }
+    );
+
+    const { json: enrollmentJson } = await safeReadJson(enrollmentsRes);
+
+    if (!enrollmentsRes.ok) {
       return {
-        statusCode: 200,
+        statusCode: enrollmentsRes.status,
         headers: corsHeaders,
-        body: JSON.stringify({
-          bundleId,
-          userId,
-          bundleCourseCount: courseIds.length,
-          autoEnroll: "Skipped — invalid expiry date (must be in the future).",
-          receivedExpiry: userExpiry,
-          newCoursesAttempted: [],
-          autoEnrollResults: [],
-          bundleCoursesForDisplay: [],
-        }),
+        body: JSON.stringify(enrollmentJson),
       };
     }
+
+    const items = Array.isArray(enrollmentJson.items) ? enrollmentJson.items : [];
+    userEnrollments.push(...items);
+    hasMore = items.length === 200;
+    page += 1;
+  }
+
+  const enrollmentByCourseId = new Map();
+  for (const e of userEnrollments) {
+    if (e && e.course_id != null) enrollmentByCourseId.set(e.course_id, e);
+  }
+
+  // Build display list (DO NOT filter by "enrolled" here)
+  const bundleCoursesForDisplay = [];
+  for (const courseId of courseIds) {
+    const courseRes = await fetch(
+      `https://api.thinkific.com/api/public/v1/courses/${courseId}`,
+      {
+        headers: {
+          "X-Auth-API-Key": API_KEY,
+          "X-Auth-Subdomain": SUBDOMAIN,
+        },
+      }
+    );
+
+    const { json: courseJson } = await safeReadJson(courseRes);
+    const enr = enrollmentByCourseId.get(courseId);
+
+    bundleCoursesForDisplay.push({
+      id: courseJson?.id ?? courseId,
+      name: courseJson?.name ?? null,
+      slug: courseJson?.slug ?? null,
+      course_card_image_url: courseJson?.course_card_image_url ?? null,
+      enrolled: !!enr && enr.expired === false,
+      expired: enr ? !!enr.expired : false,
+      expiry_date: enr?.expiry_date ?? null,
+      percentage_completed: enr?.percentage_completed ?? 0,
+    });
+  }
+
+  return {
+    statusCode: 200,
+    headers: corsHeaders,
+    body: JSON.stringify({
+      bundleId,
+      userId,
+      bundleCourseCount: courseIds.length,
+      autoEnroll: "Skipped — invalid expiry date.",
+      receivedExpiry: userExpiry,
+      autoEnrollResults: [],
+      bundleCoursesForDisplay, // ✅ ALWAYS sent
+    }),
+  };
+}
+
 
     // ---------------------------------------------------
     // 3️⃣ Fetch user enrollments (paginate) — filtered to user
@@ -793,7 +859,7 @@ exports.handler = async (event) => {
         appliedExpiryDate: userMainExpiryDate.toISOString(),
 
         // ✅ this is the key output for Option A
-        bundleCoursesForDisplay: activeBundleCoursesForDisplay,
+        bundleCoursesForDisplay,
       }),
     };
   } catch (error) {
