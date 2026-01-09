@@ -47,8 +47,8 @@ const COURSE_MAP = {
   // -------------------------
   
    [normalizeTitle("Certificate in Sustainability Plan Development")]: {
-    hubspotIssueDateProp: "masterclass_ai_for_sustainable_business_growth_issue_date",
-    hubspotLinkProp: "masterclass_ai_for_sustainable_business_growth_credential_link",
+    hubspotIssueDateProp: "masterclass_certificate_in_sustainability_plan_development_issue_date",
+    hubspotLinkProp: "masterclass_certificate_in_sustainability_plan_development_credential_link",
     accredibleGroupId: 610156,      // TODO: replace
     accredibleGroupName: null, // optional
     credentialName: "Certificate in Sustainability Plan Development",
@@ -594,21 +594,26 @@ exports.handler = async (event) => {
       HUBSPOT_PRIVATE_APP_TOKEN
     );
 
-    const alreadyHasCredentialLink = Boolean(existingProps?.[hubspotLinkProp]);
+    const existingLink = existingProps?.[hubspotLinkProp];
+    const existingIssueDate = existingProps?.[hubspotIssueDateProp];
 
-    if (alreadyHasCredentialLink) {
-      return {
+    // If both already exist, skip
+    if (existingLink && existingIssueDate) {
+    return {
         statusCode: 200,
         headers: corsHeaders,
         body: JSON.stringify({
-          ok: true,
-          alreadyIssued: true,
-          courseTitle,
-          hubspotLinkProp,
-          existingLink: existingProps[hubspotLinkProp],
+        ok: true,
+        alreadyIssued: true,
+        courseTitle,
+        hubspotLinkProp,
+        existingLink,
+        hubspotIssueDateProp,
+        existingIssueDate,
         }),
-      };
+    };
     }
+
 
     // ---------------------------
     // Accredible: create credential
