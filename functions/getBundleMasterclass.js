@@ -147,6 +147,8 @@ exports.handler = async (event) => {
 
             const enrollJson = await enrollRes.json();
 
+            console.log("ENROLLED USER:", enrollJson)
+
             // 🔹 5b: Fetch REAL course info for card display
             const courseRes = await fetch(
                 `https://api.thinkific.com/api/public/v1/courses/${courseId}`,
