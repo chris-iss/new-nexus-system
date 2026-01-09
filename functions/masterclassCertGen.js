@@ -14,6 +14,10 @@ exports.handler = async (event) => {
     };
   }
 
+  const data = JSON.parse(event.body || "{}");
+
+  console.log("Course Data:", data)
+
   const { firstName, lastName, email } = JSON.parse(event.body || "{}");
 
   if (!firstName || !lastName || !email) {
@@ -31,6 +35,8 @@ exports.handler = async (event) => {
     LastName: lastName,
     EmailAddress: email,
   };
+
+  
 
 //   try {
 //     const hubspotBaseURL = `https://api.hubapi.com/crm/v3/objects/contacts/search`;
