@@ -26,7 +26,8 @@ const toISODate = (d) => {
   const yyyy = dt.getUTCFullYear();
   const mm = String(dt.getUTCMonth() + 1).padStart(2, "0");
   const dd = String(dt.getUTCDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
+//   return `${yyyy}-${mm}-${dd}`;
+  return `${dd}-${mm}-${yyyy}`;
 };
 
 const normalizeTitle = (s) =>
