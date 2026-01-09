@@ -91,7 +91,8 @@ exports.handler = async (event) => {
         "masterclass_finance_for_good_the_colossal_impact_pension_issue_date",
         "masterclass_living_your_values_personal_sustainability_for_business_professionals_issue_date",
         "masterclass_the_link_between_corporate_culture_and_sustainability_performance_issue_date",
-        "masterclass_the_missing_link_why_culture_is_the_real_driver_of_sustainability_success_issue_date", 
+        "masterclass_the_missing_link_why_culture_is_the_real_driver_of_sustainability_success_issue_date",
+        "masterclass_certificate_in_sustainability_plan_development_issue_date",
         
         
     
@@ -137,6 +138,7 @@ exports.handler = async (event) => {
         "masterclass_turning_the_tide_on_data_pollution_credential_link",
         "masterclass_uncovering_the_voluntary_sustainability_reporting_standard_credential_link",
         "masterclass_unlock_digital_task_scaling_strategic_management_collaborate_credential_link",
+        "masterclass_certificate_in_sustainability_plan_development_credential_link",
 
         "unbundled_module_1",
         "unbundled_module_2",
