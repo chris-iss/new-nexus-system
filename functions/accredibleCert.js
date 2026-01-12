@@ -63,6 +63,13 @@ exports.handler = async (event) => {
         "module_11_crendetial_issue_date",
         "module_12_crendetial_issue_date",
         "csrd_crendetial_issue_date",
+
+        // Essential 
+        "carbon_footprinting_and_scope_3_emissions_deep_dive_credential_issue_date",
+        "foundations_of_circular_economy_credential_issue_date",
+        "understanding_the_basics_of_carbon_footprinting_credential_issue_date",
+
+        //Masterclass
         "masterclass_accelerating_industrial_decarbonisation_strategies_issue_date",
         "masterclass_ai_for_sustainable_business_growth_issue_date",    
         "masterclass_living_your_values_personal_sustainability_for_business_professionals_issue_date",  
@@ -109,6 +116,13 @@ exports.handler = async (event) => {
         "unbundled_module_11_credential_link",
         "unbundled_module_12_credential_link",
         "unbundled_csrd_credential_link",
+
+        //Essential
+        "carbon_footprinting_and_scope_3_emissions_deep_dive_credential_link",
+        "foundations_of_circular_economy_credential_link",
+        "understanding_the_basics_of_carbon_footprinting",
+
+        //Masterclass
         "masterclass_accelerating_industrial_decarbonisation_strategies_collaboration__credential_link",
         "masterclass_ai_for_sustainable_business_growth_credential_link",
         "masterclass_double_materiality_mastery_essential_skill_credential_link",
