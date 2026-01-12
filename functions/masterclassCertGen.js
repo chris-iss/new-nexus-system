@@ -26,8 +26,7 @@ const toISODate = (d) => {
   const yyyy = dt.getUTCFullYear();
   const mm = String(dt.getUTCMonth() + 1).padStart(2, "0");
   const dd = String(dt.getUTCDate()).padStart(2, "0");
-//   return `${yyyy}-${mm}-${dd}`;
-  return `${dd}-${mm}-${yyyy}`;
+  return `${yyyy}-${mm}-${dd}`;
 };
 
 const normalizeTitle = (s) =>
@@ -40,18 +39,10 @@ const normalizeTitle = (s) =>
 // 1) Course map (Thinkific title -> HubSpot props + Accredible group)
 // ---------------------------
 const COURSE_MAP = {
-  [normalizeTitle("Certificate in Sustainability Plan Development")]: {
-    hubspotIssueDateProp: "masterclass_certificate_in_sustainability_plan_development_issue_date",
-    hubspotLinkProp: "masterclass_certificate_in_sustainability_plan_development_credential_link",
-    accredibleGroupId: 610156, // ✅ replace with your real group id
-    accredibleGroupName: null,
-    credentialName: "Certificate in Sustainability Plan Development",
-  },
-
   [normalizeTitle("AI for Sustainable Business Growth")]: {
     hubspotIssueDateProp: "masterclass_ai_for_sustainable_business_growth_issue_date",
     hubspotLinkProp: "masterclass_ai_for_sustainable_business_growth_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "AI for Sustainable Business Growth",
   },
@@ -59,7 +50,7 @@ const COURSE_MAP = {
   [normalizeTitle("Creating a Culture of Sustainability")]: {
     hubspotIssueDateProp: "masterclass_creating_a_culture_of_sustainability_issue_date",
     hubspotLinkProp: "masterclass_creating_a_culture_of_sustainability_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Creating a Culture of Sustainability",
   },
@@ -69,7 +60,7 @@ const COURSE_MAP = {
       "masterclass_decarbonisation_and_scope_3_understanding_building_and_executing_issue_date",
     hubspotLinkProp:
       "masterclass_decarbonisation_and_scope_3_understanding_building_and_executing_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Decarbonisation and Scope 3: Understanding, Building, and Executing a Climate Strategy",
   },
@@ -79,7 +70,7 @@ const COURSE_MAP = {
       "masterclass_decarbonising_your_supply_chain_how_to_measure_scope_3_issue_date",
     hubspotLinkProp:
       "masterclass_decarbonising_your_supply_chain_how_to_measure_scope_3_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Decarbonising your Supply Chain: How to measure Scope 3",
   },
@@ -89,7 +80,7 @@ const COURSE_MAP = {
       "masterclass_creating_sustainable_pathways_how_to_master_your_supply_chain_issue_date",
     hubspotLinkProp:
       "masterclass_creating_sustainable_pathways_how_to_master_your_supply_chain_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Creating Sustainable Pathways: How to Master Your Supply Chain for a Greener Future",
   },
@@ -98,7 +89,7 @@ const COURSE_MAP = {
     hubspotIssueDateProp: "masterclass_accelerating_industrial_decarbonisation_strategies_issue_date",
     hubspotLinkProp:
       "masterclass_accelerating_industrial_decarbonisation_strategies_collaboration__credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Accelerating Industrial Decarbonisation: Strategies, Collaboration & Innovation",
   },
@@ -107,7 +98,7 @@ const COURSE_MAP = {
     hubspotIssueDateProp:
       "masterclass_food_for_thought_understanding_the_climate_impacts_of_food_waste_issue_date",
     hubspotLinkProp: "masterclass_food_for_thought_understanding_the_climate_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Food for Thought: Understanding the Climate Impacts of Food Waste",
   },
@@ -117,7 +108,7 @@ const COURSE_MAP = {
       "masterclass_the_benefits_and_best_practices_of_the_circular_economy_issue_date",
     hubspotLinkProp:
       "masterclass_the_benefits_and_best_practices_of_the_circular_economy_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "The Benefits and Best Practices of the Circular Economy",
   },
@@ -125,7 +116,7 @@ const COURSE_MAP = {
   [normalizeTitle("Mainstreaming Biodiversity in Business")]: {
     hubspotIssueDateProp: "masterclass_mainstreaming_biodiversity_in_business_issue_date",
     hubspotLinkProp: "masterclass_mainstreaming_biodiversity_in_business_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Mainstreaming Biodiversity in Business",
   },
@@ -133,7 +124,7 @@ const COURSE_MAP = {
   [normalizeTitle("Demystifying the EU Deforestation Regulation (EUDR)")]: {
     hubspotIssueDateProp: "masterclass_demystifying_the_eu_deforestation_regulation_eudr_issue_date",
     hubspotLinkProp: "masterclass_demystifying_the_eu_deforestation_regulation_eudr_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Demystifying the EU Deforestation Regulation (EUDR)",
   },
@@ -141,23 +132,31 @@ const COURSE_MAP = {
   [normalizeTitle("How Digitalisation Accelerates Sustainability")]: {
     hubspotIssueDateProp: "masterclass_how_digitalisation_accelerates_sustainability_issue_date",
     hubspotLinkProp: "masterclass_how_digitalisation_accelerates_sustainability_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "How Digitalisation Accelerates Sustainability",
+  },
+
+  [normalizeTitle("Critical Yeast: Creating a Tipping Point for Sustainability in your Business")]: {
+    hubspotIssueDateProp: "masterclass_critical_yeast_creating_a_tipping_point_issue_date",
+    hubspotLinkProp: "masterclass_critical_yeast_creating_a_tipping_point_for_sustainability_credential_link",
+    accredibleGroupId: 740153, // TODO
+    accredibleGroupName: null,
+    credentialName: "Critical Yeast: Creating a Tipping Point for Sustainability in your Business",
+  },
+
+  [normalizeTitle("Sustainability Plan: Key Steps to Plan Development and Implementation")]: {
+    hubspotIssueDateProp: "sustainability_plan_key_steps_to_plan_development_and_implementation_issue_date",
+    hubspotLinkProp: "masterclass_sustainability_plan_key_steps_to_plan_development_credential_link",
+    accredibleGroupId: 740153, // TODO
+    accredibleGroupName: null,
+    credentialName: "Sustainability Plan: Key Steps to Plan Development and Implementation",
   },
 
   [normalizeTitle("Turning the Tide on Data Pollution")]: {
     hubspotIssueDateProp: "masterclass_turning_the_tide_on_data_pollution_issue_date",
     hubspotLinkProp: "masterclass_turning_the_tide_on_data_pollution_credential_link",
-    accredibleGroupId: 0, // TODO
-    accredibleGroupName: null,
-    credentialName: "Turning the Tide on Data Pollution",
-  },
-
-  [normalizeTitle("New Turning the Tide on Data Pollution")]: {
-    hubspotIssueDateProp: "masterclass_turning_the_tide_on_data_pollution_issue_date",
-    hubspotLinkProp: "masterclass_turning_the_tide_on_data_pollution_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Turning the Tide on Data Pollution",
   },
@@ -166,7 +165,7 @@ const COURSE_MAP = {
     hubspotIssueDateProp: "masterclass_the_expanding_world_of_new_tech_issue_date",
     hubspotLinkProp:
       "masterclass_the_expanding_world_of_new_tech_and_its_sustainability_implications_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "The Expanding World of New Tech and Its Sustainability Implications",
   },
@@ -176,7 +175,7 @@ const COURSE_MAP = {
       "masterclass_uncovering_the_voluntary_sustainability_reporting_standard_issue_date",
     hubspotLinkProp:
       "masterclass_uncovering_the_voluntary_sustainability_reporting_standard_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Uncovering the Voluntary Sustainability Reporting Standard for SMEs (VSME)",
   },
@@ -184,7 +183,7 @@ const COURSE_MAP = {
   [normalizeTitle("Digital Product Passport: What it Means for You")]: {
     hubspotIssueDateProp: "masterclass_digital_product_passport_what_it_means_for_you_issue_date",
     hubspotLinkProp: "masterclass_digital_product_passport_what_it_means_for_you_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Digital Product Passport: What it Means for You",
   },
@@ -193,7 +192,7 @@ const COURSE_MAP = {
     hubspotIssueDateProp:
       "masterclass_living_your_values_personal_sustainability_for_business_professionals_issue_date",
     hubspotLinkProp: "masterclass_living_your_values_personal_sustainability_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Living Your Values: Personal Sustainability for Business Professionals",
   },
@@ -201,7 +200,7 @@ const COURSE_MAP = {
   [normalizeTitle("Strategic Messaging: Engaging Stakeholders for Sustainable Outcomes")]: {
     hubspotIssueDateProp: "masterclass_strategic_messaging_engaging_stakeholders_issue_date",
     hubspotLinkProp: "masterclass_strategic_messaging_engaging_stakeholders_for_sustainable_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Strategic Messaging: Engaging Stakeholders for Sustainable Outcomes",
   },
@@ -209,7 +208,7 @@ const COURSE_MAP = {
   [normalizeTitle("Sustainability & CX: An Ever Evolving Journey")]: {
     hubspotIssueDateProp: "masterclass_sustainability__cx_an_ever_evolving_journey_issue_date",
     hubspotLinkProp: "masterclass_sustainability__cx_an_ever_evolving_journey_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Sustainability & CX: An Ever Evolving Journey",
   },
@@ -217,7 +216,7 @@ const COURSE_MAP = {
   [normalizeTitle("Sustainability Leadership with the Inner Development Goals")]: {
     hubspotIssueDateProp: "masterclass_sustainability_leadership_with_the_inner_issue_date",
     hubspotLinkProp: "masterclass_sustainability_leadership_with_the_inner_development_goals_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Sustainability Leadership with the Inner Development Goals",
   },
@@ -226,7 +225,7 @@ const COURSE_MAP = {
     hubspotIssueDateProp:
       "masterclass_the_missing_link_why_culture_is_the_real_driver_of_sustainability_success_issue_date",
     hubspotLinkProp: "masterclass_the_missing_link_why_culture_is_the_real_driver_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "The Missing Link: Why Culture is the Real Driver of Sustainability Success",
   },
@@ -235,7 +234,7 @@ const COURSE_MAP = {
     hubspotIssueDateProp:
       "masterclass_the_link_between_corporate_culture_and_sustainability_performance_issue_date",
     hubspotLinkProp: "masterclass_the_link_between_corporate_culture_and_sustainability_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "The Link Between Corporate Culture and Sustainability Performance",
   },
@@ -243,7 +242,7 @@ const COURSE_MAP = {
   [normalizeTitle("Sustainable Christmas: Celebrate with Style, Mindfulness, and Purpose")]: {
     hubspotIssueDateProp: "masterclass_sustainable_christmas_celebrate_with_style_issue_date",
     hubspotLinkProp: "masterclass_sustainable_christmas_celebrate_with_style_mindfulness_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Sustainable Christmas: Celebrate with Style, Mindfulness, and Purpose",
   },
@@ -252,7 +251,7 @@ const COURSE_MAP = {
     hubspotIssueDateProp:
       "masterclass_green_growth_strategies_practical_carbon_footprint_reduction_for_small_issue_date",
     hubspotLinkProp: "masterclass_green_growth_strategies_practical_carbon_footprint_reduction_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName:
       "Green Growth Strategies: Practical Carbon Footprint Reduction for Small, Medium, and Large Businesses",
@@ -263,7 +262,7 @@ const COURSE_MAP = {
       "masterclass_designing_for_impact_lca_in_the_fashion_and_automotive_sectors_issue_date",
     hubspotLinkProp:
       "masterclass_designing_for_impact_lca_in_the_fashion_and_automotive_sectors_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Designing for Impact: LCA in the Fashion and Automotive Sectors",
   },
@@ -279,7 +278,7 @@ const COURSE_MAP = {
   [normalizeTitle("Double Materiality Mastery: Essential Skills for CSRD Compliance")]: {
     hubspotIssueDateProp: "masterclass_double_materiality_mastery_essential_skills_for_csrd_issue_date",
     hubspotLinkProp: "masterclass_double_materiality_mastery_essential_skill_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName: "Double Materiality Mastery: Essential Skills for CSRD Compliance",
   },
@@ -288,7 +287,7 @@ const COURSE_MAP = {
     hubspotIssueDateProp: "masterclass_unlock_digital_task_scaling_strategic_management_issue_date",
     hubspotLinkProp:
       "masterclass_unlock_digital_task_scaling_strategic_management_collaborate_credential_link",
-    accredibleGroupId: 0, // TODO
+    accredibleGroupId: 740153, // TODO
     accredibleGroupName: null,
     credentialName:
       "Unlock Digital Task Scaling: Strategic Management, Collaborate Communication, and Brand Positioning for Sustainability",
