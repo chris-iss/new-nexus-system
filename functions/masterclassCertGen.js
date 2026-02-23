@@ -417,6 +417,11 @@ exports.handler = async (event) => {
     const HUBSPOT_TOKEN =
       process.env.HUBSPOT_PRIVATE_APP_TOKEN || process.env.HUBSPOT_OAUTH_TOKEN;
 
+      console.log("🔐 HUBSPOT_PRIVATE_APP_TOKEN present?", !!process.env.HUBSPOT_PRIVATE_APP_TOKEN);
+console.log("🔐 HUBSPOT_OAUTH_TOKEN present?", !!process.env.HUBSPOT_OAUTH_TOKEN);
+console.log("🔐 HUBSPOT_TOKEN length:", HUBSPOT_TOKEN ? HUBSPOT_TOKEN.length : 0);
+console.log("🔐 HUBSPOT_TOKEN prefix:", HUBSPOT_TOKEN ? HUBSPOT_TOKEN.slice(0, 8) : "NONE");
+
     const ACCREDIBLE_API_KEY = process.env.ACCREDIBLE_API_KEY;
     const ACCREDIBLE_BASE_URL = process.env.ACCREDIBLE_BASE_URL || "https://api.accredible.com";
 
