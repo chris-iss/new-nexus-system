@@ -42,7 +42,7 @@ const COURSE_MAP = {
   [normalizeTitle("AI for Sustainable Business Growth")]: {
     hubspotIssueDateProp: "masterclass_ai_for_sustainable_business_growth_issue_date",
     hubspotLinkProp: "masterclass_ai_for_sustainable_business_growth_credential_link",
-    accredibleGroupId: 740153, // TODO
+    accredibleGroupId: 805345,
     accredibleGroupName: null,
     credentialName: "AI for Sustainable Business Growth",
   },
@@ -50,7 +50,7 @@ const COURSE_MAP = {
   [normalizeTitle("Creating a Culture of Sustainability")]: {
     hubspotIssueDateProp: "masterclass_creating_a_culture_of_sustainability_issue_date",
     hubspotLinkProp: "masterclass_creating_a_culture_of_sustainability_credential_link",
-    accredibleGroupId: 740153, // TODO
+    accredibleGroupId: 805348, 
     accredibleGroupName: null,
     credentialName: "Creating a Culture of Sustainability",
   },
@@ -60,7 +60,7 @@ const COURSE_MAP = {
       "masterclass_decarbonisation_and_scope_3_understanding_building_and_executing_issue_date",
     hubspotLinkProp:
       "masterclass_decarbonisation_and_scope_3_understanding_building_and_executing_credential_link",
-    accredibleGroupId: 740153, // TODO
+    accredibleGroupId: 805349, // TODO
     accredibleGroupName: null,
     credentialName: "Decarbonisation and Scope 3: Understanding, Building, and Executing a Climate Strategy",
   },
