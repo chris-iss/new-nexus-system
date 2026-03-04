@@ -60,29 +60,29 @@ const COURSE_MAP = {
       "masterclass_decarbonisation_and_scope_3_understanding_building_and_executing_issue_date",
     hubspotLinkProp:
       "masterclass_decarbonisation_and_scope_3_understanding_building_and_executing_credential_link",
-    accredibleGroupId: 805349, // TODO
+    accredibleGroupId: 805349, 
     accredibleGroupName: null,
     credentialName: "Decarbonisation and Scope 3: Understanding, Building, and Executing a Climate Strategy",
   },
 
-  [normalizeTitle("Decarbonising your Supply Chain: How to measure Scope 3")]: {
+  [normalizeTitle("A Step-by-Step Guide to ISO 14001")]: {
     hubspotIssueDateProp:
-      "masterclass_decarbonising_your_supply_chain_how_to_measure_scope_3_issue_date",
+      "masterclass_a_stepbystep_guide_to_iso_14001_issue_date",
     hubspotLinkProp:
-      "masterclass_decarbonising_your_supply_chain_how_to_measure_scope_3_credential_link",
-    accredibleGroupId: 740153, // TODO
+      "masterclass_a_stepbystep_guide_to_iso_14001_credential_link",
+    accredibleGroupId: 479604, 
     accredibleGroupName: null,
-    credentialName: "Decarbonising your Supply Chain: How to measure Scope 3",
+    credentialName: "A Step-by-Step Guide to ISO 14001",
   },
 
-  [normalizeTitle("Creating Sustainable Pathways: How to Master Your Supply Chain for a Greener Future")]: {
+  [normalizeTitle("The VSME Standard - Making Sustainability Reporting Work For SMEs")]: {
     hubspotIssueDateProp:
-      "masterclass_creating_sustainable_pathways_how_to_master_your_supply_chain_issue_date",
+      "masterclass_the_vsme_standard__making_sustainability_reporting_work_for_smes_issue_date_",
     hubspotLinkProp:
-      "masterclass_creating_sustainable_pathways_how_to_master_your_supply_chain_credential_link",
-    accredibleGroupId: 740153, // TODO
+      "masterclass_the_vsme_standard__making_sustainability_reporting_work_for_smes_credential_link",
+    accredibleGroupId: 479605, 
     accredibleGroupName: null,
-    credentialName: "Creating Sustainable Pathways: How to Master Your Supply Chain for a Greener Future",
+    credentialName: "The VSME Standard - Making Sustainability Reporting Work For SMEs",
   },
 
   [normalizeTitle("Accelerating Industrial Decarbonisation: Strategies, Collaboration & Innovation")]: {
@@ -292,6 +292,8 @@ const COURSE_MAP = {
     credentialName:
       "Unlock Digital Task Scaling: Strategic Management, Collaborate Communication, and Brand Positioning for Sustainability",
   },
+
+  
 };
 
 // ---------------------------
