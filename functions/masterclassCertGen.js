@@ -70,7 +70,7 @@ const COURSE_MAP = {
       "masterclass_a_stepbystep_guide_to_iso_14001_issue_date",
     hubspotLinkProp:
       "masterclass_a_stepbystep_guide_to_iso_14001_credential_link",
-    accredibleGroupId: 479604, 
+    accredibleGroupId: 807866, 
     accredibleGroupName: null,
     credentialName: "A Step-by-Step Guide to ISO 14001",
   },
@@ -80,7 +80,7 @@ const COURSE_MAP = {
       "masterclass_the_vsme_standard__making_sustainability_reporting_work_for_smes_issue_date_",
     hubspotLinkProp:
       "masterclass_the_vsme_standard__making_sustainability_reporting_work_for_smes_credential_link",
-    accredibleGroupId: 479605, 
+    accredibleGroupId: 807867, 
     accredibleGroupName: null,
     credentialName: "The VSME Standard - Making Sustainability Reporting Work For SMEs",
   },
